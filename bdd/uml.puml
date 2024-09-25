@@ -5,6 +5,11 @@ skin rose
 abstract class Compte {
   - email : String {id, frozen}
   - motDePasse : String
+  - numAdresseCompte : int
+  - rueCompte : String
+  - villeCompte : String
+  - codePostalCompte : int
+  - telephone : String
   +(abstract) modifierCompte() : void
 }
 
@@ -12,8 +17,6 @@ class CompteMembre {
   - nomMembre : String
   - prenomMembre : String
   - pseudo : String
-  - adresse : String
-  - telephone : String
   + modifierCompte() : void
 }
 
@@ -42,11 +45,14 @@ CompteProfessionnel --|> Compte
 abstract class Offre {
   # idOffre : String {id}
   # nomOffre : String
-  # adresse : String {code postal starts with 22, 29, 35, 44, 56}
+  # numAdresseOffre : int
+  # rueOffre : String
+  # villeOffre : String
+  # codePostalOffre : int {code postal starts with 22, 29, 35, 44, 56}
+  # prix : float {prix > 0}
   # resume : String
-  # categorie : String
+  # nomCat : String
   # noteOffre : float {noteOffre > 0}
-  # urlVersImages : String
   # dateDebut : Date
   # dateFin : Date {dateFin > dateDebut}
   # enLigne : boolean
@@ -56,6 +62,12 @@ abstract class Offre {
   + estOuvert() : boolean
   + compterAvis() : int
 }
+
+class ImageOffre {
+  - urlVersImage : String {id}
+}
+
+Offre "1" -- "1..*" ImageOffre: Illustre
 
 abstract class Categorie {
   - idOffre : String
@@ -73,7 +85,7 @@ class Prestation {
   - prixPresta : float
 }
 
-Activite -- Prestation : PrestaProposées
+Activite "1" -- "0..*" Prestation : PrestaProposées
 
 class Visite {
   - dureeVisite : String
@@ -84,7 +96,7 @@ class Langue {
   - nomLangue : String {id}
 }
 
-Visite -- Langue : LanguesProposées
+Visite "0..*" -- "0..*" Langue : LanguesProposées
 
 class Spectacles {
   - dureeSpectacle : String
@@ -103,7 +115,7 @@ class Attraction {
   - ageMinAttraction : int
 }
 
-ParcAttraction -- Attraction : AttractionsProposees
+ParcAttraction "1..*" -- "1" Attraction : AttractionsProposees
 
 class Restauration {
   - urlVersCarte : String
@@ -117,10 +129,9 @@ Categorie <|-- Spectacles
 Categorie <|-- ParcAttraction
 Categorie <|-- Restauration
 
-Offre -- Categorie
+Offre "0..*" -- "1" Categorie
 
 abstract class OffrePayante {
-  - prix : float {prix > 0}
   - option : String
   - optionActive : boolean
   + activerOption() : void
