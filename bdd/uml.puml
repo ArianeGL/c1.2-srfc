@@ -1,0 +1,181 @@
+@startuml
+
+skin rose
+
+abstract class Compte {
+  - email : String {id, frozen}
+  - motDePasse : String
+  +(abstract) modifierCompte() : void
+}
+
+class CompteMembre {
+  - nomMembre : String
+  - prenomMembre : String
+  - pseudo : String
+  - adresse : String
+  - telephone : String
+  + modifierCompte() : void
+}
+
+
+abstract class CompteProfessionnel {
+  - denomination : String
+  + (abstract) modifierCompte() : void
+}
+
+class ProfessionnelPrive {
+  - SIREN : String
+  - IBAN : String {optional}
+  + modifierCompte() : void
+}
+
+class ProfessionnelPublic {
+  + modifierCompte() : void
+}
+
+ProfessionnelPublic --|> CompteProfessionnel
+ProfessionnelPrive --|> CompteProfessionnel
+
+CompteMembre --|> Compte
+CompteProfessionnel --|> Compte
+
+abstract class Offre {
+  # idOffre : String {id}
+  # nomOffre : String
+  # adresse : String {code postal starts with 22, 29, 35, 44, 56}
+  # resume : String
+  # categorie : String
+  # noteOffre : float {noteOffre > 0}
+  # urlVersImages : String
+  # dateDebut : Date
+  # dateFin : Date {dateFin > dateDebut}
+  # enLigne : boolean
+  # datePublication : Date
+  # derniereMaj : Date
+  + mettreHorsLigne() : void
+  + estOuvert() : boolean
+  + compterAvis() : int
+}
+
+abstract class Categorie {
+  - idOffre : String
+}
+
+class Activite{
+  - ageRequis : int
+  - dureeActivite : String
+}
+
+class Prestation {
+  - idPresta : String {id}
+  - nomPrestation : String
+  - descriptionPresta : String
+  - prixPresta : float
+}
+
+Activite -- Prestation : PrestaProposées
+
+class Visite {
+  - dureeVisite : String
+  - estGuidee : boolean
+}
+
+class Langue {
+  - nomLangue : String {id}
+}
+
+Visite -- Langue : LanguesProposées
+
+class Spectacles {
+  - dureeSpectacle : String
+  - placesSpectacle : int
+  
+}
+
+class ParcAttraction {
+  - urlVersPlan : String
+  - nbAttractions : int
+}
+
+class Attraction {
+  - idAttraction : String
+  - nomAttraction : String
+  - ageMinAttraction : int
+}
+
+class Restauration
+
+Categorie <|-- Activite
+Categorie <|-- Visite
+Categorie <|-- Spectacles
+Categorie <|-- ParcAttraction
+Categorie <|-- Restauration
+
+Offre -- Categorie
+
+abstract class OffrePayante {
+  - prix : float {prix > 0}
+  - option : String
+  - optionActive : boolean
+  + activerOption() : void
+  + desactiverOption() : void
+  + calculerPrix() : float
+}
+
+class Tarif {
+  - nomTarif : String
+  - prixTarif : float {prix > 0}
+}
+
+OffrePayante "1" -- "1..*" Tarif : grilleTarifaire
+
+class OffreGratuite
+
+class OffrePremium {
+  - blacklistDispo : int {0 <= blacklistDispo <= 3}
+}
+
+class OffreStandard
+OffrePayante --|> Offre
+OffreStandard --|> OffrePayante
+OffrePremium --|> OffrePayante
+OffreGratuite --|> Offre
+
+
+class Avis {
+  - idAvis : String {id}
+  - messageA : String
+  - note : int {1  <= note <= 5}
+  - nbLike : int
+  - nbDislike : int
+  - estConsulte : boolean
+  - blacklist : boolean
+  - estSiganle : boolean
+  + signalerAvis() : void
+  + supprimerAvis() : void
+}
+
+class Reponse {
+  - idRep : String {id}
+  - messageRep : String
+  + repondreAvis(message : String) : void
+  + supprimerReponse() : void
+}
+
+CompteProfessionnel "1" -- "0..*" Offre : Propose
+CompteMembre "1" -- "0..*" Avis : Donne
+Avis "0..*" -- "1" Offre : Concerne
+
+CompteProfessionnel "1" -- "0..*" Avis
+(CompteProfessionnel, Avis) .. Reponse
+
+class Facture {
+  - numFacture : String {id}
+  - prixFacture : float {prixFacture > 0}
+  - dateFacturation : Date
+}
+
+Facture "1..*" -- "1" OffrePayante: FacturationConcerne
+Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
+
+@enduml
