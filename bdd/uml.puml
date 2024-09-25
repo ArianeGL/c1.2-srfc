@@ -103,7 +103,13 @@ class Attraction {
   - ageMinAttraction : int
 }
 
-class Restauration
+ParcAttraction -- Attraction : AttractionsProposees
+
+class Restauration {
+  - urlVersCarte : String
+  - gammePrix : String
+  - RepasServis : String
+}
 
 Categorie <|-- Activite
 Categorie <|-- Visite
