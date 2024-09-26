@@ -120,13 +120,17 @@ class Attraction {
   - idAttraction : String
   - nomAttraction : String
 }
-note left of Attraction:- ageMinAttraction >=0
+note right of Attraction:- ageMinAttraction >=0
 
 ParcAttraction "1..*" -- "1" Attraction : AttractionsProposees
 
 class Restauration {
   - urlVersCarte : String
   - gammePrix : String
+  - moyCuisine : float
+  - moyService : float
+  - moyAmbiance : float
+  - moyRapportQP : float
   - RepasServis : String
 }
 
@@ -162,6 +166,24 @@ note right of Avis
 - nbDislike >= 0
 end note
 
+Avis "1" -- "0..*" Restauration
+
+class NoteRestaurant {
+  - noteCuisine : int
+  - noteService : int
+  - noteAmbiance : int
+  - noteRapportQP : int
+  + calcAvisMoy() : float
+}
+note right of NoteRestaurant
+- 1 <= noteCuisine <= 5
+- 1 <= noteService <= 5
+- 1 <= noteAmbiance <= 5
+- 1 <= noteCuisine <= 5
+end note
+
+(Avis, Restauration) .. NoteRestaurant
+
 class Reponse {
   - idRep : String {id}
   - messageRep : String
@@ -183,7 +205,7 @@ class Facture {
 }
 note right of Facture:- prixFacture >= 0
 
-Facture "1..*" -- "1" Offre : FacturationConcerne
+Facture "0..*" -- "1" Offre : FacturationConcerne
 Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
 
 @enduml
