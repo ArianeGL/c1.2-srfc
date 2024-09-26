@@ -5,7 +5,7 @@ skin rose
 abstract class Compte {
   - email : String {id}
   - motDePasse : String
-  - numAdresseCompte : int
+  - numAdresseCompte : String
   - rueCompte : String
   - villeCompte : String
   - codePostalCompte : int
@@ -40,11 +40,11 @@ CompteProfessionnel --|> Compte
 abstract class Offre {
   # idOffre : String {id}
   # nomOffre : String
-  # numAdresseOffre : int
+  # numAdresseOffre : String
   # rueOffre : String
   # villeOffre : String
   # codePostalOffre : int
-  # prix : float
+  # prixOffre : float
   # resume : String
   # noteOffre : float
   # dateDebut : Date
@@ -52,9 +52,12 @@ abstract class Offre {
   # enLigne : boolean
   # datePublication : Date
   # derniereMaj : Date
+  # estPremium : boolean
+  # blacklistDispo : int
   + mettreHorsLigne() : void
-  + estOuvert() : boolean
   + compterAvis() : int
+  + calculerNote() : float
+  + calculerNbBlacklist(estPremium : boolean) : int
 }
 
 note right of Offre
@@ -63,6 +66,7 @@ note right of Offre
 - dateFin >= dateDebut
 - datePublication < dateFin
 - derniereMaj >= datePublication
+- 0 <= blacklistDispo <= 3
 end note
 
 class ImageOffre {
@@ -108,13 +112,13 @@ note left of Spectacles:- placesSpectacle > 0
 class ParcAttraction {
   - urlVersPlan : String
   - nbAttractions : int
+  - ageMinParc : int
 }
 note left of ParcAttraction:- nbAttractions > 0
 
 class Attraction {
   - idAttraction : String
   - nomAttraction : String
-  - ageMinAttraction : int
 }
 note left of Attraction:- ageMinAttraction >=0
 
@@ -132,14 +136,6 @@ Offre <|-- Spectacles
 Offre <|-- ParcAttraction
 Offre <|-- Restauration
 
-class OffrePayanteStandard {
-  - option : String
-  - optionActive : boolean
-  + activerOption() : void
-  + desactiverOption() : void
-  + calculerPrix() : float
-}
-
 class Tarif {
   - nomTarif : String
   - prixTarif : float {prix > 0}
@@ -147,16 +143,6 @@ class Tarif {
 note right of Tarif:- prixTarif >= 0
 
 Offre "1" -- "1..*" Tarif : grilleTarifaire
-
-
-class OffrePremium {
-  - blacklistDispo : int {0 <= blacklistDispo <= 3}
-}
-note right of OffrePremium:- 0 <= blacklistDispo <= 3
-
-OffrePayanteStandard "0..*" -- "1" Offre
-OffrePremium --|> OffrePayanteStandard
-
 
 class Avis {
   - idAvis : String {id}
@@ -197,7 +183,7 @@ class Facture {
 }
 note right of Facture:- prixFacture >= 0
 
-Facture "1..*" -- "1" OffrePayanteStandard: FacturationConcerne
+Facture "1..*" -- "1" Offre : FacturationConcerne
 Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
 
 @enduml

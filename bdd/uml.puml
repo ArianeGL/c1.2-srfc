@@ -5,7 +5,7 @@ skin rose
 abstract class Compte {
   - email : String {id}
   - motDePasse : String
-  - numAdresseCompte : int
+  - numAdresseCompte : String
   - rueCompte : String
   - villeCompte : String
   - codePostalCompte : int
@@ -40,7 +40,7 @@ CompteProfessionnel --|> Compte
 abstract class Offre {
   # idOffre : String {id}
   # nomOffre : String
-  # numAdresseOffre : int
+  # numAdresseOffre : String
   # rueOffre : String
   # villeOffre : String
   # codePostalOffre : int
@@ -53,8 +53,8 @@ abstract class Offre {
   # datePublication : Date
   # derniereMaj : Date
   + mettreHorsLigne() : void
-  + estOuvert() : boolean
   + compterAvis() : int
+  + calculerNote() : float
 }
 
 note right of Offre
