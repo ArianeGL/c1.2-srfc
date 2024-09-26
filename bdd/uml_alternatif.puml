@@ -21,9 +21,9 @@ class CompteMembre {
 }
 
 
-abstract class CompteProfessionnel {
+class CompteProfessionnel {
   - denomination : String
-  + (abstract) modifierCompte() : void
+  + modifierCompte() : void
 }
 
 class ProfessionnelPrive {
@@ -32,11 +32,6 @@ class ProfessionnelPrive {
   + modifierCompte() : void
 }
 
-class ProfessionnelPublic {
-  + modifierCompte() : void
-}
-
-ProfessionnelPublic --|> CompteProfessionnel
 ProfessionnelPrive --|> CompteProfessionnel
 
 CompteMembre --|> Compte
@@ -125,7 +120,7 @@ Offre <|-- Spectacles
 Offre <|-- ParcAttraction
 Offre <|-- Restauration
 
-abstract class OffrePayante {
+class OffrePayanteStandard {
   - option : String
   - optionActive : boolean
   + activerOption() : void
@@ -145,10 +140,8 @@ class OffrePremium {
   - blacklistDispo : int {0 <= blacklistDispo <= 3}
 }
 
-class OffreStandard
-OffrePayante "0..*" -- "1" Offre
-OffreStandard --|> OffrePayante
-OffrePremium --|> OffrePayante
+OffrePayanteStandard "0..*" -- "1" Offre
+OffrePremium --|> OffrePayanteStandard
 
 
 class Avis {
@@ -184,7 +177,7 @@ class Facture {
   - dateFacturation : Date
 }
 
-Facture "1..*" -- "1" OffrePayante: FacturationConcerne
+Facture "1..*" -- "1" OffrePayanteStandard: FacturationConcerne
 Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
 
 @enduml
