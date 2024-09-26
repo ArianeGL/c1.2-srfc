@@ -3,7 +3,7 @@
 skin rose
 
 abstract class Compte {
-  - email : String {id, frozen}
+  - email : String {id}
   - motDePasse : String
   - numAdresseCompte : int
   - rueCompte : String
@@ -43,13 +43,12 @@ abstract class Offre {
   # numAdresseOffre : int
   # rueOffre : String
   # villeOffre : String
-  # codePostalOffre : int {code postal starts with 22, 29, 35, 44, 56}
-  # prix : float {prix > 0}
+  # codePostalOffre : int
+  # prix : float
   # resume : String
-  # nomCat : String
-  # noteOffre : float {noteOffre > 0}
+  # noteOffre : float
   # dateDebut : Date
-  # dateFin : Date {dateFin > dateDebut}
+  # dateFin : Date
   # enLigne : boolean
   # datePublication : Date
   # derniereMaj : Date
@@ -57,6 +56,14 @@ abstract class Offre {
   + estOuvert() : boolean
   + compterAvis() : int
 }
+
+note right of Offre
+- codePostalOffre commence par 22, 29, 35, 44, 56
+- noteOffre >= 0
+- dateFin >= dateDebut
+- datePublication < dateFin
+- derniereMaj >= datePublication
+end note
 
 class ImageOffre {
   - urlVersImage : String {id}
@@ -68,6 +75,7 @@ class Activite{
   - ageRequis : int
   - dureeActivite : String
 }
+note left of Activite:- ageRequis >= 0
 
 class Prestation {
   - idPresta : String {id}
@@ -75,6 +83,7 @@ class Prestation {
   - descriptionPresta : String
   - prixPresta : float
 }
+note left of Prestation:- prixPresta >= 0
 
 Activite "1" -- "0..*" Prestation : PrestaProposées
 
@@ -94,17 +103,20 @@ class Spectacles {
   - placesSpectacle : int
   
 }
+note left of Spectacles:- placesSpectacle > 0
 
 class ParcAttraction {
   - urlVersPlan : String
   - nbAttractions : int
 }
+note left of ParcAttraction:- nbAttractions > 0
 
 class Attraction {
   - idAttraction : String
   - nomAttraction : String
   - ageMinAttraction : int
 }
+note left of Attraction:- ageMinAttraction >=0
 
 ParcAttraction "1..*" -- "1" Attraction : AttractionsProposees
 
@@ -132,6 +144,7 @@ class Tarif {
   - nomTarif : String
   - prixTarif : float {prix > 0}
 }
+note right of Tarif:- prixTarif >= 0
 
 Offre "1" -- "1..*" Tarif : grilleTarifaire
 
@@ -139,6 +152,7 @@ Offre "1" -- "1..*" Tarif : grilleTarifaire
 class OffrePremium {
   - blacklistDispo : int {0 <= blacklistDispo <= 3}
 }
+note right of OffrePremium:- 0 <= blacklistDispo <= 3
 
 OffrePayanteStandard "0..*" -- "1" Offre
 OffrePremium --|> OffrePayanteStandard
@@ -156,6 +170,11 @@ class Avis {
   + signalerAvis() : void
   + supprimerAvis() : void
 }
+note right of Avis
+- 1  <= note <= 5
+- nbLike >= 0
+- nbDislike >= 0
+end note
 
 class Reponse {
   - idRep : String {id}
@@ -176,6 +195,7 @@ class Facture {
   - prixFacture : float {prixFacture > 0}
   - dateFacturation : Date
 }
+note right of Facture:- prixFacture >= 0
 
 Facture "1..*" -- "1" OffrePayanteStandard: FacturationConcerne
 Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
