@@ -44,17 +44,20 @@ abstract class Offre {
   # rueOffre : String
   # villeOffre : String
   # codePostalOffre : int
+  # prixOffre : float
   # resume : String
-  # nomCat : String
   # noteOffre : float
   # dateDebut : Date
   # dateFin : Date
   # enLigne : boolean
   # datePublication : Date
   # derniereMaj : Date
+  # estPremium : boolean
+  # blacklistDispo : int
   + mettreHorsLigne() : void
   + compterAvis() : int
   + calculerNote() : float
+  + calculerNbBlacklist(estPremium : boolean) : int
 }
 
 note right of Offre
@@ -63,6 +66,7 @@ note right of Offre
 - dateFin >= dateDebut
 - datePublication < dateFin
 - derniereMaj >= datePublication
+- 0 <= blacklistDispo <= 3
 end note
 
 class ImageOffre {
@@ -71,15 +75,10 @@ class ImageOffre {
 
 Offre "1" -- "1..*" ImageOffre: Illustre
 
-abstract class Categorie {
-  - idOffre : String {id}
-}
-
 class Activite{
   - ageRequis : int
   - dureeActivite : String
 }
-
 note left of Activite:- ageRequis >= 0
 
 class Prestation {
@@ -106,66 +105,53 @@ Visite "0..*" -- "0..*" Langue : LanguesProposées
 class Spectacles {
   - dureeSpectacle : String
   - placesSpectacle : int
+  
 }
 note left of Spectacles:- placesSpectacle > 0
 
 class ParcAttraction {
   - urlVersPlan : String
   - nbAttractions : int
+  - ageMinParc : int
 }
 note left of ParcAttraction:- nbAttractions > 0
 
 class Attraction {
   - idAttraction : String
   - nomAttraction : String
-  - ageMinAttraction : int
 }
+note right of Attraction:- ageMinAttraction >=0
 
 ParcAttraction "1..*" -- "1" Attraction : AttractionsProposees
 
 class Restauration {
   - urlVersCarte : String
   - gammePrix : String
+  - moyCuisine : float
+  - moyService : float
+  - moyAmbiance : float
+  - moyRapportQP : float
   - RepasServis : String
 }
 
-Categorie <|-- Activite
-Categorie <|-- Visite
-Categorie <|-- Spectacles
-Categorie <|-- ParcAttraction
-Categorie <|-- Restauration
-
-Offre "0..*" -- "1" Categorie
-
-class OffrePayanteStandard {
-  - option : String
-  - optionActive : boolean
-  + activerOption() : void
-  + desactiverOption() : void
-  + calculerPrix() : float
-}
+Offre <|-- Activite
+Offre <|-- Visite
+Offre <|-- Spectacles
+Offre <|-- ParcAttraction
+Offre <|-- Restauration
 
 class Tarif {
   - nomTarif : String
-  - prixTarif : float
+  - prixTarif : float {prix > 0}
 }
 note right of Tarif:- prixTarif >= 0
 
 Offre "1" -- "1..*" Tarif : grilleTarifaire
 
-
-class OffrePremium {
-  - blacklistDispo : int {0 <= blacklistDispo <= 3}
-}
-note right of OffrePremium:- 0 <= blacklistDispo <= 3
-
-OffrePayanteStandard --|> Offre
-OffrePremium --|> OffrePayanteStandard
-
 class Avis {
   - idAvis : String {id}
   - messageA : String
-  - note : int
+  - note : int {1  <= note <= 5}
   - nbLike : int
   - nbDislike : int
   - estConsulte : boolean
@@ -179,6 +165,24 @@ note right of Avis
 - nbLike >= 0
 - nbDislike >= 0
 end note
+
+Avis "1" -- "0..*" Restauration
+
+class NoteRestaurant {
+  - noteCuisine : int
+  - noteService : int
+  - noteAmbiance : int
+  - noteRapportQP : int
+  + calcAvisMoy() : float
+}
+note right of NoteRestaurant
+- 1 <= noteCuisine <= 5
+- 1 <= noteService <= 5
+- 1 <= noteAmbiance <= 5
+- 1 <= noteCuisine <= 5
+end note
+
+(Avis, Restauration) .. NoteRestaurant
 
 class Reponse {
   - idRep : String {id}
@@ -201,7 +205,7 @@ class Facture {
 }
 note right of Facture:- prixFacture >= 0
 
-Facture "1..*" -- "1" OffrePayanteStandard: FacturationConcerne
+Facture "0..*" -- "1" Offre : FacturationConcerne
 Facture "0..*" -- "1" ProfessionnelPrive : ReglementFacture
 
 @enduml
