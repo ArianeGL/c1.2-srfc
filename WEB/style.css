@@ -5,6 +5,8 @@
     --navy-blue: #254766; /* Buttons */
     --light-grey: #8599AD;
     --dark-grey: #52667A;
+
+    --round-corners: 15px;
 }
 
 .container {
@@ -13,12 +15,46 @@
     width: 100%;
 }
 
+.hidden {
+    width: 33%;
+    background-color: var(--navy-blue);
+}
+
 body {
     height: 1024px;
 }
 
+h1 {
+    color: black;
+    font-family: "Concert One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h2 {
+    color: var(--red);
+    font-family: "Concert One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: xx-large;
+}
+
+h3 {
+    color: black;
+    font-family: "Concert One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h4 {
+    color: white;
+    font-family: "Concert One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 header {
-    height: 10%;
+    height: 5%;
     display: flex;
 
     text-align: center;
@@ -29,38 +65,60 @@ header {
         width: 75%;
         height: 95%;
         
-
         align-items: center;
         justify-content: space-around;
-        
-        button {
-            width: 25%;
-            height: 50%;
-            background-color: var(--navy-blue);
-        }
     }
 
+
+    .buttons {
+        display: flex;
+        width: 30%;
+        height: 75%;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--navy-blue);
+        color: white;
+        border: none;
+        border-radius: var(--round-corners);
+
+        
+        h4 {
+            font-family: "Concert One", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: x-large;
+        }
+    }
+    
     .indicator {
         width: 100%;
         height: 5%;
         background-color: var(--navy-blue);
         display: flex;
+        align-items: normal;
+        justify-content: normal;
 
-        .offre {
+        .b1-indicator {
+            width: 33%;
             background-color: var(--red);
         }
-
-        .facture{
+        
+        .b2-indicator{
+            width: 33%;
             background-color: var(--red);
         }
-
-        .compte{
+        
+        .b3-indicator{
+            width: 34%;
             background-color: var(--red);
         }
     }
 }
 
 .homeButton {
+    height: 100%;
     background-color: var(--light-blue);
-    width: 25%;    
+    width: 25%;
+    display: flex;
+    justify-content: normal;
 }
