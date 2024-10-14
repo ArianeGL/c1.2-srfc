@@ -1,0 +1,66 @@
+:root {
+    --red: #CC0000;
+    --light-blue: #E7FDFD;
+    --grey-blue: #9ABBDB;
+    --navy-blue: #254766; /* Buttons */
+    --light-grey: #8599AD;
+    --dark-grey: #52667A;
+}
+
+.container {
+    display: flex;
+    background-color: var(--light-grey);
+    width: 100%;
+}
+
+body {
+    height: 1024px;
+}
+
+header {
+    height: 10%;
+    display: flex;
+
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+
+    div {
+        width: 75%;
+        height: 95%;
+        
+
+        align-items: center;
+        justify-content: space-around;
+        
+        button {
+            width: 25%;
+            height: 50%;
+            background-color: var(--navy-blue);
+        }
+    }
+
+    .indicator {
+        width: 100%;
+        height: 5%;
+        background-color: var(--navy-blue);
+        display: flex;
+
+        .offre {
+            background-color: var(--red);
+        }
+
+        .facture{
+            background-color: var(--red);
+        }
+
+        .compte{
+            background-color: var(--red);
+        }
+    }
+}
+
+.homeButton {
+    background-color: var(--light-blue);
+    width: 25%;    
+}
