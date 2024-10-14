@@ -105,7 +105,6 @@ create table saeTest._noteRestaurant(
 );
 
 
-
 create table saeTest._compte(
   idCompte    varchar(8)    primary key,
   email       varchar(50)   not null,
@@ -113,7 +112,7 @@ create table saeTest._compte(
   numAdresseCompte    varchar(4)    not null,
   rueCompte   varchar(50)   not null,
   villeCompte varchar(30)   not null,
-  codePostalCompte    varchar(3)    not null,
+  codePostalCompte  varchar(5)    not null,
   telephone   varchar(15)   not null
 );
 
@@ -166,11 +165,36 @@ create table saeTest._facture(
 );
 
 
---    VIEWS 
+--    VIEWS CRUD
 
+-- Compte membre
 create or replace view saeTest.compteMembre AS
   select * from saeTest._compte natural join saeTest._compteMembre;
   
+create or replace function saeTest.createMembre()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  insert into saeTest._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone)
+  values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone);
+  
+  insert into saeTest._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
+  values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
+
+
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_createMembre
+  INSTEAD OF INSERT ON saeTest.compteMembre
+  FOR EACH ROW
+  EXECUTE PROCEDURE saeTest.createMembre();
+
+INSERT INTO saeTest.compteMembre(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,nomMembre,prenomMembre,pseudo)
+VALUES('Co-7849','anonymous@gmail.com','anomousny','12','route de Lannion','Trégastel','22730','0651821494','Mabit','Baptiste','The Beast');
+-- Compte professionnel publique
 create or replace view saeTest.compteProfessionnelPublique AS
   select * from saeTest._compte natural join saeTest._compteProfessionnel;
   
