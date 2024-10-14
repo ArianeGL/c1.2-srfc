@@ -90,13 +90,83 @@ create table saeTest._restauration(
   boisson boolean
 );
 
-create table saeTest._avis(
-  idAvis varchar(8) primary key,
-  messageA varchar(500),
-  note float,
-  nbLike integer,
-  nbDislike integer,
-  estConsulte boolean,
-  blacklist boolean,
-  estSignale boolean
+create table saeTest._noteRestaurant(
+  idOffre       varchar(20)   not null,
+  idAvis        varchar(8)    not null,
+  noteService   integer       not null,
+  noteCuisine   integer       not null,
+  noteAmbiance  integer       not null,
+  noteRapportQP integer       not null,
+  constraint noteRestaurant_pk
+  primary key (idOffre, idAvis)
 );
+
+
+
+create table saeTest._compte(
+  idCompte    varchar(8)    primary key,
+  email       varchar(50)   not null,
+  motDePasse  varchar(20)   not null,
+  numAdresseCompte    varchar(4)    not null,
+  rueCompte   varchar(50)   not null,
+  villeCompte varchar(30)   not null,
+  codePostalCompte    varchar(3)    not null,
+  telephone   varchar(15)   not null
+);
+
+
+create table saeTest._compteMembre(
+  idCompte    varchar(8)    primary key,
+  nomMembre   varchar(20)   not null,
+  prenomMembre  varchar(20) not null,
+  pseudo      varchar(20)   not null
+);
+
+
+create table saeTest._compteProfessionnel(
+  idCompte    varchar(8)    primary key,
+  denomination  varchar(40)   not null
+);
+
+
+create table saeTest._avis(
+  idAvis      varchar(8)    primary key,
+  membre      varchar(8)    not null references saeTest._compteMembre(idCompte),
+  messageA    varchar(500)  not null,
+  note        float         not null,
+  nbLike      integer       not null,
+  nbDislike   integer       not null,
+  estConsulte boolean       not null,
+  blacklist   boolean       not null,
+  estSignale  boolean       not null
+);
+
+create table saeTest._reponse(
+  professionnel varchar(8)    references saeTest._compteProfessionnel(idCompte),
+  membre        varchar(8)    references saeTest._compteMembre(idCompte),
+  messageRep    varchar(500)  not null,
+  constraint reponse_pk
+  primary key(professionnel,membre)
+);
+
+create table saeTest._professionnelPrive(
+  SIREN   varchar(14)   primary key,
+  IBAN    varchar(34)   not null,
+  idCompte   varchar(8)    not null
+);
+
+create table saeTest._facture(
+  numFacture    varchar(7)  primary key,
+  prixFacture   float       not null,
+  dateFacturation   date    not null,
+  idOffre       varchar(20) not null references saeTest._offre(idOffre)
+);
+
+create or replace view saeTest.compteMembre AS
+  select * from saeTest._compte natural join saeTest._compteMembre;
+  
+create or replace view saeTest.compteProfessionnelPublique AS
+  select * from saeTest._compte natural join saeTest._compteProfessionnel;
+  
+create or replace view saeTest.compteProfessionnelPrive AS
+  select * from saeTest._compte natural join saeTest._compteProfessionnel natural join saeTest._professionnelPrive;
