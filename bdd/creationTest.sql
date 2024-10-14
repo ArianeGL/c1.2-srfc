@@ -2,6 +2,8 @@ drop schema if exists saeTest cascade;
 create schema saeTest;
 set schema 'saeTest';
 
+
+--    TABLES
 create table saeTest._offre(
   idOffre varchar(20) primary key,
   nomOffre varchar(50),
@@ -87,7 +89,8 @@ create table saeTest._restauration(
   petitDejeuner boolean,
   dejeuner boolean,
   diner boolean,
-  boisson boolean
+  boisson boolean,
+  brunch  boolean
 );
 
 create table saeTest._noteRestaurant(
@@ -162,6 +165,9 @@ create table saeTest._facture(
   idOffre       varchar(20) not null references saeTest._offre(idOffre)
 );
 
+
+--    VIEWS 
+
 create or replace view saeTest.compteMembre AS
   select * from saeTest._compte natural join saeTest._compteMembre;
   
@@ -170,3 +176,19 @@ create or replace view saeTest.compteProfessionnelPublique AS
   
 create or replace view saeTest.compteProfessionnelPrive AS
   select * from saeTest._compte natural join saeTest._compteProfessionnel natural join saeTest._professionnelPrive;
+  
+create or replace view saeTest.spectacle AS
+  select * from saeTest._offre natural join saeTest._spectacle;
+  
+create or replace view saeTest.parcAttraction AS
+  select * from saeTest._offre natural join saeTest._parcAttraction;
+  
+create or replace view saeTest.visite AS
+  select * from saeTest._offre natural join saeTest._visite;
+  
+create or replace view saeTest.activite AS
+  select * from saeTest._offre natural join saeTest._activite;
+  
+create or replace view saeTest.restauration AS
+  select * from saeTest._offre natural join saeTest._restauration;
+  
