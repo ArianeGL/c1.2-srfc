@@ -4,215 +4,277 @@ set schema 'saeTest';
 
 
 --    TABLES
-create table saeTest._offre(
-  idOffre varchar(20) primary key,
-  nomOffre varchar(50),
-  numAdresse varchar(5),
-  rueOffre varchar(50),
-  villeOffre varchar(50),
-  codePostalOffre integer,
-  prixOffre float,
-  dateDebut date,
-  dateFin date,
-  enLigne boolean,
-  datePublication date,
-  derniereMAJ date,
-  estPremium boolean,
-  blacklistDispo int
+CREATE TABLE IF NOT EXISTS saetest._activite
+(
+   idoffre        varchar(7)   NOT NULL,
+   agerequis      integer      NOT NULL,
+   dureeactivite  varchar(8)   NOT NULL
 );
 
-create table saeTest._tag(
-  nomTag varchar(20) primary key
+ALTER TABLE saetest._activite
+   ADD CONSTRAINT _activite_pkey
+   PRIMARY KEY (idoffre);
+
+CREATE TABLE IF NOT EXISTS saetest._attraction
+(
+   idattraction   varchar(7)    NOT NULL,
+   nomattraction  varchar(20)   NOT NULL,
+   idoffre        varchar(7)    NOT NULL
 );
 
-create table saeTest._tarif(
-  idTarif varchar(7) primary key,
-  nomTarif varchar(20),
-  prixTarif float,
-  idOffre varchar(20) references saeTest._offre
+ALTER TABLE saetest._attraction
+   ADD CONSTRAINT _attraction_pkey
+   PRIMARY KEY (idattraction);
+
+CREATE TABLE IF NOT EXISTS saetest._compte
+(
+   idcompte          varchar(7)    NOT NULL,
+   email             varchar(50)   NOT NULL,
+   motdepasse        varchar(20)   NOT NULL,
+   numadressecompte  varchar(4)    NOT NULL,
+   ruecompte         varchar(50)   NOT NULL,
+   villecompte       varchar(30)   NOT NULL,
+   codepostalcompte  varchar(5)    NOT NULL,
+   telephone         varchar(15)   NOT NULL
 );
 
-create table saeTest._imageOffre(
-  urlVersImage varchar(100) primary key,
-  idOffre varchar(20) references saeTest._offre
+ALTER TABLE saetest._compte
+   ADD CONSTRAINT _compte_pkey
+   PRIMARY KEY (idcompte);
+
+CREATE TABLE IF NOT EXISTS saetest._comptemembre
+(
+   idcompte      varchar(7)    NOT NULL,
+   nommembre     varchar(20)   NOT NULL,
+   prenommembre  varchar(20)   NOT NULL,
+   pseudo        varchar(20)   NOT NULL
 );
 
-create table saeTest._spectacle(
-  idOffre varchar(20) primary key,--doit être le même que Offre
-  dureeSpectacle varchar(8),
-  placesSpectacle integer
+ALTER TABLE saetest._comptemembre
+   ADD CONSTRAINT _comptemembre_pkey
+   PRIMARY KEY (idcompte);
+
+CREATE TABLE IF NOT EXISTS saetest._compteprofessionnel
+(
+   idcompte      varchar(7)    NOT NULL,
+   denomination  varchar(40)   NOT NULL
 );
 
-create table saeTest._parcAttraction(
-  idOffre varchar(20) primary key,--doit être le même que Offre
-  urlVersPlan varchar(100),
-  nbAttractions integer,
-  ageMinParc integer
+ALTER TABLE saetest._compteprofessionnel
+   ADD CONSTRAINT _compteprofessionnel_pkey
+   PRIMARY KEY (idcompte);
+
+CREATE TABLE IF NOT EXISTS saetest._facture
+(
+   numfacture       varchar(7)   NOT NULL,
+   prixfacture      float8       NOT NULL,
+   datefacturation  date         NOT NULL,
+   idoffre          varchar(7)   NOT NULL,
+   idcompte         varchar(7)   NOT NULL
 );
 
-create table saeTest._attraction(
-  idAttraction varchar(7) primary key,
-  nomAttraction varchar(20)
+ALTER TABLE saetest._facture
+   ADD CONSTRAINT _facture_pkey
+   PRIMARY KEY (numfacture);
+
+CREATE TABLE IF NOT EXISTS saetest._imageoffre
+(
+   urlversimage  varchar(100)   NOT NULL,
+   idoffre       varchar(7)     NOT NULL
 );
 
-create table saeTest._visite(
-  idOffre varchar(20) primary key,--doit être le même que Offre
-  dureeVisite varchar(8),
-  estGuidee boolean
+ALTER TABLE saetest._imageoffre
+   ADD CONSTRAINT _imageoffre_pkey
+   PRIMARY KEY (urlversimage);
+
+CREATE TABLE IF NOT EXISTS saetest._langue
+(
+   nomlangue  varchar(20)   NOT NULL
 );
 
-create table saeTest._langue(
-  nomLangue varchar(20) primary key
+ALTER TABLE saetest._langue
+   ADD CONSTRAINT _langue_pkey
+   PRIMARY KEY (nomlangue);
+
+CREATE TABLE IF NOT EXISTS saetest._offre
+(
+   idoffre          varchar(7)    NOT NULL,
+   nomoffre         varchar(50)   NOT NULL,
+   numadresse       varchar(5)    NOT NULL,
+   rueoffre         varchar(50)   NOT NULL,
+   villeoffre       varchar(50)   NOT NULL,
+   codepostaloffre  integer       NOT NULL,
+   prixmin          float8        NOT NULL,
+   datedebut        date          NOT NULL,
+   datefin          date          NOT NULL,
+   enligne          boolean       NOT NULL,
+   datepublication  date          NOT NULL,
+   dernieremaj      date          NOT NULL,
+   estpremium       boolean       NOT NULL,
+   blacklistdispo   integer       NOT NULL,
+   idcompte         varchar(7)    NOT NULL
 );
 
-create table saeTest._activite(
-  idOffre varchar(20) primary key,--doit être le même que Offre
-  ageRequis integer,
-  dureeActivite varchar(8)
+ALTER TABLE saetest._offre
+   ADD CONSTRAINT _offre_pkey
+   PRIMARY KEY (idoffre);
+
+CREATE TABLE IF NOT EXISTS saetest._parcattraction
+(
+   idoffre        varchar(7)     NOT NULL,
+   urlversplan    varchar(100)   NOT NULL,
+   nbattractions  integer        NOT NULL,
+   ageminparc     integer        NOT NULL
 );
 
-create table saeTest._prestation(
-  idPresta varchar(7) primary key,
-  nomPrestation varchar(50),
-  descriptionPresta varchar(500),
-  prixPresta integer
+ALTER TABLE saetest._parcattraction
+   ADD CONSTRAINT _parcattraction_pkey
+   PRIMARY KEY (idoffre);
+
+CREATE TABLE IF NOT EXISTS saetest._prestation
+(
+   idpresta           varchar(7)     NOT NULL,
+   nomprestation      varchar(50)    NOT NULL,
+   descriptionpresta  varchar(500)   NOT NULL,
+   prixpresta         integer        NOT NULL,
+   idoffre            varchar(7)     NOT NULL
 );
 
-create table saeTest._restauration(
-  idOffre varchar(20) primary key,--doit être le même que Offre
-  urlVersCarte varchar(100),
-  gammePrix varchar(3),
-  moyCuisine float,
-  moyService float,
-  moyAmbiance float,
-  moyRapportQP float,
-  petitDejeuner boolean,
-  dejeuner boolean,
-  diner boolean,
-  boisson boolean,
-  brunch  boolean
+ALTER TABLE saetest._prestation
+   ADD CONSTRAINT _prestation_pkey
+   PRIMARY KEY (idpresta);
+
+CREATE TABLE IF NOT EXISTS saetest._professionnelprive
+(
+   siren     varchar(20)   NOT NULL,
+   iban      varchar(34)   NOT NULL,
+   idcompte  varchar(7)    NOT NULL
 );
 
-create table saeTest._noteRestaurant(
-  idOffre       varchar(20)   not null,
-  idAvis        varchar(8)    not null,
-  noteService   integer       not null,
-  noteCuisine   integer       not null,
-  noteAmbiance  integer       not null,
-  noteRapportQP integer       not null,
-  constraint noteRestaurant_pk
-  primary key (idOffre, idAvis)
+ALTER TABLE saetest._professionnelprive
+   ADD CONSTRAINT _professionnelprive_pkey
+   PRIMARY KEY (idcompte);
+
+CREATE TABLE IF NOT EXISTS saetest._restauration
+(
+   idoffre        varchar(7)     NOT NULL,
+   urlverscarte   varchar(100)   NOT NULL,
+   gammeprix      varchar(3)     NOT NULL,
+   moycuisine     float8         NOT NULL,
+   moyservice     float8         NOT NULL,
+   moyambiance    float8         NOT NULL,
+   moyrapportqp   float8         NOT NULL,
+   petitdejeuner  boolean        NOT NULL,
+   dejeuner       boolean        NOT NULL,
+   diner          boolean        NOT NULL,
+   boisson        boolean        NOT NULL,
+   brunch         boolean        NOT NULL
 );
 
+ALTER TABLE saetest._restauration
+   ADD CONSTRAINT _restauration_pkey
+   PRIMARY KEY (idoffre);
 
-create table saeTest._compte(
-  idCompte    varchar(8)    primary key,
-  email       varchar(50)   not null,
-  motDePasse  varchar(20)   not null,
-  numAdresseCompte    varchar(4)    not null,
-  rueCompte   varchar(50)   not null,
-  villeCompte varchar(30)   not null,
-  codePostalCompte  varchar(5)    not null,
-  telephone   varchar(15)   not null
+CREATE TABLE IF NOT EXISTS saetest._spectacle
+(
+   idoffre          varchar(7)   NOT NULL,
+   dureespectacle   varchar(8)   NOT NULL,
+   placesspectacle  integer      NOT NULL
 );
 
+ALTER TABLE saetest._spectacle
+   ADD CONSTRAINT _spectacle_pkey
+   PRIMARY KEY (idoffre);
 
-create table saeTest._compteMembre(
-  idCompte    varchar(8)    primary key,
-  nomMembre   varchar(20)   not null,
-  prenomMembre  varchar(20) not null,
-  pseudo      varchar(20)   not null
+CREATE TABLE IF NOT EXISTS saetest._tag
+(
+   nomtag  varchar(20)   NOT NULL
 );
 
+ALTER TABLE saetest._tag
+   ADD CONSTRAINT _tag_pkey
+   PRIMARY KEY (nomtag);
 
-create table saeTest._compteProfessionnel(
-  idCompte    varchar(8)    primary key,
-  denomination  varchar(40)   not null
+CREATE TABLE IF NOT EXISTS saetest._tagrestauration
+(
+   nomtag  varchar(20)   NOT NULL
 );
 
+ALTER TABLE saetest._tagrestauration
+   ADD CONSTRAINT _tagrestauration_pkey
+   PRIMARY KEY (nomtag);
 
-create table saeTest._avis(
-  idAvis      varchar(8)    primary key,
-  membre      varchar(8)    not null references saeTest._compteMembre(idCompte),
-  messageA    varchar(500)  not null,
-  note        float         not null,
-  nbLike      integer       not null,
-  nbDislike   integer       not null,
-  estConsulte boolean       not null,
-  blacklist   boolean       not null,
-  estSignale  boolean       not null
+CREATE TABLE IF NOT EXISTS saetest._tarif
+(
+   idtarif    varchar(7)    NOT NULL,
+   nomtarif   varchar(20)   NOT NULL,
+   prixtarif  float8        NOT NULL,
+   idoffre    varchar(7)    NOT NULL
 );
 
-create table saeTest._reponse(
-  professionnel varchar(8)    references saeTest._compteProfessionnel(idCompte),
-  membre        varchar(8)    references saeTest._compteMembre(idCompte),
-  messageRep    varchar(500)  not null,
-  constraint reponse_pk
-  primary key(professionnel,membre)
+ALTER TABLE saetest._tarif
+   ADD CONSTRAINT _tarif_pkey
+   PRIMARY KEY (idtarif);
+
+CREATE TABLE IF NOT EXISTS saetest._visite
+(
+   idoffre      varchar(7)   NOT NULL,
+   dureevisite  varchar(8)   NOT NULL,
+   estguidee    boolean      NOT NULL
 );
 
-create table saeTest._professionnelPrive(
-  SIREN   varchar(14)   primary key,
-  IBAN    varchar(34)   not null,
-  idCompte   varchar(8)    not null
-);
-
-create table saeTest._facture(
-  numFacture    varchar(7)  primary key,
-  prixFacture   float       not null,
-  dateFacturation   date    not null,
-  idOffre       varchar(20) not null references saeTest._offre(idOffre)
-);
+ALTER TABLE saetest._visite
+   ADD CONSTRAINT _visite_pkey
+   PRIMARY KEY (idoffre);
 
 
---    VIEWS CRUD
+ALTER TABLE saetest._comptemembre
+  ADD CONSTRAINT _comptemembre_idcompte_fkey
+  FOREIGN KEY (idcompte) REFERENCES saetest._compte(idcompte);
 
--- Compte membre
-create or replace view saeTest.compteMembre AS
-  select * from saeTest._compte natural join saeTest._compteMembre;
-  
-create or replace function saeTest.createMembre()
-  RETURNS trigger
-  AS
-$$
-BEGIN
-  insert into saeTest._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone)
-  values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone);
-  
-  insert into saeTest._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
-  values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
+ALTER TABLE saetest._compteprofessionnel
+  ADD CONSTRAINT _compteprofessionnel_idcompte_fkey
+  FOREIGN KEY (idcompte) REFERENCES saetest._compte(idcompte);
+
+ALTER TABLE saetest._facture
+  ADD CONSTRAINT _facture_idcompte_fkey
+  FOREIGN KEY (idcompte) REFERENCES saetest._professionnelprive(idcompte);
+
+ALTER TABLE saetest._imageoffre
+  ADD CONSTRAINT _imageoffre_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+
+ALTER TABLE saetest._offre
+  ADD CONSTRAINT _offre_idcompte_fkey
+  FOREIGN KEY (idcompte) REFERENCES saetest._compteprofessionnel(idcompte);
+
+ALTER TABLE saetest._parcattraction
+  ADD CONSTRAINT _parcattraction_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+
+ALTER TABLE saetest._prestation
+  ADD CONSTRAINT _prestation_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._activite(idoffre);
+
+ALTER TABLE saetest._professionnelprive
+  ADD CONSTRAINT _professionnelprive_idcompte_fkey
+  FOREIGN KEY (idcompte) REFERENCES saetest._compteprofessionnel(idcompte);
+
+ALTER TABLE saetest._restauration
+  ADD CONSTRAINT _restauration_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+
+ALTER TABLE saetest._spectacle
+  ADD CONSTRAINT _spectacle_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+
+ALTER TABLE saetest._tarif
+  ADD CONSTRAINT _tarif_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+
+ALTER TABLE saetest._visite
+  ADD CONSTRAINT _visite_idoffre_fkey
+  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
 
 
-  RETURN NEW;
-END;
-$$ language plpgsql;
-
-CREATE OR REPLACE TRIGGER tg_createMembre
-  INSTEAD OF INSERT ON saeTest.compteMembre
-  FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createMembre();
-
-INSERT INTO saeTest.compteMembre(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,nomMembre,prenomMembre,pseudo)
-VALUES('Co-7849','anonymous@gmail.com','anomousny','12','route de Lannion','Trégastel','22730','0651821494','Mabit','Baptiste','The Beast');
--- Compte professionnel publique
-create or replace view saeTest.compteProfessionnelPublique AS
-  select * from saeTest._compte natural join saeTest._compteProfessionnel;
-  
-create or replace view saeTest.compteProfessionnelPrive AS
-  select * from saeTest._compte natural join saeTest._compteProfessionnel natural join saeTest._professionnelPrive;
-  
-create or replace view saeTest.spectacle AS
-  select * from saeTest._offre natural join saeTest._spectacle;
-  
-create or replace view saeTest.parcAttraction AS
-  select * from saeTest._offre natural join saeTest._parcAttraction;
-  
-create or replace view saeTest.visite AS
-  select * from saeTest._offre natural join saeTest._visite;
-  
-create or replace view saeTest.activite AS
-  select * from saeTest._offre natural join saeTest._activite;
-  
-create or replace view saeTest.restauration AS
-  select * from saeTest._offre natural join saeTest._restauration;
   
