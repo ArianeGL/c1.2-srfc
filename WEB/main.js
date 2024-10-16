@@ -36,7 +36,7 @@ window.onresize = function(){
 		document.getElementById("slogan").classList.remove("sloganHide");
 	}
 	
-	if (w <= 1300) {
+	if (w <= 1400) {
 		document.getElementById("slogan").classList.add("sloganHide");
 		document.getElementById("slogan").classList.remove("sloganShow");
 	
