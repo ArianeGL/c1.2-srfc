@@ -27,3 +27,18 @@ window.onload = function() {
     
     showCorrectDiv();
 };
+
+window.onresize = function(){
+	var w = window.innerWidth;
+	
+	if (w >= 1400) {
+		document.getElementById("slogan").classList.add("sloganShow");
+		document.getElementById("slogan").classList.remove("sloganHide");
+	}
+	
+	if (w <= 1300) {
+		document.getElementById("slogan").classList.add("sloganHide");
+		document.getElementById("slogan").classList.remove("sloganShow");
+	
+	}
+}
