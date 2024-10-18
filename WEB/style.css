@@ -16,6 +16,30 @@ body {
     margin-top: 7% /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */
 }
 
+.smallButton{
+    background-color: var(--navy-blue);
+    height: 75px;
+    width: 250px;
+    color: white;
+    border: none;
+}
+
+.button {
+    background-color: var(--navy-blue);
+    height: 100px;
+    width: 500px;
+    color: white;
+    border: none;
+}
+
+.bigButton {
+    background-color: var(--navy-blue);
+    height: 150px;
+    width: 500px;
+    color: white;
+    border: none;
+}
+
 h1 {
     color: black;
     font-family: "Concert One", sans-serif;
