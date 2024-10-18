@@ -1,28 +1,19 @@
+/* IF YOU NEED TO CHANGE SOMETHING FROM THE GIVEN CODE PLS ASK ME BEFORE */
+
 :root {
-    --red: #CC0000;
-    --light-blue: #E7FDFD;
-    --grey-blue: #9ABBDB;
+    --red: #CC0000; /* Accent */
+    --light-blue: #E7FDFD; /* Accent Background */
+    --grey-blue: #9ABBDB; /* Extra */
     --navy-blue: #254766; /* Buttons */
-    --light-grey: #8599AD;
-    --dark-grey: #52667A;
+    --light-grey: #8599AD; /* Main background */
+    --dark-grey: #52667A; /* Border Color */
 
-    --round-corners: 15px;
-}
-
-.container {
-    display: flex;
-    background-color: var(--light-grey);
-    width: 100%;
-}
-
-.hidden {
-    width: 33%;
-    background-color: var(--navy-blue);
+    --round-corners: 15px; /* USE THIS FOR ROUNDED CORNERS, PING ME IF YOU WANT TO HAVE AN OTHER ROUNDED CORNER */
 }
 
 body {
     height: 1024px;
-    margin-top: 7%
+    margin-top: 7% /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */
 }
 
 h1 {
@@ -73,6 +64,16 @@ header {
         justify-content: space-around;
     }
 
+    .container {
+        display: flex;
+        background-color: var(--light-grey);
+        width: 100%;
+    }
+
+    .hidden {
+        width: 33%;
+        background-color: var(--navy-blue);
+    }
 
     .buttons {
         display: flex;
@@ -92,7 +93,7 @@ header {
             font-style: normal;
             font-size: x-large;
         }
-    }
+    } 
     
     .indicator {
         width: 100%;
@@ -165,4 +166,9 @@ footer {
         color: none;
         border: none;
     }
+}
+
+main {
+    background: white;
+    /* CSS FOR THE MAIN GOES HERE */
 }
