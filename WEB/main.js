@@ -26,6 +26,16 @@ window.onload = function() {
         });
     }
 
+ 	if (w >= 1400) {
+		document.getElementById("slogan").classList.add("sloganShow");
+		document.getElementById("slogan").classList.remove("sloganHide");
+    }
+	
+    if (w <= 1400) {
+		document.getElementById("slogan").classList.add("sloganHide");
+		document.getElementById("slogan").classList.remove("sloganShow");
+    }
+
     // If you create functions, add them here
     showCorrectDiv();
 };
@@ -43,6 +53,5 @@ window.onresize = function(){
 	if (w <= 1400) {
 		document.getElementById("slogan").classList.add("sloganHide");
 		document.getElementById("slogan").classList.remove("sloganShow");
-	
 	}
 }
