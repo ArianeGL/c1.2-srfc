@@ -176,17 +176,31 @@ header {
 footer {
     display: flex;
     flex-direction: row;
+    position: fixed;
+    bottom: 0;
     width: 100%;
     background-color: var(--light-grey);
     height: 10%;
     align-items: center;
-
     text-align: center;
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        background-color: var(--light-grey);
+        align-items: center;
+        text-align: center;
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+        margin: 5px;
+    }
 
     .top-botton {
         height: 100%;
-        align-items: center;
-        background-color: var(--light-grey);
+         background-color: var(--light-grey);
         color: none;
         border: none;
     }
