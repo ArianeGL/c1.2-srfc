@@ -1,7 +1,7 @@
 // Get the current page's filename
 const pageName = window.location.pathname.split("/").pop();
 
-// Function to show the correct div based on the page name
+// Function to show the correct div in the header based on the page's name (1, 2 or 3)
 function showCorrectDiv() {
   if (pageName.includes("1")) {
     document.getElementById("div1").classList.add("b1-indicator");
@@ -16,18 +16,22 @@ function showCorrectDiv() {
 }
 
 window.onload = function() {
+    // Makes it so the light blue part of the header is a button
     const homeButton = document.getElementById("homeButtonID");
     
     if (homeButton) {
         homeButton.addEventListener("click", function() {
             console.log('Div clicked');
-            // window.location.href = "index.html";
+            // window.location.href = "index.html"; // Home page, change link when we get it
         });
     }
-    
+
+    // If you create functions, add them here
     showCorrectDiv();
 };
 
+
+// Takes care of showing or not the slogan in the header, depending on window size and dinamically getting updated
 window.onresize = function(){
 	var w = window.innerWidth;
 	
