@@ -615,7 +615,7 @@ INSERT INTO saeTest.activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,cod
 VALUES('Of-0004','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
         CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','PROUUTTTTT',
         9,'1234min');
-
+-- caca
 
 -- Restauration
 create or replace view saeTest.restauration AS
