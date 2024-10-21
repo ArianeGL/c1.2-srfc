@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS saetest._offre
    datedebut        date          NOT NULL,
    datefin          date          NOT NULL,
    enligne          boolean       NOT NULL,
-   datepublication  date          (datepublication = CURRENT_DATE) NOT NULL,
+   datepublication  date          default(CURRENT_DATE) NOT NULL,
    dernieremaj      date          NOT NULL,
    estpremium       boolean       NOT NULL,
    blacklistdispo   integer       NOT NULL,
@@ -438,7 +438,7 @@ VALUES('Of-0001','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
 create or replace view saeTest.parcAttraction AS
   select * from saeTest._offre natural join saeTest._parcAttraction;
 
-create or replace function saeTest.createParcAttraction()
+create or replace function saeTest.createUpdateParcAttraction()
   RETURNS trigger
   AS
 $$
@@ -483,10 +483,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_createParcAttraction
+CREATE OR REPLACE TRIGGER tg_createUpdateParcAttraction
   INSTEAD OF INSERT ON saeTest.parcAttraction
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createParcAttraction();
+  EXECUTE PROCEDURE saeTest.createUpdateParcAttraction();
 
 INSERT INTO saeTest.parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
                               prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
@@ -500,12 +500,12 @@ VALUES('Of-0002','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
 create or replace view saeTest.visite AS
   select * from saeTest._offre natural join saeTest._visite;
 
-create or replace function saeTest.createVisite()
+create or replace function saeTest.createUpdateVisite()
   RETURNS trigger
   AS
 $$
 BEGIN
-  IF (TG_OP = 'INSERT')
+  IF (TG_OP = 'INSERT') THEN
   insert into saeTest._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
@@ -544,10 +544,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_createVisite
+CREATE OR REPLACE TRIGGER tg_createUpdateVisite
   INSTEAD OF INSERT ON saeTest.visite
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createVisite();
+  EXECUTE PROCEDURE saeTest.createUpdateVisite();
 
 INSERT INTO saeTest.visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
                               prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
@@ -560,12 +560,12 @@ VALUES('Of-0003','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
 create or replace view saeTest.activite AS
   select * from saeTest._offre natural join saeTest._activite;
 
-create or replace function saeTest.createActivite()
+create or replace function saeTest.createUpdateActivite()
   RETURNS trigger
   AS
 $$
 BEGIN
-  IF (TG_OP = 'INSERT')
+  IF (TG_OP = 'INSERT') THEN
   insert into saeTest._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
@@ -604,10 +604,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_createActivite
+CREATE OR REPLACE TRIGGER tg_createUpdateActivite
   INSTEAD OF INSERT ON saeTest.activite
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createActivite();
+  EXECUTE PROCEDURE saeTest.createUpdateActivite();
 
 INSERT INTO saeTest.activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
                               prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
@@ -621,12 +621,12 @@ VALUES('Of-0004','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
 create or replace view saeTest.restauration AS
   select * from saeTest._offre natural join saeTest._restauration;
   
-create or replace function saeTest.createRestauration()
+create or replace function saeTest.createUpdateRestauration()
   RETURNS trigger
   AS
 $$
 BEGIN
-  IF (TG_OP = 'INSERT')
+  IF (TG_OP = 'INSERT') THEN
   insert into saeTest._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
@@ -678,10 +678,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_createRestauration
+CREATE OR REPLACE TRIGGER tg_createUpdateRestauration
   INSTEAD OF INSERT ON saeTest.restauration
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createRestauration();
+  EXECUTE PROCEDURE saeTest.createUpdateRestauration();
 
 INSERT INTO saeTest.restauration(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
                               prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
@@ -690,14 +690,4 @@ INSERT INTO saeTest.restauration(idoffre,nomoffre,numadresse,rueoffre,villeoffre
 VALUES('Of-0005','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
         CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','Le resto de trop la balle',
         'https://lecacalepipilepopo/attractions','€€',4.4,4.4,4.4,4.4,true,true,true,true,true);
-        
-
--- FUNCTIONS 
-
-create or replace function saeTest.mettreEnLigne()
-  AS
-$$
-  BEGIN
-    UPDATE saeTest._offre SET 
-  END
-$$
+       
