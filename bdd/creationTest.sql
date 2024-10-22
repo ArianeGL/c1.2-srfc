@@ -1,6 +1,6 @@
-drop schema if exists saeTest cascade;
-create schema saeTest;
-set schema 'saeTest';
+drop schema if exists saetest cascade;
+create schema saetest;
+set schema 'saetest';
 
 
 --    TABLES
