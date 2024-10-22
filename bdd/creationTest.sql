@@ -1,33 +1,33 @@
-drop schema if exists saetest cascade;
-create schema saetest;
-set schema 'saetest';
+drop schema if exists sae cascade;
+create schema sae;
+set schema 'sae';
 
 
 --    TABLES
 
-CREATE TABLE IF NOT EXISTS saetest._activite
+CREATE TABLE IF NOT EXISTS sae._activite
 (
    idoffre        varchar(7)   NOT NULL,
    agerequis      integer      NOT NULL,
    dureeactivite  varchar(8)   NOT NULL
 );
 
-ALTER TABLE saetest._activite
+ALTER TABLE sae._activite
    ADD CONSTRAINT _activite_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS saetest._attraction
+CREATE TABLE IF NOT EXISTS sae._attraction
 (
    idattraction   varchar(7)    NOT NULL,
    nomattraction  varchar(20)   NOT NULL,
    idoffre        varchar(7)    NOT NULL
 );
 
-ALTER TABLE saetest._attraction
+ALTER TABLE sae._attraction
    ADD CONSTRAINT _attraction_pkey
    PRIMARY KEY (idattraction);
 
-CREATE TABLE IF NOT EXISTS saetest._compte
+CREATE TABLE IF NOT EXISTS sae._compte
 (
    idcompte          varchar(7)    NOT NULL,
    email             varchar(50)   NOT NULL,
@@ -40,11 +40,11 @@ CREATE TABLE IF NOT EXISTS saetest._compte
    urlimage          varchar(100)  NOT NULL
 );
 
-ALTER TABLE saetest._compte
+ALTER TABLE sae._compte
    ADD CONSTRAINT _compte_pkey
    PRIMARY KEY (idcompte);
 
-CREATE TABLE IF NOT EXISTS saetest._comptemembre
+CREATE TABLE IF NOT EXISTS sae._comptemembre
 (
    idcompte      varchar(7)    NOT NULL,
    nommembre     varchar(20)   NOT NULL,
@@ -52,21 +52,21 @@ CREATE TABLE IF NOT EXISTS saetest._comptemembre
    pseudo        varchar(20)   NOT NULL
 );
 
-ALTER TABLE saetest._comptemembre
+ALTER TABLE sae._comptemembre
    ADD CONSTRAINT _comptemembre_pkey
    PRIMARY KEY (idcompte);
 
-CREATE TABLE IF NOT EXISTS saetest._compteprofessionnel
+CREATE TABLE IF NOT EXISTS sae._compteprofessionnel
 (
    idcompte      varchar(7)    NOT NULL,
    denomination  varchar(40)   NOT NULL
 );
 
-ALTER TABLE saetest._compteprofessionnel
+ALTER TABLE sae._compteprofessionnel
    ADD CONSTRAINT _compteprofessionnel_pkey
    PRIMARY KEY (idcompte);
 
-CREATE TABLE IF NOT EXISTS saetest._facture
+CREATE TABLE IF NOT EXISTS sae._facture
 (
    numfacture       varchar(7)   NOT NULL,
    prixfacture      float8       NOT NULL,
@@ -75,30 +75,30 @@ CREATE TABLE IF NOT EXISTS saetest._facture
    idcompte         varchar(7)   NOT NULL
 );
 
-ALTER TABLE saetest._facture
+ALTER TABLE sae._facture
    ADD CONSTRAINT _facture_pkey
    PRIMARY KEY (numfacture);
 
-CREATE TABLE IF NOT EXISTS saetest._imageoffre
+CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
    urlversimage  varchar(100)   NOT NULL,
    idoffre       varchar(7)     NOT NULL
 );
 
-ALTER TABLE saetest._imageoffre
+ALTER TABLE sae._imageoffre
    ADD CONSTRAINT _imageoffre_pkey
    PRIMARY KEY (urlversimage);
 
-CREATE TABLE IF NOT EXISTS saetest._langue
+CREATE TABLE IF NOT EXISTS sae._langue
 (
    nomlangue  varchar(20)   NOT NULL
 );
 
-ALTER TABLE saetest._langue
+ALTER TABLE sae._langue
    ADD CONSTRAINT _langue_pkey
    PRIMARY KEY (nomlangue);
 
-CREATE TABLE IF NOT EXISTS saetest._offre
+CREATE TABLE IF NOT EXISTS sae._offre
 (
    idoffre          varchar(7)    NOT NULL,
    nomoffre         varchar(50)   NOT NULL,
@@ -106,23 +106,23 @@ CREATE TABLE IF NOT EXISTS saetest._offre
    rueoffre         varchar(50)   NOT NULL,
    villeoffre       varchar(50)   NOT NULL,
    codepostaloffre  integer       NOT NULL,
-   prixmin          float8        NOT NULL,
-   datedebut        date          NOT NULL,
-   datefin          date          NOT NULL,
-   enligne          boolean       NOT NULL,
-   datepublication  date          default(CURRENT_DATE) NOT NULL,
-   dernieremaj      date          NOT NULL,
-   estpremium       boolean       NOT NULL,
-   blacklistdispo   integer       NOT NULL,
+   prixmin          float8        default(0),
+   datedebut        date          ,
+   datefin          date          ,
+   enligne          boolean       default(true),
+   datepublication  date          default(CURRENT_DATE),
+   dernieremaj      date          default(CURRENT_DATE),
+   estpremium       boolean       default(false),
+   blacklistdispo   integer       default(0),
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(10000)NOT NULL
 );
 
-ALTER TABLE saetest._offre
+ALTER TABLE sae._offre
    ADD CONSTRAINT _offre_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS saetest._parcattraction
+CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
    idoffre        varchar(7)     NOT NULL,
    urlversplan    varchar(100)   NOT NULL,
@@ -130,11 +130,11 @@ CREATE TABLE IF NOT EXISTS saetest._parcattraction
    ageminparc     integer        NOT NULL
 );
 
-ALTER TABLE saetest._parcattraction
+ALTER TABLE sae._parcattraction
    ADD CONSTRAINT _parcattraction_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS saetest._prestation
+CREATE TABLE IF NOT EXISTS sae._prestation
 (
    idpresta           varchar(7)     NOT NULL,
    nomprestation      varchar(50)    NOT NULL,
@@ -143,71 +143,67 @@ CREATE TABLE IF NOT EXISTS saetest._prestation
    idoffre            varchar(7)     NOT NULL
 );
 
-ALTER TABLE saetest._prestation
+ALTER TABLE sae._prestation
    ADD CONSTRAINT _prestation_pkey
    PRIMARY KEY (idpresta);
 
-CREATE TABLE IF NOT EXISTS saetest._professionnelprive
+CREATE TABLE IF NOT EXISTS sae._professionnelprive
 (
    siren     varchar(20)   NOT NULL,
    iban      varchar(34)   NOT NULL,
    idcompte  varchar(7)    NOT NULL
 );
 
-ALTER TABLE saetest._professionnelprive
+ALTER TABLE sae._professionnelprive
    ADD CONSTRAINT _professionnelprive_pkey
    PRIMARY KEY (idcompte);
 
-CREATE TABLE IF NOT EXISTS saetest._restauration
+CREATE TABLE IF NOT EXISTS sae._restauration
 (
    idoffre        varchar(7)     NOT NULL,
    urlverscarte   varchar(100)   NOT NULL,
-   gammeprix      varchar(3)     NOT NULL,
-   moycuisine     float8         NOT NULL,
-   moyservice     float8         NOT NULL,
-   moyambiance    float8         NOT NULL,
-   moyrapportqp   float8         NOT NULL,
-   petitdejeuner  boolean        NOT NULL,
-   dejeuner       boolean        NOT NULL,
-   diner          boolean        NOT NULL,
-   boisson        boolean        NOT NULL,
-   brunch         boolean        NOT NULL
+   gammeprix      varchar(3)     default(0),
+   petitdejeuner  boolean        default(false),
+   dejeuner       boolean        default(false),
+   diner          boolean        default(false),
+   boisson        boolean        default(false),
+   brunch         boolean        default(false)
 );
 
-ALTER TABLE saetest._restauration
+ALTER TABLE sae._restauration
    ADD CONSTRAINT _restauration_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS saetest._spectacle
+CREATE TABLE IF NOT EXISTS sae._spectacle
 (
    idoffre          varchar(7)   NOT NULL,
    dureespectacle   varchar(8)   NOT NULL,
    placesspectacle  integer      NOT NULL
 );
 
-ALTER TABLE saetest._spectacle
+ALTER TABLE sae._spectacle
    ADD CONSTRAINT _spectacle_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS saetest._tag
+CREATE TABLE IF NOT EXISTS sae._tag
 (
    nomtag  varchar(20)   NOT NULL
 );
 
-ALTER TABLE saetest._tag
+ALTER TABLE sae._tag
    ADD CONSTRAINT _tag_pkey
    PRIMARY KEY (nomtag);
 
-CREATE TABLE IF NOT EXISTS saetest._tagrestauration
+CREATE TABLE IF NOT EXISTS sae._tagrestauration
 (
    nomtag  varchar(20)   NOT NULL
 );
 
-ALTER TABLE saetest._tagrestauration
+ALTER TABLE sae._tagrestauration
    ADD CONSTRAINT _tagrestauration_pkey
    PRIMARY KEY (nomtag);
 
-CREATE TABLE IF NOT EXISTS saetest._tarif
+CREATE TABLE IF NOT EXISTS sae._tarif
 (
    idtarif    varchar(7)    NOT NULL,
    nomtarif   varchar(20)   NOT NULL,
@@ -215,86 +211,86 @@ CREATE TABLE IF NOT EXISTS saetest._tarif
    idoffre    varchar(7)    NOT NULL
 );
 
-ALTER TABLE saetest._tarif
+ALTER TABLE sae._tarif
    ADD CONSTRAINT _tarif_pkey
    PRIMARY KEY (idtarif);
 
-CREATE TABLE IF NOT EXISTS saetest._visite
+CREATE TABLE IF NOT EXISTS sae._visite
 (
    idoffre      varchar(7)   NOT NULL,
    dureevisite  varchar(8)   NOT NULL,
    estguidee    boolean      NOT NULL
 );
 
-ALTER TABLE saetest._visite
+ALTER TABLE sae._visite
    ADD CONSTRAINT _visite_pkey
    PRIMARY KEY (idoffre);
 
 
-ALTER TABLE saetest._comptemembre
+ALTER TABLE sae._comptemembre
   ADD CONSTRAINT _comptemembre_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES saetest._compte(idcompte);
+  FOREIGN KEY (idcompte) REFERENCES sae._compte(idcompte);
 
-ALTER TABLE saetest._compteprofessionnel
+ALTER TABLE sae._compteprofessionnel
   ADD CONSTRAINT _compteprofessionnel_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES saetest._compte(idcompte);
+  FOREIGN KEY (idcompte) REFERENCES sae._compte(idcompte);
 
-ALTER TABLE saetest._facture
+ALTER TABLE sae._facture
   ADD CONSTRAINT _facture_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES saetest._professionnelprive(idcompte);
+  FOREIGN KEY (idcompte) REFERENCES sae._professionnelprive(idcompte);
 
-ALTER TABLE saetest._imageoffre
+ALTER TABLE sae._imageoffre
   ADD CONSTRAINT _imageoffre_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
-ALTER TABLE saetest._offre
+ALTER TABLE sae._offre
   ADD CONSTRAINT _offre_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES saetest._compteprofessionnel(idcompte);
+  FOREIGN KEY (idcompte) REFERENCES sae._compteprofessionnel(idcompte);
 
-ALTER TABLE saetest._parcattraction
+ALTER TABLE sae._parcattraction
   ADD CONSTRAINT _parcattraction_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
-ALTER TABLE saetest._prestation
+ALTER TABLE sae._prestation
   ADD CONSTRAINT _prestation_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._activite(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._activite(idoffre);
 
-ALTER TABLE saetest._professionnelprive
+ALTER TABLE sae._professionnelprive
   ADD CONSTRAINT _professionnelprive_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES saetest._compteprofessionnel(idcompte);
+  FOREIGN KEY (idcompte) REFERENCES sae._compteprofessionnel(idcompte);
 
-ALTER TABLE saetest._restauration
+ALTER TABLE sae._restauration
   ADD CONSTRAINT _restauration_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
-ALTER TABLE saetest._spectacle
+ALTER TABLE sae._spectacle
   ADD CONSTRAINT _spectacle_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
-ALTER TABLE saetest._tarif
+ALTER TABLE sae._tarif
   ADD CONSTRAINT _tarif_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
-ALTER TABLE saetest._visite
+ALTER TABLE sae._visite
   ADD CONSTRAINT _visite_idoffre_fkey
-  FOREIGN KEY (idoffre) REFERENCES saetest._offre(idoffre);
+  FOREIGN KEY (idoffre) REFERENCES sae._offre(idoffre);
 
 
 --    VIEWS CRUD
 
 -- Compte membre
-create or replace view saeTest.compteMembre AS
-  select * from saeTest._compte natural join saeTest._compteMembre;
+create or replace view sae.compteMembre AS
+  select * from sae._compte natural join sae._compteMembre;
   
-create or replace function saeTest.createMembre()
+create or replace function sae.createMembre()
   RETURNS trigger
   AS
 $$
 BEGIN
-  insert into saeTest._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
-  insert into saeTest._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
+  insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
   values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
 
 
@@ -303,30 +299,27 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createMembre
-  INSTEAD OF INSERT ON saeTest.compteMembre
+  INSTEAD OF INSERT ON sae.compteMembre
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createMembre();
-
-INSERT INTO saeTest.compteMembre(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage,nomMembre,prenomMembre,pseudo)
-VALUES('Co-7849','anonymous@gmail.com','anomousny','12','route de Lannion','Trégastel','22730','0651821494','https://avatarmaker.com/grosse\tete\a\baptiste','Mabit','Baptiste','The Beast');
+  EXECUTE PROCEDURE sae.createMembre();
 
 
 -- Compte professionnel prive
-create or replace view saeTest.compteProfessionnelPrive AS
-  select * from saeTest._compte natural join saeTest._compteProfessionnel natural join saeTest._professionnelPrive;
+create or replace view sae.compteProfessionnelPrive AS
+  select * from sae._compte natural join sae._compteProfessionnel natural join sae._professionnelPrive;
 
-create or replace function saeTest.createProfessionnelPrive()
+create or replace function sae.createProfessionnelPrive()
   RETURNS trigger
   AS
 $$
 BEGIN
-  insert into saeTest._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
-  insert into saeTest._compteProfessionnel(idCompte,denomination)
+  insert into sae._compteProfessionnel(idCompte,denomination)
   values(NEW.idCompte,NEW.denomination);
   
-  insert into saeTest._professionnelPrive(siren,iban,idCompte)
+  insert into sae._professionnelPrive(siren,iban,idCompte)
   values(NEW.siren,NEW.iban,NEW.idCompte);
 
   RETURN NEW;
@@ -334,29 +327,26 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createProfessionnelPrive
-  INSTEAD OF INSERT ON saeTest.compteProfessionnelPrive
+  INSTEAD OF INSERT ON sae.compteProfessionnelPrive
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createProfessionnelPrive();
+  EXECUTE PROCEDURE sae.createProfessionnelPrive();
   
-
-INSERT INTO saeTest.compteProfessionnelPrive(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage,denomination,siren,iban)
-VALUES('Co-7850','batttt@gmail.com','ouieuhhhcestmoi','26','rue du Prout','Saint Hilaire de Loulay','85600','0651821495','https://oui.com/img1','Mabit Coorporation','362 521 879 00034','FR14 2004 1010 0505 0001 3M02 606');
 
 
 -- Compte professionnel publique
-create or replace view saeTest.compteProfessionnelPublique AS
-  select * from saeTest._compte natural join saeTest._compteProfessionnel
-  where idCompte not in (select idCompte from saeTest.compteProfessionnelPrive);
+create or replace view sae.compteProfessionnelPublique AS
+  select * from sae._compte natural join sae._compteProfessionnel
+  where idCompte not in (select idCompte from sae.compteProfessionnelPrive);
   
-create or replace function saeTest.createProfessionnelPublique()
+create or replace function sae.createProfessionnelPublique()
   RETURNS trigger
   AS
 $$
 BEGIN
-  insert into saeTest._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
-  insert into saeTest._compteProfessionnel(idCompte,denomination)
+  insert into sae._compteProfessionnel(idCompte,denomination)
   values(NEW.idCompte,NEW.denomination);
 
 
@@ -365,26 +355,22 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createProfessionnelPublique
-  INSTEAD OF INSERT ON saeTest.compteProfessionnelPublique
+  INSTEAD OF INSERT ON sae.compteProfessionnelPublique
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createProfessionnelPublique();
+  EXECUTE PROCEDURE sae.createProfessionnelPublique();
   
 
-INSERT INTO saeTest.compteProfessionnelPublique(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage,denomination)
-VALUES('Co-7894','batttt@gmail.com','ouieuhhhcestmoi','12','rue du Caca','Saint Hilaire de Loulay','85600','0651821494','https://caca.fr/accueil/image\accueil','Mabit Industries');
-
-
 -- Spectacle
-create or replace view saeTest.spectacle AS
-  select * from saeTest._offre natural join saeTest._spectacle;
+create or replace view sae.spectacle AS
+  select * from sae._offre natural join sae._spectacle;
 
-create or replace function saeTest.createUpdateSpectacle()
+create or replace function sae.createUpdateSpectacle()
   RETURNS trigger
   AS
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-    insert into saeTest._offre(idoffre,nomoffre,numadresse,
+    insert into sae._offre(idoffre,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,
                               prixmin,datedebut,datefin,enligne,datepublication,
                               dernieremaj,estpremium,blacklistdispo,idcompte,resume)
@@ -393,13 +379,15 @@ BEGIN
             NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
             NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
   
-    insert into saeTest._spectacle(idoffre,dureespectacle,placesspectacle)
+    insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
     
+    --UPDATE set blacklistdispo = 3 where estpremium = true;
+
     RETURN NEW;
     
   ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE saeTest._offre SET nomoffre = NEW.nomoffre,
+    UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
                               villeoffre = NEW.villeoffre,
@@ -413,7 +401,7 @@ BEGIN
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
-    UPDATE saeTest._spectacle SET dureespectacle = NEW.dureespectacle,
+    UPDATE sae._spectacle SET dureespectacle = NEW.dureespectacle,
                                   placesspectacle = NEW.placesspectacle
     WHERE NEW.idoffre = idoffre;
 
@@ -423,28 +411,22 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateSpectacle
-  INSTEAD OF INSERT or UPDATE ON saeTest.spectacle
+  INSTEAD OF INSERT or UPDATE ON sae.spectacle
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createUpdateSpectacle();
-
-INSERT INTO saeTest.spectacle(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
-                              blacklistdispo,idcompte,resume,dureespectacle,placesspectacle)
-VALUES('Of-0001','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
-        CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','truc bien','123min',64);
+  EXECUTE PROCEDURE sae.createUpdateSpectacle();
         
 
 -- Parc d'attraction
-create or replace view saeTest.parcAttraction AS
-  select * from saeTest._offre natural join saeTest._parcAttraction;
+create or replace view sae.parcAttraction AS
+  select * from sae._offre natural join sae._parcAttraction;
 
-create or replace function saeTest.createUpdateParcAttraction()
+create or replace function sae.createUpdateParcAttraction()
   RETURNS trigger
   AS
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into saeTest._offre(idoffre,nomoffre,numadresse,
+  insert into sae._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
                             dernieremaj,estpremium,blacklistdispo,idcompte,resume)
@@ -453,13 +435,15 @@ BEGIN
           NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
           NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
   
-  insert into saeTest._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
+  insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
+
+  --UPDATE set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE saeTest._offre SET nomoffre = NEW.nomoffre,
+    UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
                               villeoffre = NEW.villeoffre,
@@ -473,7 +457,7 @@ BEGIN
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
-    UPDATE saeTest._parcattraction SET urlversplan = NEW.urlversplan,
+    UPDATE sae._parcattraction SET urlversplan = NEW.urlversplan,
                                        nbattractions = NEW.nbattractions,
                                        ageminparc = NEW.ageminparc
     WHERE NEW.idoffre = idoffre;
@@ -484,29 +468,22 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateParcAttraction
-  INSTEAD OF INSERT ON saeTest.parcAttraction
+  INSTEAD OF INSERT ON sae.parcAttraction
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createUpdateParcAttraction();
-
-INSERT INTO saeTest.parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
-                              blacklistdispo,idcompte,resume,urlversplan,nbattractions,ageminparc)
-VALUES('Of-0002','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
-        CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','truc encore mieux',
-        'https://lecacalepipilepopo/attractions',4,7);
+  EXECUTE PROCEDURE sae.createUpdateParcAttraction();
 
 
 -- Visite
-create or replace view saeTest.visite AS
-  select * from saeTest._offre natural join saeTest._visite;
+create or replace view sae.visite AS
+  select * from sae._offre natural join sae._visite;
 
-create or replace function saeTest.createUpdateVisite()
+create or replace function sae.createUpdateVisite()
   RETURNS trigger
   AS
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into saeTest._offre(idoffre,nomoffre,numadresse,
+  insert into sae._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
                             dernieremaj,estpremium,blacklistdispo,idcompte,resume)
@@ -515,13 +492,15 @@ BEGIN
           NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
           NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
   
-  insert into saeTest._visite(idoffre,dureevisite,estguidee)
+  insert into sae._visite(idoffre,dureevisite,estguidee)
   values(NEW.idoffre,NEW.dureevisite,NEW.estguidee);
+
+  --UPDATE set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE saeTest._offre SET nomoffre = NEW.nomoffre,
+    UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
                               villeoffre = NEW.villeoffre,
@@ -535,7 +514,7 @@ BEGIN
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
-    UPDATE saeTest._visite SET dureevisite = NEW.dureevisite,
+    UPDATE sae._visite SET dureevisite = NEW.dureevisite,
                                estguide = NEW.estguide
     WHERE NEW.idoffre = idoffre;
 
@@ -545,28 +524,22 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateVisite
-  INSTEAD OF INSERT ON saeTest.visite
+  INSTEAD OF INSERT ON sae.visite
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createUpdateVisite();
-
-INSERT INTO saeTest.visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
-                              blacklistdispo,idcompte,resume,dureevisite,estguidee)
-VALUES('Of-0003','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
-        CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','TRUC PAS OUF','5433min',true);
+  EXECUTE PROCEDURE sae.createUpdateVisite();
 
 
 -- Activite
-create or replace view saeTest.activite AS
-  select * from saeTest._offre natural join saeTest._activite;
+create or replace view sae.activite AS
+  select * from sae._offre natural join sae._activite;
 
-create or replace function saeTest.createUpdateActivite()
+create or replace function sae.createUpdateActivite()
   RETURNS trigger
   AS
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into saeTest._offre(idoffre,nomoffre,numadresse,
+  insert into sae._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
                             dernieremaj,estpremium,blacklistdispo,idcompte,resume)
@@ -575,13 +548,15 @@ BEGIN
           NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
           NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
   
-  insert into saeTest._activite(idoffre,agerequis,dureeactivite)
+  insert into sae._activite(idoffre,agerequis,dureeactivite)
   values(NEW.idoffre,NEW.agerequis,NEW.dureeactivite);
+
+  --UPDATE set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE saeTest._offre SET nomoffre = NEW.nomoffre,
+    UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
                               villeoffre = NEW.villeoffre,
@@ -595,7 +570,7 @@ BEGIN
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
-    UPDATE saeTest._activite SET agerequis = NEW.agerequis,
+    UPDATE sae._activite SET agerequis = NEW.agerequis,
                                  dureeactivite = NEW.dureeactivite
     WHERE NEW.idoffre = idoffre;
 
@@ -605,29 +580,22 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateActivite
-  INSTEAD OF INSERT ON saeTest.activite
+  INSTEAD OF INSERT ON sae.activite
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createUpdateActivite();
+  EXECUTE PROCEDURE sae.createUpdateActivite();
 
-INSERT INTO saeTest.activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
-                              blacklistdispo,idcompte,resume,agerequis,dureeactivite)
-VALUES('Of-0004','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
-        CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','PROUUTTTTT',
-        9,'1234min');
--- caca
 
 -- Restauration
-create or replace view saeTest.restauration AS
-  select * from saeTest._offre natural join saeTest._restauration;
+create or replace view sae.restauration AS
+  select * from sae._offre natural join sae._restauration;
   
-create or replace function saeTest.createUpdateRestauration()
+create or replace function sae.createUpdateRestauration()
   RETURNS trigger
   AS
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into saeTest._offre(idoffre,nomoffre,numadresse,
+  insert into sae._offre(idoffre,nomoffre,numadresse,
                             rueoffre,villeoffre,codepostaloffre,
                             prixmin,datedebut,datefin,enligne,datepublication,
                             dernieremaj,estpremium,blacklistdispo,idcompte,resume)
@@ -636,17 +604,19 @@ BEGIN
           NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
           NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
   
-  insert into saeTest._restauration(idoffre,urlverscarte,gammeprix,moycuisine,moyservice,
+  insert into sae._restauration(idoffre,urlverscarte,gammeprix,moycuisine,moyservice,
                                     moyambiance,moyrapportqp,petitdejeuner,dejeuner,diner,
                                     boisson,brunch)
   values(NEW.idoffre,NEW.urlverscarte,NEW.gammeprix,NEW.moycuisine,NEW.moyservice,
          NEW.moyambiance,NEW.moyrapportqp,NEW.petitdejeuner,NEW.dejeuner,NEW.diner,
          NEW.boisson,NEW.brunch);
 
+  --UPDATE set blacklistdispo = 3 where estpremium = true;
+
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE saeTest._offre SET nomoffre = NEW.nomoffre,
+    UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
                               villeoffre = NEW.villeoffre,
@@ -655,17 +625,14 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
+                              dernieremaj = CURRENT_DATE,
                               estpremium = NEW.estpremium,
                               blacklistdispo = NEW.blacklistdispo,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
-    UPDATE saeTest._restauration SET urlverscarte = NEW.urlverscarte,
+    UPDATE sae._restauration SET urlverscarte = NEW.urlverscarte,
                                      gammeprix = NEW.gammeprix,
-                                     moycuisine = NEW.moycuisine,
-                                     moyservice = NEW.moyservice,
-                                     moyambiance = NEW.moyambiance,
-                                     moyrapportqp = NEW.moyrapportqp,
                                      petitdejeuner = NEW.petitdejeuner,
                                      dejeuner = NEW.dejeuner,
                                      diner = NEW.diner,
@@ -679,15 +646,6 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateRestauration
-  INSTEAD OF INSERT ON saeTest.restauration
+  INSTEAD OF INSERT ON sae.restauration
   FOR EACH ROW
-  EXECUTE PROCEDURE saeTest.createUpdateRestauration();
-
-INSERT INTO saeTest.restauration(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,dernieremaj,estpremium,
-                              blacklistdispo,idcompte,resume,urlverscarte,gammeprix,moycuisine,moyservice,
-                              moyambiance,moyrapportqp,petitdejeuner,dejeuner,diner,boisson,brunch)
-VALUES('Of-0005','spectacle2oof','23','rue du Pipi','Pipiville',22300,60.0,
-        CURRENT_DATE,CURRENT_DATE,true,CURRENT_DATE,CURRENT_DATE,true,2,'Co-7850','Le resto de trop la balle',
-        'https://lecacalepipilepopo/attractions','€€',4.4,4.4,4.4,4.4,true,true,true,true,true);
-       
+  EXECUTE PROCEDURE sae.createUpdateRestauration();
