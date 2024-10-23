@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS sae._compte
    villecompte       varchar(30)   NOT NULL,
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
-   urlimage          varchar(100)  -- default(srfc-ventsdouest.dev/imageCompte.png)
+   urlimage          varchar(200)  default("/docker/sae/data/html/images/photoProfileDefault.png")
 );
 
 ALTER TABLE sae._compte
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS sae._comptemembre
    idcompte      varchar(7)    NOT NULL,
    nommembre     varchar(20)   NOT NULL,
    prenommembre  varchar(20)   NOT NULL,
-   pseudo        varchar(40)   default(select concat(nommembre," ",prenommembre) from sae._compte)
+   pseudo        varchar(40)   NOT NULL
 );
 
 ALTER TABLE sae._comptemembre
@@ -221,7 +221,7 @@ CREATE TABLE IF NOT EXISTS sae._visite
 (
    idoffre      varchar(7)   NOT NULL,
    dureevisite  varchar(8)   NOT NULL,
-   estguidee    boolean      NOT NULL
+   estguidee    boolean      default(false)
 );
 
 ALTER TABLE sae._visite
@@ -292,14 +292,13 @@ BEGIN
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
-  -- IF (NEW.pseudo is NULL) THEN
-  -- insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
-  -- values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,concat(select concat(nommembre,prenommembre) from sae._compte));
-  -- ELSE
+  IF (NEW.pseudo is NULL) THEN
+  insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
+  values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,select concat(nommembre,prenommembre) from sae._compte);
+  ELSE
   insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
   values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
-  -- END IF
-
+  END IF;
 
   RETURN NEW;
 END;
@@ -638,3 +637,177 @@ CREATE OR REPLACE TRIGGER tg_createUpdateRestauration
   INSTEAD OF INSERT ON sae.restauration
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateRestauration();
+
+
+
+-- INSERT TEST
+
+-- ACTIVITES
+INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination,siren,iban)
+VALUES("Co-0001","agnes.pinson@gmail.com","motdepasse","3B","Hent Penn ar Pave",
+"Le Vieux-Marche",22420,0684947677,"Planete Kayak",519495882,"FR7630001007941234567890181");
+
+-- offre planete kayak a mettre
+
+INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination)
+VALUES("Co-0002","tregor,bicyclette@gmail.com","motdepasse","3","Allee des soupirs",
+"Lannion",22300,0712345678,"Tregor Bicyclette");
+
+INSERT INTO activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,agerequis,dureeactivite)
+VALUES("Of-0002","Qui m'aime me suive","3","Allee des soupirs",
+"Lannion",22300,0,"Co-0002",
+"Montrer que l'on peut réaliser localement de belles balades à vélo, en empruntant de petites 
+routes tranquilles et sans trop de montées",
+"Les sorties sont volontairement limitées entre 15 km et 20 km pour permettre à un large 
+public familial de se joindre à nous. A partir de 6 ou 7 ans, un enfant à l'aise sur son vélo, peut en 
+général parcourir une telle distance sans problème : le rythme est suffisamment lent (adapté aux plus 
+faibles), avec des pauses, et le fait d'être en groupe est en général un bon stimulant pour les enfants 
+... et les plus grands ! Les plus jeunes peuvent aussi participer en charrette, sur un siège vélo ou bien 
+avec une barre de traction.",
+12,"6h");
+-- A METTRE EN LIEN AVEC CETTE OFFRE donc tables a change obligatoires
+-- mais jpp je pars d'un uml caca et un dictionnaire de donnees pas coherant
+-- grille tarif a mettre
+-- prestations a mettre
+-- prestations non incluses a mettre
+-- accesibilite
+-- tags a mettre
+
+---------------------------------------------------------------------------------------------
+
+-- VISITES
+INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination)
+VALUES("Co-0003","mairiedelannion@gmail.com","motdepasse","0","Pl. du General Leclerc",
+"Lannion",22300,0296466422,"Mairie de Lannion");
+
+INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureevisite)
+VALUES("Of-0003","Decouverte du centre-ville historique de Lannion","0","Pl. du General Leclerc",
+"Lannion",22300,0,"Co-0003",
+"Decouverte du centre-ville historique de Lannion",
+"Decouverte du centre-ville historique de Lannion",
+"A votre rythme");
+
+INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination)
+VALUES("Co-0004","cotedarmor@gmail.com","motdepasse","0","0",
+"0",22000,0296626222,"Departement des cotes d'Armor");
+
+INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureevisite)
+VALUES("Of-0004","Parc et Château de la Roche Jagu","0","0",
+"Ploezal",22260,0,"Co-0004",
+"Parc et Château de la Roche Jagu",
+"Le parc est en accès libre et gratuit 7j/7 toute l'année ! Tarifs. Entrée château/expo (automne-hiver 2024) Plein tarif : 4,50 €",
+"A votre rythme");
+
+INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination,siren,iban)
+VALUES("Co-0005","leradome.cdt@gmail.com","motdepasse","0","Parc du Radome",
+"Pleumeur-Bodou",22560,0296466380," Fondation d’Entreprise Cité des Télécoms ",493290506,"FR7630001007941234567890182");
+
+INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureevisite)
+VALUES("Of-0005","Cité des Télécoms","0","Parc du Radome",
+"Pleumeur-Bodou",22560,0,"Co-0005",
+"Cité des Télécoms",
+"La Cité des télécoms est un parc français consacré aux télécommunications, des débuts à nos jours. 
+Elle est située sur la commune de Pleumeur-Bodou en Bretagne.",
+"A votre rythme");
+
+INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination,siren,iban)
+VALUES("Co-0006","armor.navigation@gmail.com","motdepasse","0","Bd Joseph le Bihan",
+"Perros-Guirec",22700,0296911000," Fondation d’Entreprise Cité des Télécoms ",398414698,"FR7630001007941234567890186");
+
+INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureevisite,estguide)
+VALUES("Of-0006","Excursion vers les 7 Iles","0","Bd Joseph le Bihan",
+"Perros-Guirec",22700,0,"Co-0006",
+"Découvrez l’archipel des Sept-Îles, la plus grande réserve ornithologique de France, à bord 
+d’une vedette ou d’un bateau de la Ligue de Protection des Oiseaux.",
+"Les Vedettes des 7 Iles proposent des excursions et des visites commentées vers l'archipel 
+des Sept-Iles, au départ de Perros-Guirec. Le site est protégé et l'accès aux îles réglementé, mais vous 
+pourrez néanmoins fouler le sol de l'Île-aux-Moines et admirer les autres îles depuis le bateau. Les 7 
+îles sont un véritable sanctuaire pour les oiseaux marins, notamment les goélands, les fous de Bassan 
+et les macareux",
+"3h",true);
+
+-- A ajouter accesibilite et tags
+
+--------------------------------------------------------------------------
+
+-- Spectacles
+
+INSERT INTO spectacle(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureespectacle,placesspectacle)
+VALUES("Of-0007","La Magie des arbres,","0","plage de Tourony",
+"Perros-Guirec",22700,5.00,"Co-0004",
+"Sur le site exceptionnel de la plage de Tourony, au cœur de la côte de Granit rose, ce festival 
+concert son et lumière se déroule dans les arbres les 26 et 27 août.",
+"Venez découvrir la Magie des arbres dans ce site exceptionnel de la côte de Granit rose : 
+première partie musicale autour du Bagad de Perros-Guirec, puis, à la nuit tombée, assistez au son et 
+lumière avec la projection sur des voiles de grands mâts tendues dans les arbres. Ce spectacle mêlant 
+effets pyrotechniques, lumières et musique, vous entraînera dans un univers exceptionnel.",
+"1h30",300);
+
+-- A ajouter tags
+
+------------------------------------------------------------------------
+
+-- Parc d'atraction
+
+INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination)
+VALUES("Co-0007","village.gaulois@gmail.com","motdepasse","0","Parc du Radome",
+"Pleumeur-Bodou",22560,0296918395,"Un Village Gaulois pour l’Afrique");
+
+INSERT INTO parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,urlversplan)
+VALUES("Of-0008","Le Village Gaulois,","0","Parc du Radome",
+"Pleumeur-Bodou",22560,5.00,"Co-0007",
+"Un Village Gaulois pour l’Afrique",
+"Petit parc de loisirs pour enfants sur le thème du village avec jeux, activités et lieu de restauration.",
+"https://parcduradome.com/wp-content/uploads/2023/02/illustration_parc-768x453.jpg");
+
+
+-----------------------------------------------------------------------------
+
+-- Restauration
+
+INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
+numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+denomination,siren,iban)
+VALUES("Co-0008","contact@la-ville-blanche.com","motdepasse","29","Route de Tréguier",
+"Rospez-Lannion",22300,0296370428," SARL La Ville Blanche ",384552014,"FR7630001007941234567890188");
+
+INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,urlverscarte,gammeprix,dejeuner,diner,boisson)
+VALUES("Of-0009","La Ville Blanche","29","route de Tréguier",
+"Rospez-Lannion",22300,0,"Co-0008",
+"La Ville Blanche, en plein cœur du Trégor, non loin de la côte de Granit Rose vous accueille 
+pour le plaisir des papilles.",
+"Ce petit corps de ferme repris par la famille Jaguin est devenu au fil du temps une Maison 
+de renom. D’aventures en aventures, la passion de cette cuisine s’est maintenant transmise, des 
+souvenirs et des moments se sont déroulés dans cette Maison symbolique de Bretagne. Gorgé 
+d’histoire, venez continuer de l’écrire avec Maud et Yvan Guglielmetti.",
+"https://cdn.eat-list.fr/establishment/menu/gallery_menu/22300-rospez/la-ville-blanche_77330_b8c.jpg","€€€",true,true,true);
+
+-- Remettre nbavis et note dans offre
+-- + toutes les moyennes dans restauration
+-- Mettre les tags restauration
+
+-- Ajouter un attribut estgratuit qui met prixmin a 0 a la premiere insert ou estgratuit est en true
+-- Ajouter un complement d'adresse
+-- Changer des types d'attribut lies a l'adresse + taille des attributs
