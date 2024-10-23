@@ -8,7 +8,7 @@ set schema 'sae';
 CREATE TABLE IF NOT EXISTS sae._activite
 (
    idoffre        varchar(7)   NOT NULL,
-   agerequis      integer      NOT NULL,
+   agerequis      integer      default(0),
    dureeactivite  varchar(8)   NOT NULL
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS sae._compte
    villecompte       varchar(30)   NOT NULL,
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
-   urlimage          varchar(100)  NOT NULL
+   urlimage          varchar(100)  -- default(srfc-ventsdouest.dev/imageCompte.png)
 );
 
 ALTER TABLE sae._compte
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS sae._comptemembre
    idcompte      varchar(7)    NOT NULL,
    nommembre     varchar(20)   NOT NULL,
    prenommembre  varchar(20)   NOT NULL,
-   pseudo        varchar(20)   NOT NULL
+   pseudo        varchar(40)   default(select concat(nommembre," ",prenommembre) from sae._compte)
 );
 
 ALTER TABLE sae._comptemembre
@@ -68,9 +68,9 @@ ALTER TABLE sae._compteprofessionnel
 
 CREATE TABLE IF NOT EXISTS sae._facture
 (
-   numfacture       varchar(7)   NOT NULL,
-   prixfacture      float8       NOT NULL,
-   datefacturation  date         NOT NULL,
+   idfacture        varchar(7)   NOT NULL,
+   prixfacture      real         default(0),
+   datefacturation  date         default(CURRENT_DATE),
    idoffre          varchar(7)   NOT NULL,
    idcompte         varchar(7)   NOT NULL
 );
@@ -101,12 +101,13 @@ ALTER TABLE sae._langue
 CREATE TABLE IF NOT EXISTS sae._offre
 (
    idoffre          varchar(7)    NOT NULL,
+   categorie        varchar(30)   NOT NULL,
    nomoffre         varchar(50)   NOT NULL,
    numadresse       varchar(5)    NOT NULL,
    rueoffre         varchar(50)   NOT NULL,
    villeoffre       varchar(50)   NOT NULL,
    codepostaloffre  integer       NOT NULL,
-   prixmin          float8        default(0),
+   prixmin          real          default(0),
    datedebut        date          ,
    datefin          date          ,
    enligne          boolean       default(true),
@@ -115,7 +116,7 @@ CREATE TABLE IF NOT EXISTS sae._offre
    estpremium       boolean       default(false),
    blacklistdispo   integer       default(0),
    idcompte         varchar(7)    NOT NULL,
-   resume           varchar(10000)NOT NULL
+   resume           varchar(9999) NOT NULL
 );
 
 ALTER TABLE sae._offre
@@ -126,8 +127,8 @@ CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
    idoffre        varchar(7)     NOT NULL,
    urlversplan    varchar(100)   NOT NULL,
-   nbattractions  integer        NOT NULL,
-   ageminparc     integer        NOT NULL
+   nbattractions  integer        default(1),
+   ageminparc     integer        default(0)
 );
 
 ALTER TABLE sae._parcattraction
@@ -138,8 +139,8 @@ CREATE TABLE IF NOT EXISTS sae._prestation
 (
    idpresta           varchar(7)     NOT NULL,
    nomprestation      varchar(50)    NOT NULL,
-   descriptionpresta  varchar(5000)  NOT NULL,
-   prixpresta         integer        NOT NULL,
+   descriptionpresta  varchar(9999)  NOT NULL,
+   prixpresta         real           default(0),
    idoffre            varchar(7)     NOT NULL
 );
 
@@ -197,6 +198,7 @@ ALTER TABLE sae._tag
 CREATE TABLE IF NOT EXISTS sae._tagrestauration
 (
    nomtag  varchar(20)   NOT NULL
+
 );
 
 ALTER TABLE sae._tagrestauration
@@ -207,7 +209,7 @@ CREATE TABLE IF NOT EXISTS sae._tarif
 (
    idtarif    varchar(7)    NOT NULL,
    nomtarif   varchar(20)   NOT NULL,
-   prixtarif  float8        NOT NULL,
+   prixtarif  real        NOT NULL,
    idoffre    varchar(7)    NOT NULL
 );
 
@@ -290,8 +292,13 @@ BEGIN
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
+  -- IF (NEW.pseudo is NULL) THEN
+  -- insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
+  -- values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,concat(select concat(nommembre,prenommembre) from sae._compte));
+  -- ELSE
   insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
   values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
+  -- END IF
 
 
   RETURN NEW;
@@ -370,19 +377,17 @@ create or replace function sae.createUpdateSpectacle()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-    insert into sae._offre(idoffre,nomoffre,numadresse,
+    insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,
-                              prixmin,datedebut,datefin,enligne,datepublication,
-                              dernieremaj,estpremium,blacklistdispo,idcompte,resume)
-    values(NEW.idoffre,NEW.nomoffre,NEW.numadresse,
+                              prixmin,estpremium,idcompte,resume)
+    values(NEW.idoffre,"Spectacle",NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
-            NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
-            NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
+            NEW.prixmin,NEW.estpremium,NEW.idcompte,NEW.resume);
   
     insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
     
-    --UPDATE set blacklistdispo = 3 where estpremium = true;
+    UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
 
     RETURN NEW;
     
@@ -396,8 +401,8 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
-                              estpremium = NEW.estpremium,
-                              blacklistdispo = NEW.blacklistdispo,
+                              -- estpremium = NEW.estpremium, on peut modif ce status la ?
+                              dernieremaj = CURRENT_DATE,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
@@ -426,19 +431,17 @@ create or replace function sae.createUpdateParcAttraction()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into sae._offre(idoffre,nomoffre,numadresse,
-                            rueoffre,villeoffre,codepostaloffre,
-                            prixmin,datedebut,datefin,enligne,datepublication,
-                            dernieremaj,estpremium,blacklistdispo,idcompte,resume)
-  values(NEW.idoffre,NEW.nomoffre,NEW.numadresse,
-          NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
-          NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
-          NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
+    insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
+                              rueoffre,villeoffre,codepostaloffre,
+                              prixmin,estpremium,idcompte,resume)
+    values(NEW.idoffre,"Parc d'attraction",NEW.nomoffre,NEW.numadresse,
+            NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
+            NEW.prixmin,NEW.estpremium,NEW.idcompte,NEW.resume);
   
   insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
 
-  --UPDATE set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
@@ -483,19 +486,17 @@ create or replace function sae.createUpdateVisite()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into sae._offre(idoffre,nomoffre,numadresse,
-                            rueoffre,villeoffre,codepostaloffre,
-                            prixmin,datedebut,datefin,enligne,datepublication,
-                            dernieremaj,estpremium,blacklistdispo,idcompte,resume)
-  values(NEW.idoffre,NEW.nomoffre,NEW.numadresse,
-          NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
-          NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
-          NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
+    insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
+                              rueoffre,villeoffre,codepostaloffre,
+                              prixmin,estpremium,idcompte,resume)
+    values(NEW.idoffre,"Visite",NEW.nomoffre,NEW.numadresse,
+            NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
+            NEW.prixmin,NEW.estpremium,NEW.idcompte,NEW.resume);
   
   insert into sae._visite(idoffre,dureevisite,estguidee)
   values(NEW.idoffre,NEW.dureevisite,NEW.estguidee);
 
-  --UPDATE set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
@@ -539,19 +540,17 @@ create or replace function sae.createUpdateActivite()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into sae._offre(idoffre,nomoffre,numadresse,
-                            rueoffre,villeoffre,codepostaloffre,
-                            prixmin,datedebut,datefin,enligne,datepublication,
-                            dernieremaj,estpremium,blacklistdispo,idcompte,resume)
-  values(NEW.idoffre,NEW.nomoffre,NEW.numadresse,
-          NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
-          NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
-          NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
+    insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
+                              rueoffre,villeoffre,codepostaloffre,
+                              prixmin,estpremium,idcompte,resume)
+    values(NEW.idoffre,"Activite",NEW.nomoffre,NEW.numadresse,
+            NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
+            NEW.prixmin,NEW.estpremium,NEW.idcompte,NEW.resume);
   
   insert into sae._activite(idoffre,agerequis,dureeactivite)
   values(NEW.idoffre,NEW.agerequis,NEW.dureeactivite);
 
-  --UPDATE set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
@@ -595,23 +594,19 @@ create or replace function sae.createUpdateRestauration()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-  insert into sae._offre(idoffre,nomoffre,numadresse,
-                            rueoffre,villeoffre,codepostaloffre,
-                            prixmin,datedebut,datefin,enligne,datepublication,
-                            dernieremaj,estpremium,blacklistdispo,idcompte,resume)
-  values(NEW.idoffre,NEW.nomoffre,NEW.numadresse,
-          NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
-          NEW.prixmin,NEW.datedebut,NEW.datefin,NEW.enligne,NEW.datepublication,
-          NEW.dernieremaj,NEW.estpremium,NEW.blacklistdispo,NEW.idcompte,NEW.resume);
+    insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
+                              rueoffre,villeoffre,codepostaloffre,
+                              prixmin,estpremium,idcompte,resume)
+    values(NEW.idoffre,"Restauration",NEW.nomoffre,NEW.numadresse,
+            NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,
+            NEW.prixmin,NEW.estpremium,NEW.idcompte,NEW.resume);
   
-  insert into sae._restauration(idoffre,urlverscarte,gammeprix,moycuisine,moyservice,
-                                    moyambiance,moyrapportqp,petitdejeuner,dejeuner,diner,
+  insert into sae._restauration(idoffre,urlverscarte,gammeprix,petitdejeuner,dejeuner,diner,
                                     boisson,brunch)
-  values(NEW.idoffre,NEW.urlverscarte,NEW.gammeprix,NEW.moycuisine,NEW.moyservice,
-         NEW.moyambiance,NEW.moyrapportqp,NEW.petitdejeuner,NEW.dejeuner,NEW.diner,
+  values(NEW.idoffre,NEW.urlverscarte,NEW.gammeprix,NEW.petitdejeuner,NEW.dejeuner,NEW.diner,
          NEW.boisson,NEW.brunch);
 
-  --UPDATE set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
 
   RETURN NEW;
       
