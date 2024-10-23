@@ -401,7 +401,6 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
-                              -- estpremium = NEW.estpremium, on peut modif ce status la ?
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
@@ -455,8 +454,7 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
-                              estpremium = NEW.estpremium,
-                              blacklistdispo = NEW.blacklistdispo,
+                              dernieremaj = CURRENT_DATE,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
@@ -510,8 +508,7 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
-                              estpremium = NEW.estpremium,
-                              blacklistdispo = NEW.blacklistdispo,
+                              dernieremaj = CURRENT_DATE,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
@@ -564,8 +561,7 @@ BEGIN
                               datedebut = NEW.datedebut,
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
-                              estpremium = NEW.estpremium,
-                              blacklistdispo = NEW.blacklistdispo,
+                              dernieremaj = CURRENT_DATE,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
@@ -621,8 +617,6 @@ BEGIN
                               datefin = NEW.datefin,
                               enligne = NEW.enligne,
                               dernieremaj = CURRENT_DATE,
-                              estpremium = NEW.estpremium,
-                              blacklistdispo = NEW.blacklistdispo,
                               resume = NEW.resume                       
     WHERE NEW.idoffre = idoffre;
     
