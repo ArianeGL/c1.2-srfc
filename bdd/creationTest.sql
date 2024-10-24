@@ -16,18 +16,6 @@ ALTER TABLE sae._activite
    ADD CONSTRAINT _activite_pkey
    PRIMARY KEY (idoffre);
 
-CREATE TABLE IF NOT EXISTS sae._attraction
-(
-   idattraction   varchar(7)    NOT NULL,
-   nomattraction  varchar(20)   NOT NULL,
-   idoffre        varchar(7)    NOT NULL REFERENCES sae._parcattraction(idoffre)
-);
-
-ALTER TABLE sae._attraction
-   ADD CONSTRAINT _attraction_pkey
-   PRIMARY KEY (idattraction);
-
-
 
 
 CREATE TABLE IF NOT EXISTS sae._compte
@@ -149,7 +137,7 @@ CREATE TABLE IF NOT EXISTS sae._prestation
    idpresta           varchar(7)     NOT NULL,
    nomprestation      varchar(50)    NOT NULL,
    descriptionpresta  varchar(9999)  ,
-   prixpresta         real           default(0),
+   prixpresta         real           default(0)
 );
 
 ALTER TABLE sae._prestation
@@ -196,7 +184,11 @@ CREATE TABLE IF NOT EXISTS sae._restauration
    dejeuner       boolean        default(false),
    diner          boolean        default(false),
    boisson        boolean        default(false),
-   brunch         boolean        default(false)
+   brunch         boolean        default(false),
+   moycuisine     real			 ,
+   moyservice     real			 ,
+   moyambiance    real			 ,
+   moyqp          real			 
 );
 
 ALTER TABLE sae._restauration
@@ -226,11 +218,11 @@ ALTER TABLE sae._tag
    CREATE TABLE IF NOT EXISTS sae._tagpouroffre
 (
    nomtag  varchar(20)   NOT NULL REFERENCES sae._tag(nomtag),
-   idoffre    varchar(7)   NOT NULL REFERENCES sae._offre(idoffre),
+   idoffre    varchar(7)   NOT NULL REFERENCES sae._offre(idoffre)
 );
 
 ALTER TABLE sae._tagpouroffre
-   ADD CONSTRAINT _tag_pkey
+   ADD CONSTRAINT _tagpouroffre_pkey
    PRIMARY KEY (nomtag,idoffre);
 
 CREATE TABLE IF NOT EXISTS sae._tagrestauration
@@ -245,11 +237,11 @@ ALTER TABLE sae._tagrestauration
 CREATE TABLE IF NOT EXISTS sae._tagpourrestauration
 (
    nomtag  varchar(20)   NOT NULL REFERENCES sae._tagrestauration(nomtag),
-   idoffre    varchar(7)   NOT NULL REFERENCES sae._restauration(idoffre),
+   idoffre    varchar(7)   NOT NULL REFERENCES sae._restauration(idoffre)
 );
 
 ALTER TABLE sae._tagpourrestauration
-   ADD CONSTRAINT _tag_pkey
+   ADD CONSTRAINT _tagpourrestauration_pkey
    PRIMARY KEY (nomtag,idoffre);
 
 CREATE TABLE IF NOT EXISTS sae._tarif
@@ -281,10 +273,20 @@ CREATE TABLE IF NOT EXISTS sae._langueproposes
   idoffre      varchar(7)   NOT NULL REFERENCES sae._visite(idoffre)
 );
 
-ALTER TABLE sae._langue
-   ADD CONSTRAINT _langue_pkey
-   PRIMARY KEY (nomlangue);
+ALTER TABLE sae._langueproposes
+   ADD CONSTRAINT _langueproposes_pkey
+   PRIMARY KEY (nomlangue,idoffre);
 
+CREATE TABLE IF NOT EXISTS sae._attraction
+(
+   idattraction   varchar(7)    NOT NULL,
+   nomattraction  varchar(20)   NOT NULL,
+   idoffre        varchar(7)    NOT NULL REFERENCES sae._parcattraction(idoffre)
+);
+
+ALTER TABLE sae._attraction
+   ADD CONSTRAINT _attraction_pkey
+   PRIMARY KEY (idattraction);
 
 ALTER TABLE sae._comptemembre
   ADD CONSTRAINT _comptemembre_idcompte_fkey
@@ -479,7 +481,7 @@ CREATE OR REPLACE TRIGGER tg_createUpdateSpectacle
 
 -- Parc d'attraction
 create or replace view sae.parcAttraction AS
-  select * from sae._offre natural join sae._parcAttraction;
+  select * from sae._offre natural join sae._parcattraction;
 
 create or replace function sae.createUpdateParcAttraction()
   RETURNS trigger
