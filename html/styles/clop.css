@@ -1,0 +1,179 @@
+#clop{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.clopButton{
+    background-color: var(--navy-blue);
+    height: 150px;
+    width: 400px;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    margin: 2em;
+}
+
+.clopRecherche{
+    width: 100%;
+    height: 3em;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    padding: none;
+    border:none;
+}
+
+.clopBienvenue{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clopBienvenue > div{
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#searchText{
+    border: none;
+    color: var(--navy-blue);
+    background-color: var(--light-grey);
+    font-size: 1.2em;
+    block-size: border;
+    padding: 0% 0.2em;
+    height: 100%;
+    width: 60%;
+}
+
+#searchText::placeholder {
+    border: none;
+    padding: none;
+    color: var(--navy-blue);
+    text-transform: underline;
+}
+
+.searchButton{
+    border: none;
+    border-right: 1px var(--navy-blue) solid;
+    color: var(--navy-blue);
+    background-color: var(--light-grey);
+    height: 100%;
+    width: 5%;
+    margin: none;
+    text-wrap: wrap;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+
+.filterButton{
+    border: none;
+    border-left: 1px var(--navy-blue) solid;
+    color: var(--navy-blue);
+    background-color: var(--light-grey);
+    height: 100%;
+    width: 12.5%;
+    margin: none;
+    text-wrap: wrap;
+}
+
+.sortButton{
+    border: none;
+    border-left: 1px var(--navy-blue) solid;
+    color: var(--navy-blue);
+    background-color: var(--light-grey);
+    height: 100%;
+    width: 12.5%;
+    margin: none;
+    text-wrap: wrap;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+
+#clopRangement{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10%;
+}
+
+#clopArt{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: stretch;
+    margin: 3em 5em;
+    height: 23em;
+    background-color: var(--light-grey);
+    color: var(--navy-blue);
+    box-shadow: 5px 5px 5px var(--light-grey);
+    border: 2px var(--navy-blue) solid;
+    border-radius: 25px;
+    flex-basis: calc(40% - 10%); /* 50% pour 2 éléments par ligne, ajusté pour l'espace */
+    box-sizing: border-box;
+}
+
+.clopArtDroite{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:100%
+}
+
+#clopArt > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    max-height: 20em;
+    width: 90%;
+}
+
+.clopArtDroite > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items:stretch;
+}
+
+.clopArtImg{
+    width: 50%;
+    height: 70%;
+    object-fit: fill;
+    margin: 1em;
+}
+
+.clopResume{
+    height: 33%;
+    width: 100%;
+    max-height: 450px;
+    overflow: hidden;          /* Hide the overflow content */
+    /* Masking for fade effect */
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0));
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0)); /* For WebKit-based browsers */
+    
+    line-height: 1em;        /* Set line height for readability */
+    word-wrap: break-word;
+}
+
+.clopCat{
+    justify-self: flex-start;
+    align-self: flex-start;
+}
+
+.clopTitre{
+    justify-self: center;
+}
+
+.clopPrix{
+    justify-self: flex-end;
+}
+
+.clopVille{
+    align-self: flex-start;
+}
+
+.clopDeno{
+    align-self: flex-end;
+}
