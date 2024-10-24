@@ -939,7 +939,7 @@ INSERT INTO parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codep
 prixmin,idcompte,resume,urlversplan)
 VALUES('Of-0001','Le Parc du Tregor,','4','Route du Tregor',
 'Lannion',22300,5.00,'Co-0003',
-'Parc d'attractions tout publique sur le thème de la bretagne, activités et lieu de restauration. (Ce parc est fictif)',
+'Parc d''attractions tout publique sur le thème de la bretagne, activités et lieu de restauration. (Ce parc est fictif)',
 'https://thumbs.dreamstime.com/b/carte-de-ville-imaginaire-avec-parcelle-cadastrale-parc-public-et-terrain-vert-naturel-illustration-cadastre-320575928.jpg');
 
 
