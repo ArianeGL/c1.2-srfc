@@ -72,7 +72,7 @@ ALTER TABLE sae._facture
 
 CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
-   urlversimage  varchar(100)   NOT NULL,
+   urlversimage  varchar(200)   NOT NULL,
    idoffre       varchar(7)     NOT NULL
 );
 
@@ -123,7 +123,7 @@ ALTER TABLE sae._offre
 CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
    idoffre        varchar(7)     NOT NULL,
-   urlversplan    varchar(100)   NOT NULL,
+   urlversplan    varchar(200)   NOT NULL,
    nbattractions  integer        default(1),
    ageminparc     integer        default(0)
 );
@@ -178,7 +178,7 @@ ALTER TABLE sae._professionnelprive
 CREATE TABLE IF NOT EXISTS sae._restauration
 (
    idoffre        varchar(7)     NOT NULL,
-   urlverscarte   varchar(100)   NOT NULL,
+   urlverscarte   varchar(200)   NOT NULL,
    gammeprix      varchar(3)     default(0),
    petitdejeuner  boolean        default(false),
    dejeuner       boolean        default(false),
