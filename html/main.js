@@ -15,6 +15,14 @@ function showCorrectDiv() {
   }
 }
 
+function loadCreaOffre(){
+  window.location.href="form_offre-1.php";
+}
+
+function loadSesOffresPro(){
+  window.location.href="liste_offres_pro-1.php"; // temporaire
+}
+
 window.onload = function() {
     // Makes it so the light blue part of the header is a button
     const homeButton = document.getElementById("homeButtonID");
