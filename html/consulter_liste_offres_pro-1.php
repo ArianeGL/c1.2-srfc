@@ -42,9 +42,7 @@ try {
     <main id="clop">
         <div>
             <p>
-                Bonjour
-                <?php echo $_SESSION['identifiant'] //temporaire?>
-                , bienvenue sur votre compte professionnel
+                Bonjour <?php echo $_SESSION['identifiant']; ?>, bienvenue sur votre compte professionnel
             </p>
         </div>
         <button onclick="loadCreaOffre()" class="clopButton">Créer une offre</button>
