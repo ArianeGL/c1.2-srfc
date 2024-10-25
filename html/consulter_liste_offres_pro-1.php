@@ -40,7 +40,16 @@ try {
 
     <!-- Main content -->
     <main id="clop">
-
+        <div>
+            <p>
+                Bonjour
+                <?php echo $_SESSION['identifiant'] //temporaire?>
+                , bienvenue sur votre compte professionnel
+            </p>
+        </div>
+        <button onclick="loadCreaOffre()" class="clopButton">Créer une offre</button>
+        <button onclick="loadSesOffresPro()" class="clopButton">Afficher vos offres</button>
+        
         <div class="clopRecherche">
             <button class="searchButton"><img src="blabla.png" alt="Rechercher"></button>
             <input id="searchText" placeholder="Rechercher une offre"></input>
