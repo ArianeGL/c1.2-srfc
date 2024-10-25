@@ -104,7 +104,7 @@ $query1 = "SELECT email, motdepasse FROM " . NOM_SCHEMA . "._compteProfessionnel
                         }
                     } else if (isset($_SESSION["identifiant"])) {
                             ?> <script>
-                window.location = "consulter_liste_offres_pro-1.php";
+                window.location = "consulter_liste_offres_pro.php";
             </script> <?php  //Ligne a changer
                     } else { ?>
             <form action="connection_pro-3.php" method="post" enctype="multipart/form-data">

@@ -3,12 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/style_modifier_offre.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
+
+    <script src="main.js"></script>
+
+    <script src="scripts/image_preview.js"></script>
     <title>PACT - Cr&eacute;er une offre</title>
-    <script src="Main.js"></script>
 </head>
 
 <body>
+    <?php require_once "header_inc.html"; ?>
     <main>
         <h1>Cr&eacute;ation d'une offre</h1>
         <form method="post" action="form_offre_handler.inc.php" enctype="multipart/form-data" id="creation_offre">

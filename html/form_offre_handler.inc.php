@@ -19,10 +19,14 @@ function get_account_id()
 {
     global $dbh;
 
-    $query = "SELECT idcompte FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = '" . $_SESSION['identifiant'] . "';";
-    $id = $dbh->query($query);
+    try {
+        $query = "SELECT idcompte FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = '" . $_SESSION['identifiant'] . "';";
+        $id = $dbh->query($query)->fetch();
+    } catch (PDOException $e) {
+        throw $e;
+    }
 
-    return $id;
+    return $id['idcompte'];
 }
 
 /**
@@ -168,8 +172,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt = null;
                 break;
             case "visite":
-                if ($_POST['guidee'] == "oui") $guidee = true;
-                else $guidee = false;
+                if ($_POST['guidee'] == "oui") $guidee = TRUE;
+                else $guidee = FALSE;
                 $duree = $_POST['duree'];
 
                 $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_VISITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, estguidee, dureevisite) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :guidee, :dureevisite);";
@@ -184,8 +188,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":ville", $ville);
                 $stmt->bindParam(":codePost", $code_postal);
                 $stmt->bindParam(":resume", $resume);
-                $stmt->bindParam(":guidee", $guidee);
-                $stmt->bindParam(":duree", $duree);
+                $stmt->bindParam(":guidee", $guidee, PDO::PARAM_BOOL);
+                $stmt->bindParam(":dureevisite", $duree);
 
                 $stmt->execute();
                 $stmt = null;
@@ -219,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $nb_places = $_POST['nb_places'];
                 $duree = $_POST['duree'];
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_VISITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, placesspectacle, dureespectacle) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :nb_places, :duree);";
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_SPECTACLE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, placesspectacle, dureespectacle) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :nb_places, :duree);";
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(":id", $id);
@@ -259,12 +263,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
 
         //rediriger vers consultation avec les infos
+        echo "<script>location.href='./informations_offre-1.php?idoffre=" . $id . "'</script>";
 ?>
-        <form id="redirect" method="post" action="info_offre-1.php">
-            <?php
-            echo '<input type="hidden" name="idoffre" values="' . $id . '>';
-            ?>
-        </form>
 <?php
     } catch (PDOException $e) {
         die("SQL Query failed : " . $e->getMessage());

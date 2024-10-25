@@ -36,9 +36,9 @@
             global $dbh;
 
             $query = "SELECT idcompte FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = '" . $_SESSION['identifiant'] . "';";
-            $id = $dbh->query($query);
+            $id = $dbh->query($query)->fetch();
 
-            return $id;
+            return $id['idcompte'];
         }
 
         const IMAGE_DIR = "./images_importees/";

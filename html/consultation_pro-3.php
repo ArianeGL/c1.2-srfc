@@ -1,24 +1,22 @@
 <?php
-include('db_connection_inc.php');
+include('db_connection.inc.php');
+global $dbh;
 
-$conn = new PDO("host=$servername dbname=$dbname user=$username password=$password");
-
-if (!$conn) {
-    echo "Erreur de connexion à la base de données.";
-    exit;
+if (isset($_SESSION['identifiant'])) {
+    $email = $_SESSION['identifiant'];
+    $requeteCompte = $dbh->query('SELECT idcompte, email FROM sae._compte WHERE email = '.$email, PDO::FETCH_ASSOC);
+    $idCompte = $requeteCompte['idcompte'];
 }
 
-if (isset($_POST['idcompte'])) {
-    $idCompte = $_GET['idcompte'];
-}
+$queryCompte = 'SELECT * FROM '.NOM_SCHEMA.'._compte NATURAL JOIN '.NOM_SCHEMA.'._compteProfessionnel WHERE idcompte = :idcompte';
+$sthCompte = $dbh->prepare($queryCompte);
+$sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
+$sthCompte->execute();
+$count = $sthCompte->fetchColumn();
 
-$sql = "SELECT email, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, urlimage, denomination, iban,
-        FROM comptesProfessionnel 
-        WHERE idCompte = $1";
-$result = pg_query_params($conn, $sql, array($idCompte));
-
-if ($result && pg_num_rows($result) > 0) {
-    $row = pg_fetch_assoc($result);
+if ($count != 0) {
+    $rows = $sth1->fetchAll();
+    $row = $rows[0];
     $email = $row['email'];
     $adresse = $row['numadressecompte'] . " " . $row['ruecompte'];
     $ville = $row['villecompte'];
@@ -28,25 +26,9 @@ if ($result && pg_num_rows($result) > 0) {
     $IBAN = $row['iban'];
     $image = $row['urlimage'];
 } else {
-    http_response_code(404);
-    echo "
-    <html lang='fr'>
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Erreur 404 - Compte non trouvé</title>
-    </head>
-    <body>
-        <div class='error-page'>
-            <h1>404 - Compte non trouvé</h1>
-            <p>Le compte demandé n'existe pas.</p>
-        </div>
-    </body>
-    </html>";
-    exit;
+    ?> <script>window.location = "consultation_liste_offres_pro-1.php";</script> <?php
 }
 
-pg_close($conn);
 ?>
 
 <!DOCTYPE html>

@@ -1,6 +1,8 @@
 <?php
 require_once("db_connection.inc.php");
 
+global $dbh;
+
 if (isset($_GET['idoffre'])) {
     $offerId = $_GET['idoffre'];
     $queryOffer = 'SELECT * FROM sae._offre WHERE idoffre = :offerId';
@@ -58,10 +60,10 @@ if (isset($_GET['idoffre'])) {
 
                 require_once './pages-info-offres/activite.php';
 
-                break;       
-        
+                break;
+
             case "Restauration":
-                $queryOffreCategorisee = 'SELECT * FROM sae.restauration WHERE idoffre = :offerId'; 
+                $queryOffreCategorisee = 'SELECT * FROM sae.restauration WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();
@@ -78,7 +80,7 @@ if (isset($_GET['idoffre'])) {
                 require_once './pages-info-offres/restauration.php';
 
                 break;
-            
+
             case "Visite":
                 $queryOffreCategorisee = 'SELECT * FROM sae.visite WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
@@ -89,10 +91,10 @@ if (isset($_GET['idoffre'])) {
                 $duration = $offreCategorisee['dureevisite'];
                 $isGuided = $offreCategorisee['estguidee'];
 
-                require_once './pages-info-offres/visite.php';    
-            
+                require_once './pages-info-offres/visite.php';
+
                 break;
-            
+
             case "Parc attraction":
                 $queryOffreCategorisee = 'SELECT * FROM sae.parcattraction WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
@@ -107,7 +109,7 @@ if (isset($_GET['idoffre'])) {
                 require_once './pages-info-offres/parc-attraction.php';
 
                 break;
-                        
+
             case "Spectacle":
                 $queryOffreCategorisee = 'SELECT * FROM sae.spectacle WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
@@ -128,3 +130,4 @@ if (isset($_GET['idoffre'])) {
 } else {
     echo "No offer ID provided in the URL.";
 }
+
