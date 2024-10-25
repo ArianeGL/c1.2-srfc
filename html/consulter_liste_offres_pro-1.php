@@ -104,7 +104,7 @@ try {
 <script src="main.js"></script>
 <script>
     function loadInfoOffre(idoffre){
-        window.location.href=`info_offre-1.php?idoffre=${idoffre}`;
+        window.location.href=`informations_offre-1.php?idoffre=${idoffre}`;
     }
 
     alert(articles[0].firstElementChild.children[1].innerHTML);
