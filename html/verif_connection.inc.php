@@ -12,7 +12,8 @@ function valid_account()
         $isValid = false;
         $i = 0;
         while ($i < sizeof($res) && !$isValid) {
-            if ($_SESSION['identifiant'] == $res[$i]['email']);
+            if ($_SESSION['identifiant'] == $res[$i]['email']) $isValid = true;
+            $i++;
         }
     } catch (PDOException $e) {
         echo "Couldn't fetch accounts : " . $e->getMessage();
