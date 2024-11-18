@@ -105,6 +105,31 @@ function upload_images_offre($url, $id)
     $stmt->execute();
 }
 
+function bind_type_offre($id)
+{
+    if (isset($_POST['type'])) {
+        global $dbh;
+
+        switch ($_POST['type']) {
+            case 'premium':
+                $premium = "true";
+                $standard = "false";
+                break;
+            case 'standard':
+                $standard = "true";
+                $premium = "false";
+                break;
+        }
+        echo "<br>" . $premium . "<br>" . $standard;
+
+        $query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " SET estpremium = " . $premium . ", eststandard = " . $standard . " WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
     $id_compte = get_account_id();
     $titre = $_POST['titre'];
@@ -249,6 +274,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
         }
         echo "data imported";
 
+        bind_type_offre($id);
+
+        //importe les images
         $destUrl = IMAGE_DIR . $id;
         mkdir($destUrl, 0777, true);
         $files = $_FILES['images_offre'];
