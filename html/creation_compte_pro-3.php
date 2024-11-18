@@ -134,6 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (PDOException $e) {
         die("SQL Query error : " . $e->getMessage());
     }
+    $_SESSION['identifiant'] = $email;
 }
 ?>
 
