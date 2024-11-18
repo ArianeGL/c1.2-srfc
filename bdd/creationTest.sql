@@ -72,7 +72,7 @@ ALTER TABLE sae._facture
 
 CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
-   urlversimage  varchar(200)   NOT NULL,
+   urlversimage  varchar(100)   NOT NULL,
    idoffre       varchar(7)     NOT NULL
 );
 
@@ -123,7 +123,7 @@ ALTER TABLE sae._offre
 CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
    idoffre        varchar(7)     NOT NULL,
-   urlversplan    varchar(200)   NOT NULL,
+   urlversplan    varchar(100)   NOT NULL,
    nbattractions  integer        default(1),
    ageminparc     integer        default(0)
 );
@@ -178,7 +178,7 @@ ALTER TABLE sae._professionnelprive
 CREATE TABLE IF NOT EXISTS sae._restauration
 (
    idoffre        varchar(7)     NOT NULL,
-   urlverscarte   varchar(200)   NOT NULL,
+   urlverscarte   varchar(100)   NOT NULL,
    gammeprix      varchar(3)     default(0),
    petitdejeuner  boolean        default(false),
    dejeuner       boolean        default(false),
@@ -935,14 +935,6 @@ VALUES('Culture','Of-0007');
 
 -- Parc d'atraction
 
-INSERT INTO parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,urlversplan)
-VALUES('Of-0001','Le Parc du Tregor,','4','Route du Tregor',
-'Lannion',22300,5.00,'Co-0003',
-'Parc d''attractions tout publique sur le thème de la bretagne, activités et lieu de restauration. (Ce parc est fictif)',
-'https://thumbs.dreamstime.com/b/carte-de-ville-imaginaire-avec-parcelle-cadastrale-parc-public-et-terrain-vert-naturel-illustration-cadastre-320575928.jpg');
-
-
 INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
 denomination)
@@ -964,13 +956,13 @@ VALUES('Of-0008','Le Village Gaulois,','0','Parc du Radome',
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Francaise');
 INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Gastronomique');
+VALUES('Gastronaine');
+INSERT INTO sae._tagrestauration(nomtag)
+VALUES('Italieomique');
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Europeenne');
 INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Mexicaine');
-INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Italienne');
+VALUES('Mexicnne');
 
 INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
@@ -996,3 +988,72 @@ INSERT INTO sae._tagpourrestauration(nomtag,idoffre)
 VALUES('Francaise','Of-0009');
 INSERT INTO sae._tagpourrestauration(nomtag,idoffre)
 VALUES('Gastronomique','Of-0009');
+
+
+------------------------------------------------------------------------------------------------
+
+-- Tag d'une offre
+create or replace view sae.tagof AS
+  select * from sae._tag natural join sae._tagpouroffre;
+
+create or replace function sae.placerTagof()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    insert into sae._tag(nomtag)
+    values(NEW.nomtag);
+
+    insert into sae._tagpouroffre(nomtag,idoffre)
+    values(NEW.nomtag.NEW.idoffre);
+  RETURN NEW;
+      
+  ELSIF (TG_OP = 'UPDATE') THEN
+    UPDATE sae._tagpouroffre SET nomtag = NEW.nomtag
+    WHERE NEW.idoffre = idoffre;
+
+    RETURN NEW;
+  END IF;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_placerTagof
+  INSTEAD OF INSERT ON sae.tagof
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.placerTagof();
+
+-------------------------------------------------------------------------------------------
+
+-- Tag d'une offre
+create or replace view sae.tagre AS
+  select * from sae._tagrestauration natural join sae._tagpourrestauration;
+
+create or replace function sae.placerTagre()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    insert into sae._tagrestauration(nomtag)
+    values(NEW.nomtag);
+
+    insert into sae._tagpourrestauration(nomtag,idoffre)
+    values(NEW.nomtag.NEW.idoffre);
+  RETURN NEW;
+      
+  ELSIF (TG_OP = 'UPDATE') THEN
+    UPDATE sae._tagpourrestauration SET nomtag = NEW.nomtag
+    WHERE NEW.idoffre = idoffre;
+
+    RETURN NEW;
+  END IF;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_placerTagof
+  INSTEAD OF INSERT ON sae.tagof
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.placerTagof();
+
+-------------------------------------------------------------------------------------------
