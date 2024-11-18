@@ -45,10 +45,10 @@
 
         require_once "db_connection.inc.php";
         global $dbh;
+        require_once "verif_connection.inc.php";
 
         //$_SESSION['id'] = "Co-0004"; //test, ligne a supprimer
-
-        if (isset($_SESSION['identifiant'])) {
+        if (isset($_SESSION['identifiant']) && valid_account()) {
             $id_compte = get_account_id();
             $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idcompte = '" . $id_compte . "';";
 

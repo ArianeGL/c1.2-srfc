@@ -130,4 +130,3 @@ if (isset($_GET['idoffre'])) {
 } else {
     echo "No offer ID provided in the URL.";
 }
-

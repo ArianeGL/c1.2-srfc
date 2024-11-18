@@ -1,14 +1,16 @@
 <?php
-include('db_connection.inc.php');
+require_once "db_connection.inc.php";
 global $dbh;
 
-if (isset($_SESSION['identifiant'])) {
+require_once "verif_connection.inc.php";
+
+if (isset($_SESSION['identifiant']) && valid_account()) {
     $email = $_SESSION['identifiant'];
-    $requeteCompte = $dbh->query('SELECT idcompte, email FROM sae._compte WHERE email = '.$email, PDO::FETCH_ASSOC);
+    $requeteCompte = $dbh->query('SELECT idcompte, email FROM sae._compte WHERE email = ' . $email, PDO::FETCH_ASSOC);
     $idCompte = $requeteCompte['idcompte'];
 }
 
-$queryCompte = 'SELECT * FROM '.NOM_SCHEMA.'._compte NATURAL JOIN '.NOM_SCHEMA.'._compteProfessionnel WHERE idcompte = :idcompte';
+$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
 $sthCompte->execute();
@@ -26,13 +28,16 @@ if ($count != 0) {
     $IBAN = $row['iban'];
     $image = $row['urlimage'];
 } else {
-    ?> <script>window.location = "consultation_liste_offres_pro-1.php";</script> <?php
-}
+?> <script>
+        window.location = "consultation_liste_offres_pro-1.php";
+    </script> <?php
+            }
 
-?>
+                ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +56,7 @@ if ($count != 0) {
 </head>
 
 <body>
-<header>
+    <header>
         <div id="homeButtonID" class="homeButton">
             <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
             <h2>PACT</h2>
@@ -62,17 +67,17 @@ if ($count != 0) {
                 <button class="buttons header-button1">
                     <h4>Offres</h4>
                 </button>
-                
+
                 <!-- Button for back office -->
                 <button class="buttons header-button2">
                     <h4>Factures</h4>
                 </button>
-                
+
                 <!-- Button for front office -->
                 <button style="display: none;" class="buttons header-button2">
                     <h4>R&eacute;cent</h4>
                 </button>
-                
+
                 <button class="buttons header-button3">
                     <h4>Compte</h4>
                 </button>
@@ -85,54 +90,55 @@ if ($count != 0) {
         </div>
     </header>
     <main id="box">
-    <section class="profile">
-        <div class="profile-header">
-            <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>
-        </div>
-        <div class="profile-row">
-            <form>
-                <div class="input-group">
-                    <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" readonly>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="telephone" value=<?php echo htmlspecialchars($telephone) ?>readonly>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse)?>" readonly>
-                </div>
-
-                <div id="code-postal-ville">
+        <section class="profile">
+            <div class="profile-header">
+                <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>
+            </div>
+            <div class="profile-row">
+                <form>
                     <div class="input-group">
-                        <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" readonly>
+                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
+                        <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" readonly>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
-                </div>
-            </form>
+                    <div class="input-group">
+                        <input type="text" id="telephone" value=<?php echo htmlspecialchars($telephone) ?>readonly>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse) ?>" readonly>
+                    </div>
+
+                    <div id="code-postal-ville">
+                        <div class="input-group">
+                            <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" readonly>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
+                    </div>
+                </form>
 
                 <div class="actions-profil">
-            <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
-            <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
-            <button id="bouton-supprimer" type="button">Supprimer le compte</button>
-        </div>
+                    <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
+                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
+                    <button id="bouton-supprimer" type="button">Supprimer le compte</button>
+                </div>
             </div>
-            
+
         </section>
     </main>
     <?php require_once "footer_inc,html"; ?>
 
 </body>
 <script src="main.js"></script>
+
 </html>
