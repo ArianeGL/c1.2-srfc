@@ -209,4 +209,28 @@ footer {
 main {
     background: white;
     /* CSS FOR THE MAIN GOES HERE */
+    text-align: center;
+}
+
+#creation_offre {
+    display: flex;
+    flex-direction: column;
+}
+
+creation_offre > div > input{
+    width: 45%;
+    height: 3em;
+    border-radius: 25px;
+}
+
+#creation_offre > input{
+    width: 45%;
+    height: 3em;
+    border-radius: 25px;
+}
+
+creeation_offre > div > select{
+    width: 45%;
+    height: 3em;
+    border-radius: 25px;
 }
