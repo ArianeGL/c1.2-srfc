@@ -54,7 +54,6 @@
                         <option value="premium">Premium</option>
                     </select>
 
-                    <br>
                 <?php } ?>
                 <select name="categorie" id="categorie" onchange="detect_category()">
                     <option value="" disabled selected hidden>Cat&eacute;gorie *</option>
@@ -64,28 +63,25 @@
                     <option value="parc_attractions">Parc d'attractions</option>
                     <option value="spectacle">Spectacle</option>
                 </select>
-                <br>
                 <div id="depends_select"></div>
 
-                <input type="text" name="num_addresse" id="num_addresse" placeholder="Num&eacute;ro d'addresse *" required>
-                <input type="text" name="rue_addresse" id="rue_addresse" placeholder="Addresse *" required>
-                <br>
-                <input type="text" name="ville" id="ville" placeholder="Ville *" required>
-                <input type="text" inputmode="numeric" name="code_postal" id="code_postal" placeholder="Code postal *" maxlength="5" required>
-                <br>
+                <div id="addresse">
+                    <input type="text" name="num_addresse" id="num_addresse" placeholder="Num&eacute;ro d'addresse *" required>
+                    <input type="text" name="rue_addresse" id="rue_addresse" placeholder="Addresse *" required>
+                </div>
+                <div id="ville_num">
+                    <input type="text" name="ville" id="ville" placeholder="Ville *" required>
+                    <input type="text" inputmode="numeric" name="code_postal" id="code_postal" placeholder="Code postal *" maxlength="5" required>
+                </div>
 
-                <input type="text" name="telephone" id="telephone" placeholder="T&eacute;l&eacute;phone">
+                <input type="text" name="telephone" id="telephone" placeholder="T&eacute;l&eacute;phone" maxlength="10">
                 <input type="text" name="site_web" id="site_web" placeholder="Site Web">
-                <br>
 
                 <input type="text" name="resume" id="resume" placeholder="R&eacute;sum&eacute; *" required>
-                <br>
 
-                <input type="text" name="description" id="description" placeholder="Description *" required>
-                <br>
+                <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
 
                 <input type="text" name="tags" id="tags" placeholder="Tags">
-                <br>
 
                 <script src="scripts/image_preview.js"></script>
                 <img id="image_preview" src="" alt="Illustration de l'offre">
