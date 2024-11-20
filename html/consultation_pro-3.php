@@ -1,33 +1,43 @@
 <?php
+session_start();
 require_once "db_connection.inc.php";
 global $dbh;
 
 require_once "verif_connection.inc.php";
 
+print_r ($_SESSION['identifiant']);
 if (isset($_SESSION['identifiant']) && valid_account()) {
     $email = $_SESSION['identifiant'];
-    $requeteCompte = $dbh->query('SELECT idcompte, email FROM sae._compte WHERE email = ' . $email, PDO::FETCH_ASSOC);
-    $idCompte = $requeteCompte['idcompte'];
-}
+    $requeteCompte = $dbh->prepare("SELECT idcompte, email FROM sae._compte WHERE email = '" . $email."';"); //, PDO::FETCH_ASSOC
+    $requeteCompte->execute();
+    //$idCompte = $requeteCompte['idcompte'];
+    $idCompte = $requeteCompte->fetch(PDO::FETCH_ASSOC)["idcompte"];
 
-$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel WHERE idcompte = :idcompte';
+}else{
+    ?> <script>
+        window.location = "connection_pro-3.php";
+    </script> <?php
+            }
+
+$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
 $sthCompte->execute();
-$count = $sthCompte->fetchColumn();
+//$count = $sthCompte->fetchColumn();
+$count = 5;
+$compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
 
-if ($count != 0) {
-    $rows = $sth1->fetchAll();
-    $row = $rows[0];
-    $email = $row['email'];
-    $adresse = $row['numadressecompte'] . " " . $row['ruecompte'];
-    $ville = $row['villecompte'];
-    $codePostal = $row['codepostalcompte'];
-    $telephone = $row['telephone'];
-    $denomination = $row['denomination'];
-    $IBAN = $row['iban'];
-    $image = $row['urlimage'];
-} else {
+if ($compte) {
+    //$row = $rows[0];
+    $email = $compte["email"];
+    $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
+    $ville = $compte['villecompte'];
+    $codePostal = $compte['codepostalcompte'];
+    $telephone = $compte['telephone'];
+    $denomination = $compte['denomination'];
+    $IBAN = $compte['iban'];
+    $image = $compte['urlimage'];
+} else {    
 ?> <script>
         window.location = "consultation_liste_offres_pro-1.php";
     </script> <?php
@@ -105,7 +115,7 @@ if ($count != 0) {
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="telephone" value=<?php echo htmlspecialchars($telephone) ?>readonly>
+                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" readonly>
                     </div>
 
                     <div class="input-group">
@@ -136,7 +146,7 @@ if ($count != 0) {
 
         </section>
     </main>
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 <script src="main.js"></script>
