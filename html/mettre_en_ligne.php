@@ -11,11 +11,11 @@ if (isset($_GET['idoffre'])) {
     if (isset($_GET['action']) && $_GET['action'] === 'mettreHorsLigne') {
         try {
 
-            $checkSql = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . "WHERE idoffre = :idoffre";
+            $checkSql = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " WHERE idoffre = :idoffre";
             $checkStmt = $dbh->prepare($checkSql);
             $checkStmt->execute(['idoffre' => $idOffre]);
             $count = $checkStmt->fetchColumn();
-            echo $count;
+            print_r($count);
 
             if ($count > 0) {
                 $sql = "UPDATE " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " SET enligne = false WHERE idoffre = :idoffre";
