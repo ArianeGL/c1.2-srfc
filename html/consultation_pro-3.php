@@ -1,23 +1,26 @@
 <?php
 require_once "db_connection.inc.php";
 global $dbh;
-
+session_start();
 require_once "verif_connection.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
     $email = $_SESSION['identifiant'];
-    $requeteCompte = $dbh->query('SELECT idcompte, email FROM sae._compte WHERE email = ' . $email, PDO::FETCH_ASSOC);
-    $idCompte = $requeteCompte['idcompte'];
+    $requeteCompte = $dbh->prepare('SELECT idcompte, email FROM sae._compte WHERE email = :email');
+    $requeteCompte->bindParam(':email', $email, PDO::PARAM_STR);
+    $requeteCompte->execute();
+    $result = $requeteCompte->fetch(PDO::FETCH_ASSOC);
+    $idCompte = $result['idcompte'];
 }
 
 $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
 $sthCompte->execute();
-$count = $sthCompte->fetchColumn();
+$count = $sthCompte->rowCount();
 
 if ($count != 0) {
-    $rows = $sth1->fetchAll();
+    $rows = $sthCompte->fetchAll();
     $row = $rows[0];
     $email = $row['email'];
     $adresse = $row['numadressecompte'] . " " . $row['ruecompte'];
@@ -29,7 +32,7 @@ if ($count != 0) {
     $image = $row['urlimage'];
 } else {
 ?> <script>
-        window.location = "consultation_liste_offres_pro-1.php";
+        window.location = "connection_pro-3.php";
     </script> <?php
             }
 
@@ -136,7 +139,7 @@ if ($count != 0) {
 
         </section>
     </main>
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 <script src="main.js"></script>
