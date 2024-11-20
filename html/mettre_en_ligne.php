@@ -1,15 +1,24 @@
 <?php
-include 'connect_params.php';
+include 'db_connection.inc.php';
+echo "<pre>";
+print_r($_GET);
+echo "</pre>";
 
-
-if (isset($_POST['idoffre'])) {
-    $idOffre = $_POST['idoffre'];
+if (isset($_GET['idoffre'])) {
+    $idOffre = $_GET['idoffre'];
     
-    if (isset($_POST['action']) && $_POST['action'] === 'mettreHorsLigne') {
+    if (isset($_GET['action']) && $_GET['action'] === 'mettreHorsLigne') {
         try {
 
-            $sql = "UPDATE _offre SET horsLigne = true WHERE idoffre = :idoffre";
-            $stmt = $pdo->prepare($sql);
+            $checkSql = "SELECT COUNT(*) FROM parcattraction WHERE idoffre = :idoffre";
+            $checkStmt = $dbh->prepare($checkSql);
+            $checkStmt->execute(['idoffre' => $idOffre]);
+            $count = $checkStmt->fetchColumn();
+
+            if ($count > 0) {
+                $sql = "UPDATE " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " SET enligne = false WHERE idoffre = :idoffre";
+                $stmt = $dbh->prepare($sql);
+            }
             
             // Exécution de la requête avec le paramètre
             $success = $stmt->execute(['idoffre' => $idOffre]);
@@ -23,7 +32,7 @@ if (isset($_POST['idoffre'])) {
         } catch (PDOException $e) {
             echo "<p>Erreur lors de la mise hors-ligne de l'offre : " . $e->getMessage() . "</p>";
         }
-    } elseif (isset($_POST['action']) && $_POST['action'] === 'annuler') {
+    } elseif (isset($_GET['action']) && $_GET['action'] === 'annuler') {
         header("Location: information_offre-1.php");
         exit;
     }
@@ -35,6 +44,7 @@ if (isset($_POST['idoffre'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="styles/consultation.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,8 +59,8 @@ if (isset($_POST['idoffre'])) {
     <p id="red-text">Attention ! L’offre sera visible de tous sur le site</p>
     <p>Voulez vous vraiment mettre l’offre en ligne ?</p>
 
-    <form class="pop-up" method="POST" action="information_offre-1.php">
-        <input type="hidden" name="idOffre" value="<?php echo htmlspecialchars($idOffre); ?>">
+    <form class="pop-up" method="GET" action="informations_offre-1.php">
+        <input type="hidden" name="idoffre" value="<?php echo htmlspecialchars($idOffre); ?>">
         <button type="submit" class="big-button"id="bouton-supprimer" name="action" value="mettreHorsLigne">Mettre hors-ligne</button>
         <button type="submit" class="big-button"id= "bouton-modifier" name="action" value="annuler">Annuler</button>
     </form>
