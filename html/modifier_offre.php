@@ -11,14 +11,39 @@ if (isset($_POST["titre"])) {
     $post_code_postal = $_POST['code_postal'];
     $post_resume = $_POST['resume'];
     $post_idoffre = $_POST['idoffre'];
+    $post_prixmin = $_POST['prixmin'];
+    $post_datedebut = $_POST['datedebut'];
+    $post_datefin = $_POST['datefin'];
 
+    switch($_POST["categorie"]){
+        case "Activite" :
+            $table = "activite";
+            break;
+        case "Visite" :
+            $table = "visite";
+            break;
+        case "Parc Attraction";
+            $table = "parcattraction";
+            break;
+        case "Spectacle" :
+            $table = "spectacle";
+            break;
+        case "Restauration" :
+            $table = "restauration";
+            break;
+        default :
+            echo("erreur sur la catégorie");
+    }
     $query_envoie = "UPDATE " . NOM_SCHEMA . "._offre
                     SET nomoffre = :post_titre,
                         numadresse = :post_numadresse,
                         rueoffre = :post_rueoffre,
                         villeoffre = :post_ville,
                         codepostaloffre = :post_code_postal,
-                        resume = :post_resume 
+                        resume = :post_resume,
+                        prixmin = :post_prixmin,
+                        datedebut = :post_datedebut,
+                        datefin = :post_datefin
                         WHERE idoffre = '" . $post_idoffre . "';";
     $stmt_envoie = $dbh->prepare($query_envoie);
     $stmt_envoie->bindParam(':post_titre', $post_titre);
@@ -27,6 +52,9 @@ if (isset($_POST["titre"])) {
     $stmt_envoie->bindParam(':post_ville', $post_ville);
     $stmt_envoie->bindParam(':post_code_postal', $post_code_postal);
     $stmt_envoie->bindParam(':post_resume', $post_resume);
+    $stmt_envoie->bindParam(':post_prixmin',$post_prixmin);
+    $stmt_envoie->bindparam(':post_datedebut',$post_datedebut);
+    $stmt_envoie->bindparam(':post_datefin',$post_datefin);
     $stmt_envoie->execute();
 
 
@@ -89,31 +117,29 @@ if (isset($_POST["titre"])) {
     $stmt_codepostal->execute();
     $codepostal = $stmt_codepostal->fetch(PDO::FETCH_ASSOC)["codepostaloffre"];
 
-
-    /*$query_telephone = "SELECT telephone FROM ".NOM_SCHEMA."_offre
-                        INNER JOIN _compte ON _offre.idcompte = _compte.idcompte
-                        WHERE idoffre = '$idoffre'";
-    $stmt_telephone = $dbh->prepare($query_telephone);
-    $stmt_telephone->execute();
-    $telephone = $stmt_telephone->fetch(PDO::FETCH_ASSOC)["telephone"];*/
-
-    /*$query_denomination = "SELECT denomination FROM ".NOM_SCHEMA."_offre
-                        INNER JOIN _compteprofessionnel ON _offre.idcompte = _compteprofessionel.idcompte
-                        WHERE idoffre = '$idoffre''";
-    $stmt_denomination = $dbh->prepare($query_denomintion);
-    $denomination = $stmt_denomination->execute();*/
-
-    /*$query_IBAN = "SELECT IBAN FROM ".NOM_SCHEMA."_offre
-                    INNER JOIN _professionnelprive ON _offre.idcompte = _professionelprive.idcompte
-                    WHERE idoffre = '$idoffre''";
-    $stmt_IBAN = $dbh->prepare($query_IBAN);
-    $IBAN = $stmt_IBAN->execute();*/
-
     $query_resume = "SELECT resume FROM " . NOM_SCHEMA . "._offre
                     WHERE _offre.idoffre = '$idoffre'";
     $stmt_resume = $dbh->prepare($query_resume);
     $stmt_resume->execute();
     $resume = $stmt_resume->fetch(PDO::FETCH_ASSOC)["resume"];
+
+    $query_prixmin = "SELECT prixmin FROM " . NOM_SCHEMA . "._offre
+                    WHERE _offre.idoffre = '$idoffre'";
+    $stmt_prixmin = $dbh->prepare($query_prixmin);
+    $stmt_prixmin->execute();
+    $prixmin = $stmt_prixmin->fetch(PDO::FETCH_ASSOC)["prixmin"];
+
+    $query_datedebut = "SELECT datedebut FROM " . NOM_SCHEMA . "._offre
+                    WHERE _offre.idoffre = '$idoffre'";
+    $stmt_datedebut = $dbh->prepare($query_datedebut);
+    $stmt_datedebut->execute();
+    $datedebut = $stmt_datedebut->fetch(PDO::FETCH_ASSOC)["datedebut"];
+
+    $query_datefin = "SELECT datefin FROM " . NOM_SCHEMA . "._offre
+                    WHERE _offre.idoffre = '$idoffre'";
+    $stmt_datefin = $dbh->prepare($query_datefin);
+    $stmt_datefin->execute();
+    $datefin = $stmt_datefin->fetch(PDO::FETCH_ASSOC)["datefin"];
 
     /*
     $query_description = "SELECT description FROM ".NOM_SCHEMA."_offre
@@ -158,50 +184,58 @@ if (isset($_POST["titre"])) {
         <main id="top">
             <h1>Modifier une offre</h1>
             <form action="modifier_offre.php" method="POST" enctype="multipart/form-data" id="modifier_offre">
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="titre">Titre : </label>
                         <input name="titre" type="text" id="titre" value="<?php echo $titre ?>">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="catégorie">Catégorie : </label>
                         <select name="categorie" id="categorie">
-                            <option value="activite" <?php //if(!strcmp($select_categorie,"activite")) echo "selected"
-                                                        ?>>Activité</option>
-                            <option value="restauration" <?php //if(!strcmp($select_categorie,"restauration")) echo "selected"
-                                                            ?>>Réstauration</option>
-                            <option value="visite" <?php //if(!strcmp($select_categorie,"visite")) echo "selected"
-                                                    ?>>Visite</option>
-                            <option value="parc_attractions" <?php //if(!strcmp($select_categorie,"parc_attraction")) echo "selected"
-                                                                ?>>Parc d'attractions</option>
-                            <option value="spectacle" <?php //if(!strcmp($select_categorie,"spectacle")) echo "selected"
-                                                        ?>>Spectacle</option>
+                            <option value="activite" <?php if(!strcmp($categorie,"activite")) echo "selected"?>>Activité</option>
+                            <option value="restauration" <?php if(!strcmp($categorie,"restauration")) echo "selected"?>>Restauration</option>
+                            <option value="visite" <?php if(!strcmp($categorie,"visite")) echo "selected"?>>Visite</option>
+                            <option value="parc_attractions" <?php if(!strcmp($categorie,"parc_attraction")) echo "selected"?>>Parc d'attractions</option>
+                            <option value="spectacle" <?php if(!strcmp($categorie,"spectacle")) echo "selected"?>>Spectacle</option>
                         </select>
-                    </div>
+                    
                 </div>
                 <!--<textarea name="tags" id="tags"><?php echo $tags ?></textarea>-->
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="code_postal">Code postal : </label>
                         <input name="code_postal" type="numeric" id="code_postal" value="<?php echo $codepostal ?>" required maxlenght="5">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="ville">Ville : </label>
                         <input name="ville" type="text" id="ville" value="<?php echo $ville ?>">
-                    </div>
+                    
                 </div>
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="numadresse">Numéro de rue : </label>
                         <input name="numadresse" type="text" id="adresse" value="<?php echo $numadresse ?>">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="rueoffre">Rue : </label>
                         <input name="rueoffre" type="text" id="rueoffre" value="<?php echo $rueoffre ?>">
-                    </div>
+                    
                 </div>
-                <div class="element_form">
-
+                <div class="element_form row-form">
+                    
+                        <label for="prixmin">prix minimal : </label>
+                        <input type="numeral" id="prixmin" name="prixmin"  value="<?php echo $prixmin ?>" required>
+                    
+                </div>
+                <div class="element_form row-form">
+                    
+                        <label for="datedebut">Date de debut</label>
+                        <input type="date" id="datedebut" name="datedebut" value="<?php echo $datedebut ?>">
+                    
+                    
+                        <label for="datefin">Date de fin</label>
+                        <input type="date" id="datefin" name="datefin" value="<?php echo $datefin ?>">
+                    
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
                 <div class="boutonimages">
