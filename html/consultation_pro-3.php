@@ -5,6 +5,19 @@ global $dbh;
 
 require_once "verif_connection.inc.php";
 
+function est_prive($email)
+{
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_PRO_PRIVE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['iban'])) $ret = true;
+
+    return $ret;
+}
+
 print_r ($_SESSION['identifiant']);
 if (isset($_SESSION['identifiant']) && valid_account()) {
     $email = $_SESSION['identifiant'];
@@ -19,7 +32,12 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     </script> <?php
             }
 
-$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte WHERE idcompte = :idcompte';
+if (est_prive($email)){
+    $schemaCompte=VUE_PRO_PRIVE;
+}else{
+    $schemaCompte=VUE_PRO_PUBLIQUE;
+}
+$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
 $sthCompte->execute();
