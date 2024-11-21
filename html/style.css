@@ -1,4 +1,4 @@
-/* IF YOU NEED TO CHANGE SOMETHING FROM THE GIVEN CODE PLS ASK ME BEFORE */
+/* IF YOU NEED TO CHANGE SOMETHING FROM THE GIVEN CODE PLS ASK ME BEFORE */ss
 
 :root {
     --red: #CC0000; /* Accent */
@@ -209,64 +209,5 @@ footer {
 main {
     background: white;
     /* CSS FOR THE MAIN GOES HERE */
-    text-align: center;
-}
-
-#creation_offre {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#creation_offre > div > input{
-    width: 45%;
-    border-radius: 25px;
-    margin: 10px;
-    padding: 10px;
-}
-
-#creation_offre > input{
-    width: 45%;
-    border-radius: 25px;
-    margin: 10px;
-    padding: 10px;
-}
-
-#creeation_offre > div > select{
-    width: 45%;
-    height: 3em;
-    border-radius: 25px;
-}
-
-#creeation_offre > select{
-    width: 45%;
-    height: 3em;
-    border-radius: 25px;
-}
-
-#depends_select {
-    margin: 10px;
-}
-
-#depends_select > input {
-    margin: 10px;
-    padding: 10px;
-}
-
-#addresse {
-    display: flex;
-}
-
-#ville_num {
-    display: flex;
-}
-
-#description {
-    height: 20em;
-    width: 45%;
-    resize: none;
-    border-radius: 25px;
-    padding-left: 10px;
-    padding-top: 10px;
 }
 
