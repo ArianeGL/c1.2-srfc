@@ -63,7 +63,7 @@
                 <div class="offre">
                     <div class="upper_row">
                         <p><?php echo $offre['categorie']; ?></p>
-                        <p><?php echo $offre['nomoffre']; ?></p>
+                        <p id="titre_offre"><?php echo $offre['nomoffre']; ?></p>
                     </div>
                     <?php
                     $image = scandir(IMAGE_DIR . $offre['idoffre'])[2]; //recupere la premiere image dans le dossier contenant les images de l'offre
