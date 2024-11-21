@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/header_footer.css">
     <link rel="stylesheet" href="./styles/liste_offres_pro.css">
+    <link rel="stylesheet" href="./styles/recherche.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
 
     <script src="main.js"></script>
-
+    <script src="recherche.js" defer></script>
+    <script src="levenshtein.js"></script>
     <title>PACT - Mes Offres</title>
 </head>
 
@@ -58,27 +60,48 @@
                 die("SQL Query error : " . $e->getMessage());
             }
 
-            foreach ($offres as $offre) {
-        ?>
-                <div class="offre">
-                    <div class="upper_row">
-                        <p><?php echo $offre['categorie']; ?></p>
-                        <p><?php echo $offre['nomoffre']; ?></p>
-                    </div>
-                    <?php
-                    $image = scandir(IMAGE_DIR . $offre['idoffre'])[2]; //recupere la premiere image dans le dossier contenant les images de l'offre
-                    ?>
-                    <div class="lower_row">
-                        <img src="<?php echo IMAGE_DIR . $offre['idoffre'] . "/" . $image; ?>" alt="apercu de l'offre">
-                        <div class="info">
-                            <p><?php echo $offre['villeoffre']; ?></p>
-                            <button class="button-facture" type="button">Factures</button>
-                        </div>
-                        <p><?php echo $offre['resume']; ?></p>
-                    </div>
+            ?> 
+            <div class="barre_recherche">
+            <input type="text" id="rechercheOffre" placeholder="Rechercher offre..." onkeyup="rechercheOffre()">
+            <div class="filtre">
+                <!-- A ajouter dans le select pour les filtres : id="SelectionFiltre" onchange="filtreOffre()" -->
+                <select>
+                    <option value="" disabled selected>FILTRES</option>
+                    <option value="categorie1">Filtre 1</option>
+                    <option value="categorie2">Filtre 2</option>
+                </select>
+            </div>
+            <div class="tri">
+                <!-- A ajouter dans le select pour les tris : id="SelectionTri" onchange="triOffre()" -->
+                <select>
+                    <option value="" disabled selected>TRIS</option>
+                    <option value="">Tri 1</option>
+                    <option value="">Tri 2</option>
+                </select>
+            </div>
+        </div>
+        <div id="listeOffres">
+    <?php foreach ($offres as $offre) { ?>
+        <div class="offre">
+            <div class="upper_row">
+                <p><?php echo $offre['categorie']; ?></p>
+                <p class="nom_offre"><?php echo $offre['nomoffre']; ?></p>
+            </div>
+            <?php
+            $image = scandir(IMAGE_DIR . $offre['idoffre'])[2]; // Récupère la première image du dossier contenant les images de l'offre
+            ?>
+            <div class="lower_row">
+                <img src="<?php echo IMAGE_DIR . $offre['idoffre'] . "/" . $image; ?>" alt="apercu de l'offre">
+                <div class="info">
+                    <p><?php echo $offre['villeoffre']; ?></p>
+                    <button class="button-facture" type="button">Factures</button>
                 </div>
-        <?php
-            }
+                <p><?php echo $offre['resume']; ?></p>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+<?php
         } else {
             echo "<script>location.href='./1_connexionPro.php'</script>";
         }
@@ -87,7 +110,7 @@
 
 
     <?php require_once "footer_inc,html"; ?>
-
+    <script src="recherche.js" defer></script>
 </body>
 
 </html>
