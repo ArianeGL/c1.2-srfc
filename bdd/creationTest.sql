@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS sae._activite
 (
    idoffre        varchar(7)   NOT NULL,
    agerequis      integer      default(0),
-   dureeactivite  varchar(16)   NOT NULL
+   dureeactivite  varchar(999)   NOT NULL
 );
 
 ALTER TABLE sae._activite
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS sae._compte
    villecompte       varchar(30)   NOT NULL,
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
-   urlimage          varchar(200)  default('/docker/sae/data/html/images/photoProfileDefault.png')
+   urlimage          varchar(200)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png')
 );
 
 ALTER TABLE sae._compte
@@ -57,18 +57,6 @@ ALTER TABLE sae._compteprofessionnel
    ADD CONSTRAINT _compteprofessionnel_pkey
    PRIMARY KEY (idcompte);
 
-CREATE TABLE IF NOT EXISTS sae._facture
-(
-   idfacture        varchar(7)   NOT NULL,
-   prixfacture      real         default(0),
-   datefacturation  date         default(CURRENT_DATE),
-   idoffre          varchar(7)   NOT NULL,
-   idcompte         varchar(7)   NOT NULL
-);
-
-ALTER TABLE sae._facture
-   ADD CONSTRAINT _facture_pkey
-   PRIMARY KEY (idfacture);
 
 CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
@@ -98,21 +86,21 @@ CREATE TABLE IF NOT EXISTS sae._offre
    rueoffre         varchar(50)   NOT NULL,
    villeoffre       varchar(50)   NOT NULL,
    codepostaloffre  integer       NOT NULL,
-   nbavis           integer       default(0),
-   note             real          default(0),
-   prixmin          real          default(0),
+   nbavis           integer       default(0) not null,
+   note             real          default(0) not null,
+   prixmin          real          default(0) not NULL,
    datedebut        date          ,
    datefin          date          ,
-   enligne          boolean       default(true),
+   enligne          boolean       default(true) not null,
    datepublication  date          default(CURRENT_DATE),
    dernieremaj      date          default(CURRENT_DATE),
-   estpremium       boolean       default(false),
-   eststandard      boolean       default(false),
-   estgratuit       boolean       default(true),
-   blacklistdispo   integer       default(0),
+   estpremium       boolean       default(false) not null,
+   eststandard      boolean       default(false) not null,
+   estgratuit       boolean       default(true) not null,
+   blacklistdispo   integer       default(0) not null,
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(9999) NOT NULL,
-   description      varchar(9999) ,
+   description      varchar(9999) default(0),
    accesibilite     varchar(999)  default('non adapte pour personne a mobilite reduite')
 );
 
@@ -179,7 +167,7 @@ CREATE TABLE IF NOT EXISTS sae._restauration
 (
    idoffre        varchar(7)     NOT NULL,
    urlverscarte   varchar(100)   NOT NULL,
-   gammeprix      varchar(3)     default(0),
+   gammeprix      varchar(3)     NOT NULL,
    petitdejeuner  boolean        default(false),
    dejeuner       boolean        default(false),
    diner          boolean        default(false),
@@ -284,6 +272,35 @@ CREATE TABLE IF NOT EXISTS sae._attraction
    idoffre        varchar(7)    NOT NULL REFERENCES sae._parcattraction(idoffre)
 );
 
+-----------------------------------------------------------------------
+-- SPRINT 2 AVIS + FACTURE
+
+CREATE TABLE IF NOT EXISTS sae._facture
+(
+  idfacture   varchar(7) PRIMARY KEY,
+  prixfacture real not null,
+  datefacture date not null DEFAULT(CURRENT_DATE),
+  idoffre     varchar(7) REFERENCES sae._offre(idoffre)
+);
+
+CREATE TABLE IF NOT EXISTS sae._avis
+(
+  idavis varchar(7) PRIMARY KEY,
+  idoffre varchar(7) REFERENCES sae._offre(idoffre),
+  idcompte varchar(7) REFERENCES sae._comptemembre(idcompte),
+  messagea varchar(9999) not null,
+  note real not null,
+  nblike integer not null,
+  nbdislike integer not null,
+  blacklist boolean not null,
+  signale boolean not null
+);
+
+
+
+-----------------------------------------------------------------------
+
+
 ALTER TABLE sae._attraction
    ADD CONSTRAINT _attraction_pkey
    PRIMARY KEY (idattraction);
@@ -295,10 +312,6 @@ ALTER TABLE sae._comptemembre
 ALTER TABLE sae._compteprofessionnel
   ADD CONSTRAINT _compteprofessionnel_idcompte_fkey
   FOREIGN KEY (idcompte) REFERENCES sae._compte(idcompte);
-
-ALTER TABLE sae._facture
-  ADD CONSTRAINT _facture_idcompte_fkey
-  FOREIGN KEY (idcompte) REFERENCES sae._professionnelprive(idcompte);
 
 ALTER TABLE sae._imageoffre
   ADD CONSTRAINT _imageoffre_idoffre_fkey
@@ -340,6 +353,9 @@ create or replace function sae.createMembre()
   AS
 $$
 BEGIN
+  if (NEW.urlimage is null) THEN
+    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+  end if;
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
@@ -430,14 +446,46 @@ create or replace function sae.createUpdateSpectacle()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
+    if (NEW.nbavis is null) then
+      NEW.nbavis = 0;
+    end if;
+    if (NEW.note is null) then
+      NEW.note = 0;
+    end if;
+    if (NEW.prixmin is null) THEN
+      NEW.prixmin = 0;
+    end if;
+    if (NEW.enligne is null) THEN 
+      NEW.enligne = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.estpremium = false;
+    end if;
+    if (NEW.eststandard is null) THEN
+      NEW.eststandard = false;
+    end if;
+    if (NEW.estgratuit is null) THEN
+      NEW.estgratuit = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.blacklistdispo is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.accesibilite is null) THEN
+      NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
+    end if;
+
+
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,estpremium,eststandard,estgratuit,idcompte,
-                              resume,description,accesibilite)
+                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
     values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite);
+            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
     insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
@@ -480,7 +528,7 @@ CREATE OR REPLACE TRIGGER tg_createUpdateSpectacle
         
 
 -- Parc d'attraction
-create or replace view sae.parcAttraction AS
+create or replace view sae.parcattraction AS
   select * from sae._offre natural join sae._parcattraction;
 
 create or replace function sae.createUpdateParcAttraction()
@@ -489,15 +537,50 @@ create or replace function sae.createUpdateParcAttraction()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
+    if (NEW.nbavis is null) then
+      NEW.nbavis = 0;
+    end if;
+    if (NEW.note is null) then
+      NEW.note = 0;
+    end if;
+    if (NEW.prixmin is null) THEN
+      NEW.prixmin = 0;
+    end if;
+    if (NEW.enligne is null) THEN 
+      NEW.enligne = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.estpremium = false;
+    end if;
+    if (NEW.eststandard is null) THEN
+      NEW.eststandard = false;
+    end if;
+    if (NEW.estgratuit is null) THEN
+      NEW.estgratuit = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.blacklistdispo is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.accesibilite is null) THEN
+      NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
+    end if;
+
+
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,estpremium,eststandard,estgratuit,idcompte,
-                              resume,description,accesibilite)
-    values(NEW.idoffre,'Parc attraction',NEW.nomoffre,NEW.numadresse,
+                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+    values(NEW.idoffre,'Parc Attraction',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite);
+            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
+  if (NEW.nbattractions is null) THEN
+    NEW.nbattractions = 1;
+  end if;
   insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
 
@@ -534,7 +617,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateParcAttraction
-  INSTEAD OF INSERT ON sae.parcAttraction
+  INSTEAD OF INSERT ON sae.parcattraction
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateParcAttraction();
 
@@ -549,15 +632,50 @@ create or replace function sae.createUpdateVisite()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
+    if (NEW.nbavis is null) then
+      NEW.nbavis = 0;
+    end if;
+    if (NEW.note is null) then
+      NEW.note = 0;
+    end if;
+    if (NEW.prixmin is null) THEN
+      NEW.prixmin = 0;
+    end if;
+    if (NEW.enligne is null) THEN 
+      NEW.enligne = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.estpremium = false;
+    end if;
+    if (NEW.eststandard is null) THEN
+      NEW.eststandard = false;
+    end if;
+    if (NEW.estgratuit is null) THEN
+      NEW.estgratuit = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.blacklistdispo is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.accesibilite is null) THEN
+      NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
+    end if;
+
+
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,estpremium,eststandard,estgratuit,idcompte,
-                              resume,description,accesibilite)
+                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
     values(NEW.idoffre,'Visite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite);
+            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
+  if (NEW.estguidee is null) THEN
+    NEW.estguidee = false;
+  end if;
   insert into sae._visite(idoffre,dureevisite,estguidee)
   values(NEW.idoffre,NEW.dureevisite,NEW.estguidee);
 
@@ -608,15 +726,50 @@ create or replace function sae.createUpdateActivite()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
+    if (NEW.nbavis is null) then
+      NEW.nbavis = 0;
+    end if;
+    if (NEW.note is null) then
+      NEW.note = 0;
+    end if;
+    if (NEW.prixmin is null) THEN
+      NEW.prixmin = 0;
+    end if;
+    if (NEW.enligne is null) THEN 
+      NEW.enligne = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.estpremium = false;
+    end if;
+    if (NEW.eststandard is null) THEN
+      NEW.eststandard = false;
+    end if;
+    if (NEW.estgratuit is null) THEN
+      NEW.estgratuit = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.blacklistdispo is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.accesibilite is null) THEN
+      NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
+    end if;
+
+
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,estpremium,eststandard,estgratuit,idcompte,
-                              resume,description,accesibilite)
+                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
     values(NEW.idoffre,'Activite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite);
+            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
+  if (NEW.agerequis is null) THEN
+    NEW.agerequis = 0;
+  end if;
   insert into sae._activite(idoffre,agerequis,dureeactivite)
   values(NEW.idoffre,NEW.agerequis,NEW.dureeactivite);
 
@@ -657,7 +810,7 @@ CREATE OR REPLACE TRIGGER tg_createUpdateActivite
   EXECUTE PROCEDURE sae.createUpdateActivite();
 
 
--- Restauration
+-- Restauration 
 create or replace view sae.restauration AS
   select * from sae._offre natural join sae._restauration;
   
@@ -667,15 +820,64 @@ create or replace function sae.createUpdateRestauration()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
+    if (NEW.nbavis is null) then
+      NEW.nbavis = 0;
+    end if;
+    if (NEW.note is null) then
+      NEW.note = 0;
+    end if;
+    if (NEW.prixmin is null) THEN
+      NEW.prixmin = 0;
+    end if;
+    if (NEW.enligne is null) THEN 
+      NEW.enligne = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.estpremium = false;
+    end if;
+    if (NEW.eststandard is null) THEN
+      NEW.eststandard = false;
+    end if;
+    if (NEW.estgratuit is null) THEN
+      NEW.estgratuit = true;
+    end if;
+    if (NEW.estpremium is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.blacklistdispo is null) THEN
+      NEW.blacklistdispo = 0;
+    end if;
+    if (NEW.accesibilite is null) THEN
+      NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
+    end if;
+
+
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,estpremium,eststandard,estgratuit,idcompte,
-                              resume,description,accesibilite)
+                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
     values(NEW.idoffre,'Restauration',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite);
+            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
+
+  if (NEW.petitdejeuner is null) THEN
+    NEW.petitdejeuner = false;
+  end if;
+  if (NEW.dejeuner is null) THEN
+    NEW.dejeuner = false;
+  end if;
+  if (NEW.diner is null) THEN
+    NEW.diner = false;
+  end if;
+  if (NEW.boisson is null) THEN
+    NEW.boisson = false;
+  end if;
+  if (NEW.brunch is null) THEN
+    NEW.brunch = false;
+  end if;
+   
   insert into sae._restauration(idoffre,urlverscarte,gammeprix,petitdejeuner,dejeuner,diner,
                                     boisson,brunch,moycuisine,moyservice,moyambiance,moyqp)
   values(NEW.idoffre,NEW.urlverscarte,NEW.gammeprix,NEW.petitdejeuner,NEW.dejeuner,NEW.diner,
@@ -770,7 +972,15 @@ VALUES('Co-0001','agnes.pinson@gmail.com','motdepasse','3B','Hent Penn ar Pave',
 'Le Vieux-Marche',22420,0684947677,'Planete Kayak',519495882,'FR7630001007941234567890181');
 
 --------------------------------------------------------------------------------------------------------
--- offre planete kayak a mettre
+
+INSERT INTO activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,dureeactivite)
+VALUES('Of-0001','Archipel de Brehat en kayak','3B','Hent Penn ar Pave',
+'Le Vieux-Marche',22420,0,'Co-0001',
+'Des îles et paysages qui évoluent sous vos yeux au fil de la marée',
+'Venez jouer à cache-cache avec les couleurs et les lumières dans les labyrinthes d’îlots et de blocs de granit colorés et découvrir les 
+trésors que Bréhat réserve aux kayakistes curieux !','Prennez votre temps');
+
 --------------------------------------------------------------------------------------------------------
 
 INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
@@ -956,7 +1166,7 @@ VALUES('Of-0008','Le Village Gaulois,','0','Parc du Radome',
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Francaise');
 INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Gastronaine');
+VALUES('Gastronomique');
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Italieomique');
 INSERT INTO sae._tagrestauration(nomtag)
@@ -1023,9 +1233,10 @@ CREATE OR REPLACE TRIGGER tg_placerTagof
   FOR EACH ROW
   EXECUTE PROCEDURE sae.placerTagof();
 
+
 -------------------------------------------------------------------------------------------
 
--- Tag d'une offre
+-- Tag d'un restaurant
 create or replace view sae.tagre AS
   select * from sae._tagrestauration natural join sae._tagpourrestauration;
 
@@ -1051,9 +1262,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_placerTagof
-  INSTEAD OF INSERT ON sae.tagof
+CREATE OR REPLACE TRIGGER tg_placerTagre
+  INSTEAD OF INSERT ON sae.tagre
   FOR EACH ROW
-  EXECUTE PROCEDURE sae.placerTagof();
+  EXECUTE PROCEDURE sae.placerTagre();
 
 -------------------------------------------------------------------------------------------
+
