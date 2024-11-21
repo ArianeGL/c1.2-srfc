@@ -43,6 +43,12 @@ try {
         let clopButtonsRedirige = document.getElementsByClassName("clopButton");
         clopButtonsRedirige[0].addEventListener("click", loadCreaOffre);
         clopButtonsRedirige[1].addEventListener("click", loadSesOffresPro);
+
+        function apply_filter(event, changement){
+            // get changed element
+            // refresh and apply change: load(url)
+            // get current url:
+        }
         /*
         for (article in articles){
             let nom = document.querySelector();
