@@ -139,6 +139,7 @@ if (isset($_POST["titre"])) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./styles/style_modifier_offre.css">
+        <link rel="stylesheet" href="./style.css">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,12 +206,13 @@ if (isset($_POST["titre"])) {
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
                 <div class="boutonimages">
-                    <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
-                    <input type="file" id="fichier" name="fichier">
+                    <p>Importer une Grille Tarifaire, un Menu et/ou un Plan</p>
+                    <label for="fichier" class="smallButton">Importer</label>
+                    <input type="file" id="fichier" name="fichier" >
                     <input type="hidden" name="idoffre" value="<?php echo $idoffre; ?>">
                 </div>
                 <div id="divVal">
-                    <button type="submit" id="bnVal">Valider</button>
+                    <button type="submit" id="bnVal" class="bigButton">Valider</button>
                 </div>
             </form>
         </main>
