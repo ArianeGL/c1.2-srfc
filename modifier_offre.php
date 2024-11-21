@@ -184,12 +184,12 @@ if (isset($_POST["titre"])) {
         <main id="top">
             <h1>Modifier une offre</h1>
             <form action="modifier_offre.php" method="POST" enctype="multipart/form-data" id="modifier_offre">
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="titre">Titre : </label>
                         <input name="titre" type="text" id="titre" value="<?php echo $titre ?>">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="catégorie">Catégorie : </label>
                         <select name="categorie" id="categorie">
                             <option value="activite" <?php if(!strcmp($categorie,"activite")) echo "selected"?>>Activité</option>
@@ -198,44 +198,44 @@ if (isset($_POST["titre"])) {
                             <option value="parc_attractions" <?php if(!strcmp($categorie,"parc_attraction")) echo "selected"?>>Parc d'attractions</option>
                             <option value="spectacle" <?php if(!strcmp($categorie,"spectacle")) echo "selected"?>>Spectacle</option>
                         </select>
-                    </div>
+                    
                 </div>
                 <!--<textarea name="tags" id="tags"><?php echo $tags ?></textarea>-->
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="code_postal">Code postal : </label>
                         <input name="code_postal" type="numeric" id="code_postal" value="<?php echo $codepostal ?>" required maxlenght="5">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="ville">Ville : </label>
                         <input name="ville" type="text" id="ville" value="<?php echo $ville ?>">
-                    </div>
+                    
                 </div>
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="numadresse">Numéro de rue : </label>
                         <input name="numadresse" type="text" id="adresse" value="<?php echo $numadresse ?>">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="rueoffre">Rue : </label>
                         <input name="rueoffre" type="text" id="rueoffre" value="<?php echo $rueoffre ?>">
-                    </div>
+                    
                 </div>
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="prixmin">prix minimal : </label>
                         <input type="numeral" id="prixmin" name="prixmin"  value="<?php echo $prixmin ?>" required>
-                    </div>
+                    
                 </div>
-                <div class="element_form">
-                    <div class="row-form">
+                <div class="element_form row-form">
+                    
                         <label for="datedebut">Date de debut</label>
                         <input type="date" id="datedebut" name="datedebut" value="<?php echo $datedebut ?>">
-                    </div>
-                    <div class="row-form">
+                    
+                    
                         <label for="datefin">Date de fin</label>
                         <input type="date" id="datefin" name="datefin" value="<?php echo $datefin ?>">
-                    </div>
+                    
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
                 <div class="boutonimages">
