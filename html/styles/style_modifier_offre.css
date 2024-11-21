@@ -64,18 +64,21 @@ form div label{
 form div input{
     width:100%;
     height: 3em;
-    border-radius: var(--round-corners);
 
     padding-left: 1em;
     padding-right: 1em;
+    padding-bottom: -1em;
     font-size: 1em;
 
+    border: 2px solid var(--dark-grey);
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 form div select{
     width: 100%;
     height: 3em;
-    border-radius: var(--round-corners);
     background-color: white;
 
     padding-left: 1em;
@@ -83,19 +86,21 @@ form div select{
     font-size: 1em;
     padding-top: 0px;
     padding-bottom: 0px;
-    border-top: 0px;
-    border-right: 0px;
-    border-left: 0px;
-    border-bottom: 1px;
+    
+    border: 2px solid var(--dark-grey);
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 textarea{
-    width: 95%;
+    width: 50%;
     height: 5em;
     border-radius: var(--round-corners);
     padding-top: 1em;
     font-size: 1em;
-
+    
+    border: 2px solid var(--dark-grey);
 }
 
 form{
