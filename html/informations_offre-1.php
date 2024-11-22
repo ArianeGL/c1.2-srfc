@@ -34,19 +34,6 @@ if (isset($_GET['idoffre'])) {
         $dateUpload = $offer['datepublication'];
         $dateLastUpdate = $offer['dernieremaj'];
 
-        // Display the offer details
-        echo "Offer Details: <br>";
-        echo "ID: $id <br>";
-        echo "Category: $categorie <br>";
-        echo "Name: $name <br>";
-        echo "Address: $address <br>";
-        echo "Min Price: $minPrice <br>";
-        echo "Start Date: $dateStart <br>";
-        echo "End Date: $dateEnd <br>";
-        echo "Is Online: $isOnline <br>";
-        echo "Uploaded On: $dateUpload <br>";
-        echo "Last Updated On: $dateLastUpdate <br>";
-
         switch ($categorie) {
             case "Activite":
                 $queryOffreCategorisee = 'SELECT * FROM sae.activite WHERE idoffre = :offerId';
