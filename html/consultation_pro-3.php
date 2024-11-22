@@ -159,6 +159,7 @@ if ($compte) {
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
                     <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
                     <button id="bouton-supprimer" type="button">Supprimer le compte</button>
+                    <button id="bouton-supprimer" type="button" value="deco">Se déconnecter</button>
                 </div>
             </div>
 
