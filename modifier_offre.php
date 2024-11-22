@@ -16,7 +16,7 @@ if (isset($_POST["titre"])) {
     $post_datefin = $_POST['datefin'];
 
     switch($_POST["categorie"]){
-        case "Activite" :
+        case "Activité" :
             $table = "activite";
             break;
         case "Visite" :
@@ -57,6 +57,8 @@ if (isset($_POST["titre"])) {
     $stmt_envoie->bindparam(':post_datefin',$post_datefin);
     $stmt_envoie->execute();
 
+    
+
 
     header('Status: 301 Moved Permanently', false, 301);
     header('Location: informations_offre-1.php?idoffre=' . $post_idoffre);
@@ -77,12 +79,15 @@ if (isset($_POST["titre"])) {
     $stmt_titre->execute();
     $titre = $stmt_titre->fetch(PDO::FETCH_ASSOC)["nomoffre"];
 
-    /*$query_tags = "SELECT tags FROM ".NOM_SCHEMA."_offre
-                    INNER JOIN _tag ON _offre.id = _tag.idoffre
+    $query_tags = "SELECT nomtag FROM ".NOM_SCHEMA.".tagof
                     WHERE idoffre = '$idoffre'";
     $stmt_tags = $dbh->prepare($query_tags);
     $stmt_tags->execute();
-    $tags = $stmt_tags->fetch(PDO::FETCH_ASSOC)["nomtags"];*/
+    $tags = $stmt_tags->fetchall();
+
+    if($tags == ""){
+        print_r("idoffre = $idoffre ;   pas de tags");
+    }
 
     $query_categorie = "SELECT categorie FROM " . NOM_SCHEMA . "._offre
                     WHERE idoffre = '$idoffre'";
@@ -238,6 +243,8 @@ if (isset($_POST["titre"])) {
                     
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
+                <textarea name="tags" id="tags"><?php foreach($tags as $key => $value){ echo $value[0].",";} ?></textarea>
+                
                 <div class="boutonimages">
                     <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
                     <input type="file" id="fichier" name="fichier">
@@ -252,7 +259,6 @@ if (isset($_POST["titre"])) {
 
     </body>
     <script src="main.js"></script>
-
     </html>
 <?php
 }
