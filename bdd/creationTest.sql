@@ -97,6 +97,8 @@ CREATE TABLE IF NOT EXISTS sae._offre
    estpremium       boolean       default(false) not null,
    eststandard      boolean       default(false) not null,
    estgratuit       boolean       default(true) not null,
+   alaune           BOOLEAN       DEFAULT(false) not null,
+   enrelief         BOOLEAN       default(false) not null,
    blacklistdispo   integer       default(0) not null,
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(9999) NOT NULL,
@@ -280,20 +282,25 @@ CREATE TABLE IF NOT EXISTS sae._facture
   idfacture   varchar(7) PRIMARY KEY,
   prixfacture real not null,
   datefacture date not null DEFAULT(CURRENT_DATE),
-  idoffre     varchar(7) REFERENCES sae._offre(idoffre)
+  idoffre     varchar(7) REFERENCES sae._offre(idoffre),
+  idcompte    varchar(7) REFERENCES sae._professionnelprive(idcompte)
 );
 
 CREATE TABLE IF NOT EXISTS sae._avis
 (
   idavis varchar(7) PRIMARY KEY,
+  titre   varchar(50) NOT NULL,
+  datevisite DATE DEFAULT(CURRENT_DATE) NOT NULL,
+  contexte varchar(20) NOT NULL,
   idoffre varchar(7) REFERENCES sae._offre(idoffre),
   idcompte varchar(7) REFERENCES sae._comptemembre(idcompte),
-  messagea varchar(9999) not null,
+  commentaire varchar(9999) not null,
   note real not null,
   nblike integer not null,
   nbdislike integer not null,
   blacklist boolean not null,
-  signale boolean not null
+  signale boolean not null,
+  CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
 );
 
 
@@ -359,16 +366,12 @@ BEGIN
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
-  IF(NEW.pseudo <> '') THEN
+  IF(NEW.pseudo is null) THEN
+    NEW.pseudo = CONCAT(NEW.nommembre,NEW.prenommembre);
+  end if;
+
   insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
   values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
-  ELSE
-  insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
-  values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
-
-  UPDATE sae._compteMembre SET pseudo = CONCAT(nommembre,prenommembre);
-  END IF;
-
 
   RETURN NEW;
 END;
@@ -381,6 +384,7 @@ CREATE OR REPLACE TRIGGER tg_createMembre
 
 
 -- Compte professionnel prive
+
 create or replace view sae.compteProfessionnelPrive AS
   select * from sae._compte natural join sae._compteProfessionnel natural join sae._professionnelPrive;
 
@@ -389,6 +393,10 @@ create or replace function sae.createProfessionnelPrive()
   AS
 $$
 BEGIN
+
+  if (NEW.urlimage is null) THEN
+    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+  end if;
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
@@ -419,6 +427,9 @@ create or replace function sae.createProfessionnelPublique()
   AS
 $$
 BEGIN
+  if (NEW.urlimage is null) THEN
+    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+  end if;
   insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
   values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
   
@@ -476,16 +487,21 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-
+    if (NEW.alaune is null) THEN
+      NEW.alaune = FALSE;
+    end if;
+    if (NEW.enrelief is null) THEN
+      NEW.enrelief = FALSE;
+    end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
     values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
   
     insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
@@ -567,19 +583,27 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-
+    if (NEW.alaune is null) THEN
+      NEW.alaune = FALSE;
+    end if;
+    if (NEW.enrelief is null) THEN
+      NEW.enrelief = FALSE;
+    end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
-    values(NEW.idoffre,'Parc Attraction',NEW.nomoffre,NEW.numadresse,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
+    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
   
   if (NEW.nbattractions is null) THEN
     NEW.nbattractions = 1;
+  end if;
+  if (NEW.ageminparc is null) THEN
+    NEW.ageminparc = 0;
   end if;
   insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
@@ -662,16 +686,21 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-
+    if (NEW.alaune is null) THEN
+      NEW.alaune = FALSE;
+    end if;
+    if (NEW.enrelief is null) THEN
+      NEW.enrelief = FALSE;
+    end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
-    values(NEW.idoffre,'Visite',NEW.nomoffre,NEW.numadresse,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
+    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
   
   if (NEW.estguidee is null) THEN
     NEW.estguidee = false;
@@ -756,16 +785,21 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-
+    if (NEW.alaune is null) THEN
+      NEW.alaune = FALSE;
+    end if;
+    if (NEW.enrelief is null) THEN
+      NEW.enrelief = FALSE;
+    end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
-    values(NEW.idoffre,'Activite',NEW.nomoffre,NEW.numadresse,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
+    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
   
   if (NEW.agerequis is null) THEN
     NEW.agerequis = 0;
@@ -850,16 +884,21 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-
+    if (NEW.alaune is null) THEN
+      NEW.alaune = FALSE;
+    end if;
+    if (NEW.enrelief is null) THEN
+      NEW.enrelief = FALSE;
+    end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
-    values(NEW.idoffre,'Restauration',NEW.nomoffre,NEW.numadresse,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
+    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
   
 
   if (NEW.petitdejeuner is null) THEN
