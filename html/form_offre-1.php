@@ -41,7 +41,6 @@
         return $ret;
     }
 
-
     if (isset($_SESSION['identifiant']) && valid_account()) {
     ?>
         <main>
@@ -56,7 +55,6 @@
                             <option value="premium">Premium</option>
                         </select>
                 </div>
-
             <?php } ?>
             <select name="categorie" id="categorie" onchange="detect_category()">
                 <option value="" disabled selected hidden class>Cat&eacute;gorie *</option>
@@ -85,6 +83,20 @@
             <input type="text" name="resume" id="resume" placeholder="R&eacute;sum&eacute; *" required>
 
             <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
+
+            <?php if (est_prive($_SESSION['identifiant'])) { ?>
+                <select name="opt" id="opt" onchange="detect_category()">
+                    <option value="no_opt" disabled selected hidden class>Options
+                    </option>
+                    <option value="no_opt">Pas d'option
+                    </option>
+                    <option value="relief">En relief
+                    </option>
+                    <option value="une">&Agrave; la une
+                    </option>
+
+                </select>
+            <?php } ?>
 
             <input type="text" name="tags" id="tags" placeholder="Tags">
 
