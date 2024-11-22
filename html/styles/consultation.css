@@ -1,10 +1,9 @@
-
 :root {
     --red: #CC0000;
     --red-hover: #890c0c;
     --light-blue: #E7FDFD;
     --grey-blue: #9ABBDB;
-    --navy-blue: #254766; /* Buttons */
+    --navy-blue: #254766; 
     --navy-blue-hover: #133147;
     --light-grey: #8599AD;
     --dark-grey: #52667A;
@@ -12,6 +11,7 @@
     --black: black;
     --round-corners: 15px;
 }
+
 p {
     font-size: 40px;
     text-align: center;
@@ -141,7 +141,6 @@ a {
 }
 #bouton-modifier {
     background-color: var(--navy-blue);
-    color:var(--white);
     
 }
 
@@ -151,7 +150,6 @@ a {
 
 #bouton-supprimer {
     background-color: var(--red);
-    color:var(--white);
 }
 
 #bouton-supprimer:hover {
