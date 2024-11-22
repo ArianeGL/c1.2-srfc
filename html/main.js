@@ -84,14 +84,21 @@ function detect_category() {
 		div.appendChild(gammeprix);
 
 		let image_carte = document.createElement("img");
-		image_carte.setAttribute("alt", "votre carte");
+		image_carte.setAttribute("alt", "");
 		image_carte.setAttribute("src", "");
 		image_carte.setAttribute("id", "carte_preview");
 		div.appendChild(image_carte);
 
+		let carte_button = document.createElement("label");
+		carte_button.setAttribute("for", "carte");
+		carte_button.setAttribute("class", "smallButton");
+		carte_button.innerHTML = "Votre carte"
+		div.appendChild(carte_button);
+
 		let carte = document.createElement("input");
 		carte.setAttribute("type", "file");
 		carte.setAttribute("name", "carte");
+		carte.setAttribute("id", "carte");
 		carte.setAttribute("accept", "image/*");
 		carte.setAttribute("required", "");
 		carte.setAttribute("onchange", "preview(carte_preview)");
@@ -146,14 +153,21 @@ function detect_category() {
 
 
 		let image_plan = document.createElement("img");
-		image_plan.setAttribute("alt", "votre plan");
+		image_plan.setAttribute("alt", "");
 		image_plan.setAttribute("src", "");
 		image_plan.setAttribute("id", "plan_preview");
 		div.appendChild(image_plan);
 
+		let plan_button = document.createElement("label");
+		plan_button.setAttribute("for", "plan");
+		plan_button.setAttribute("class", "smallButton");
+		plan_button.innerHTML = "Plan du parc"
+		div.appendChild(plan_button);
+
 		let plan = document.createElement("input");
 		plan.setAttribute("type", "file");
 		plan.setAttribute("name", "plan");
+		plan.setAttribute("id", "plan");
 		plan.setAttribute("accept", "image/*");
 		plan.setAttribute("required", "");
 		plan.setAttribute("onchange", "preview(plan_preview)");
