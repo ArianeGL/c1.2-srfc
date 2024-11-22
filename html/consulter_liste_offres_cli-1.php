@@ -44,10 +44,30 @@ try {
         clopButtonsRedirige[0].addEventListener("click", loadCreaOffre);
         clopButtonsRedirige[1].addEventListener("click", loadSesOffresPro);
 
+        let bouton_filtre = document.getElementsByClassName("filterButton");
+        bouton_filtre.addEventListener("click", hideAndShow);
+
+        function hideAndShow(){
+            if (bouton_filtre.style.display == "none"){
+                bouton_filtre.style.display = "flex";
+            } else {
+                bouton_filtre.style.display = "none";
+            }
+        }
+
+        let activite = document.querySelector("#activite");
+        let visite = document.querySelector("#visite");
+        let parc_attraction = document.querySelector("#parcAttraction");
+        let spectacle = document.querySelector("#spectacle");
+        let restauration = document.querySelector("#restauration");
+
         function apply_filter(event, changement){
             // get changed element
             // refresh and apply change: load(url)
-            // get current url:
+            // get current url: window.location.href
+            if (changement == "categorie"){
+
+            }
         }
         /*
         for (article in articles){
@@ -104,6 +124,20 @@ try {
             <button class="filterButton">Filtrer</button>
             <button class="sortButton">Trier</button>
         </div>
+
+        <fieldset display="none" id="filter_offer">
+            <h3>Par Catégorie :</h3>
+            <label for="activite">
+                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+            <label for="visite">
+                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+            <label for="parcAttraction">
+                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+            <label for="spectacle">
+                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+            <label for="restauration">
+                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+        </fieldset>
 
         <div id="clopRangement">
             <?php
