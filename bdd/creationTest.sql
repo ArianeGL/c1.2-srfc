@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS sae._avis
   idoffre varchar(7) REFERENCES sae._offre(idoffre),
   idcompte varchar(7) REFERENCES sae._comptemembre(idcompte),
   commentaire varchar(9999) not null,
-  note real not null,
+  noteavis real not null,
   nblike integer not null,
   nbdislike integer not null,
   blacklist boolean not null,
@@ -303,7 +303,23 @@ CREATE TABLE IF NOT EXISTS sae._avis
   CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
 );
 
+CREATE TABLE IF NOT EXISTS sae._notere
+(
+  idavis varchar(7) PRIMARY KEY REFERENCES sae._avis(idavis),
+  idoffre varchar(7) NOT NULL REFERENCES sae._restauration(idoffre),
+  noteCuisine real NOT NULL,
+  noteService real NOT NULL,
+  noteAmbiance real NOT NULL,
+  noteRapportQP real NOT NULL
+);
 
+CREATE TABLE IF NOT EXISTS sae._reponse
+(
+  idrep VARCHAR(7) PRIMARY KEY,
+  idcompte varchar(7) NOT NULL REFERENCES sae._compteprofessionnel(idcompte),
+  idavis varchar(7) NOT NULL REFERENCES sae._avis(idavis),
+  reponse varchar(9999) NOT NULL
+);
 
 -----------------------------------------------------------------------
 
@@ -1251,11 +1267,17 @@ create or replace function sae.placerTagof()
 $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-    insert into sae._tag(nomtag)
-    values(NEW.nomtag);
-
-    insert into sae._tagpouroffre(nomtag,idoffre)
-    values(NEW.nomtag.NEW.idoffre);
+    if ( (select count(nomtag) from sae._tag where nomtag = NEW.nomtag) = 1 ) THEN
+      insert into sae._tagpouroffre(nomtag,idoffre)
+      values(NEW.nomtag,NEW.idoffre);
+    else
+      insert into sae._tag(nomtag)
+      values(NEW.nomtag);
+      
+      insert into sae._tagpouroffre(nomtag,idoffre)
+      values(NEW.nomtag,NEW.idoffre);
+    END IF;
+  
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
@@ -1289,7 +1311,7 @@ BEGIN
     values(NEW.nomtag);
 
     insert into sae._tagpourrestauration(nomtag,idoffre)
-    values(NEW.nomtag.NEW.idoffre);
+    values(NEW.nomtag,NEW.idoffre);
   RETURN NEW;
       
   ELSIF (TG_OP = 'UPDATE') THEN
@@ -1308,3 +1330,15 @@ CREATE OR REPLACE TRIGGER tg_placerTagre
 
 -------------------------------------------------------------------------------------------
 
+INSERT INTO
+sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, urlimage, nommembre, prenommembre, pseudo)
+VALUES ('Co-0009', 'john.doe@gmail.com', 'motdepasse', '54', 'Imp. Covenant Pasquiou', 'Lannion', '22300', '0606060606', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png', 'Doe', 'John', 'DoeJohn22');
+
+
+-------------------------------------------------------------------------------------------
+-- tg facture avis notere reponse
+
+
+
+
+-------------------------------------------------------------------------------------------
