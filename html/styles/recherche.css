@@ -1,10 +1,10 @@
-.barre_recherche {
+#barre_recherche {
     display: flex;
     align-items: center;
     background-color: #f0f0f0;
     
 }
-.barre_recherche input[type="text"] {
+#barre_recherche input[type="text"] {
     background-color: #f0f0f0;
     width: 100%;
     padding: 10px;
@@ -14,7 +14,7 @@
     font-size: 40px;
     
 }
-.barre_recherche .filtre, .barre_recherche .tri {
+#barre_recherche .filtre, .barre_recherche .tri {
     display: flex;
     align-items: center;
     padding: 20px;
@@ -25,7 +25,7 @@
     
     
 }
-.barre_recherche .filtre select, .barre_recherche .tri select {
+#barre_recherche .filtre select, #barre_recherche .tri select {
     border: none;
     background-color: transparent;
     appearance: none;

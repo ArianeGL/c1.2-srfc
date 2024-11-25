@@ -17,8 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
 
     <script src="main.js"></script>
-    <script src="recherche.js" defer></script>
-    <script src="levenshtein.js"></script>
+    <script src="recherche.js"></script>
+    
     <title>PACT - Mes Offres</title>
 </head>
 
@@ -110,7 +110,6 @@
 
 
     <?php require_once "footer_inc,html"; ?>
-    <script src="recherche.js" defer></script>
 </body>
 
 </html>
