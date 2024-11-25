@@ -1,3 +1,5 @@
+@import "../style.css";
+
 .container {
     display: flex;
     background-color: var(--light-grey);
