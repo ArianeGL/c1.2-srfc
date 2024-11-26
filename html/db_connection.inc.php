@@ -10,6 +10,7 @@ const VUE_PARC_ATTRACTIONS = "parcattraction";
 const VUE_SPECTACLE = "spectacle";
 const VUE_PRO_PRIVE = "compteProfessionnelPrive";
 const VUE_PRO_PUBLIQUE = "compteprofessionnelpublique";
+const VUE_MEMBRE = "comptemembre";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";
