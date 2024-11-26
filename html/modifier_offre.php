@@ -1,9 +1,15 @@
 <?php
 require_once("db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
+print_r($idoffre);
 global $dbh;
 
 if (isset($_POST["titre"])) {
+
+    $string_tags = $_POST["tags"];
+    $post_tags = explode(",", $string_tags);
+    
+    
     $post_titre = $_POST['titre'];
     $post_numadresse = $_POST['numadresse'];
     $post_rueoffre = $_POST['rueoffre'];
@@ -14,26 +20,67 @@ if (isset($_POST["titre"])) {
     $post_prixmin = $_POST['prixmin'];
     $post_datedebut = $_POST['datedebut'];
     $post_datefin = $_POST['datefin'];
+    $post_categorie = $_POST['categorie'];
+  
+    try{
+    if($post_categorie == "restauration"){
+        $query_delete_tags = "DELETE FROM ". NOM_SCHEMA . "._tagpourrestauration
+                            WHERE idoffre = '" . $post_idoffre . "';";
+        $stmt_delete_tags = $dbh->prepare($query_delete_tags);
+        $stmt_delete_tags->execute();
+    }
+    else{
+        $query_delete_tags = "DELETE FROM ". NOM_SCHEMA . "._tagpouroffre
+                            WHERE idoffre = '" . $post_idoffre . "';";
+        $stmt_delete_tags = $dbh->prepare($query_delete_tags);
+        $stmt_delete_tags->execute();
+    }
+
+    if($post_categorie == "restauration"){
+        foreach($post_tags as $value){
+            $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagre (nomtag,idoffre)
+                            VALUES(:nomtag, :idoffre);";
+            $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
+            $stmt_envoie_tags->bindParam(':nomtag', $value);
+            $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
+            $stmt_envoie_tags->execute();
+        }
+    }else{
+        foreach($post_tags as $key => $value){
+            $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagof(nomtag,idoffre)
+                            VALUES(:nomtag, :idoffre);";
+            $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
+            $stmt_envoie_tags->bindParam(':nomtag', $value);
+            $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
+            $stmt_envoie_tags->execute();
+        }
+    }
+    }catch(PDOException $e){
+        print_r($e);
+    }
+    //print_r($_POST["categorie"]."|");
 
     switch($_POST["categorie"]){
-        case "Activite" :
+        case "activite" :
             $table = "activite";
             break;
-        case "Visite" :
+        case "visite" :
             $table = "visite";
             break;
-        case "Parc Attraction";
+        case "parc_attraction";
             $table = "parcattraction";
             break;
-        case "Spectacle" :
+        case "spectacle" :
             $table = "spectacle";
             break;
-        case "Restauration" :
+        case "restauration" :
             $table = "restauration";
             break;
         default :
             echo("erreur sur la catégorie");
     }
+
+    try{
     $query_envoie = "UPDATE " . NOM_SCHEMA . "._offre
                     SET nomoffre = :post_titre,
                         numadresse = :post_numadresse,
@@ -56,6 +103,11 @@ if (isset($_POST["titre"])) {
     $stmt_envoie->bindparam(':post_datedebut',$post_datedebut);
     $stmt_envoie->bindparam(':post_datefin',$post_datefin);
     $stmt_envoie->execute();
+    }catch(PDOException $e){
+        print_r($e);
+    }
+
+    
 
 
     header('Status: 301 Moved Permanently', false, 301);
@@ -77,12 +129,15 @@ if (isset($_POST["titre"])) {
     $stmt_titre->execute();
     $titre = $stmt_titre->fetch(PDO::FETCH_ASSOC)["nomoffre"];
 
-    /*$query_tags = "SELECT tags FROM ".NOM_SCHEMA."_offre
-                    INNER JOIN _tag ON _offre.id = _tag.idoffre
+    $query_tags = "SELECT nomtag FROM ".NOM_SCHEMA.".tagof
                     WHERE idoffre = '$idoffre'";
     $stmt_tags = $dbh->prepare($query_tags);
     $stmt_tags->execute();
-    $tags = $stmt_tags->fetch(PDO::FETCH_ASSOC)["nomtags"];*/
+    $tags = $stmt_tags->fetchall();
+
+    if($tags == ""){
+        print_r("idoffre = $idoffre ;   pas de tags");
+    }
 
     $query_categorie = "SELECT categorie FROM " . NOM_SCHEMA . "._offre
                     WHERE idoffre = '$idoffre'";
@@ -238,6 +293,8 @@ if (isset($_POST["titre"])) {
                     
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
+                <textarea name="tags" id="tags"><?php foreach($tags as $key => $value){ echo $value[0].",";} ?></textarea>
+                
                 <div class="boutonimages">
                     <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
                     <input type="file" id="fichier" name="fichier">
@@ -252,7 +309,6 @@ if (isset($_POST["titre"])) {
 
     </body>
     <script src="main.js"></script>
-
     </html>
 <?php
 }
