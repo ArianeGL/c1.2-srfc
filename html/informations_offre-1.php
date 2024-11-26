@@ -5,7 +5,7 @@ global $dbh;
 
 if (isset($_GET['idoffre'])) {
     $offerId = $_GET['idoffre'];
-    $queryOffer = 'SELECT * FROM sae._offre WHERE idoffre = :offerId';
+    $queryOffer = 'SELECT * FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
     $sthOffer = $dbh->prepare($queryOffer);
     $sthOffer->bindParam(':offerId', $offerId, PDO::PARAM_STR);
     $sthOffer->execute();
@@ -36,7 +36,7 @@ if (isset($_GET['idoffre'])) {
 
         switch ($categorie) {
             case "Activite":
-                $queryOffreCategorisee = 'SELECT * FROM sae.activite WHERE idoffre = :offerId';
+                $queryOffreCategorisee = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_ACTIVITE . " WHERE idoffre = :offerId";
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();
@@ -50,7 +50,7 @@ if (isset($_GET['idoffre'])) {
                 break;
 
             case "Restauration":
-                $queryOffreCategorisee = 'SELECT * FROM sae.restauration WHERE idoffre = :offerId';
+                $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_RESTO . ' WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();
@@ -69,7 +69,7 @@ if (isset($_GET['idoffre'])) {
                 break;
 
             case "Visite":
-                $queryOffreCategorisee = 'SELECT * FROM sae.visite WHERE idoffre = :offerId';
+                $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.visite WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();
@@ -83,7 +83,7 @@ if (isset($_GET['idoffre'])) {
                 break;
 
             case "Parc attraction":
-                $queryOffreCategorisee = 'SELECT * FROM sae.parcattraction WHERE idoffre = :offerId';
+                $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_PARC_ATTRACTIONS . 'WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();
@@ -98,7 +98,7 @@ if (isset($_GET['idoffre'])) {
                 break;
 
             case "Spectacle":
-                $queryOffreCategorisee = 'SELECT * FROM sae.spectacle WHERE idoffre = :offerId';
+                $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_SPECTACLE . ' WHERE idoffre = :offerId';
                 $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                 $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                 $sthOffreCategorisee->execute();

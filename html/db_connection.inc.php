@@ -4,6 +4,7 @@ const NOM_SCHEMA = "sae";
 const NOM_TABLE_OFFRE = "_offre";
 const NOM_TABLE_COMPTE = "_compte";
 const NOM_TABLE_COMPTE_PRO = "_compteprofessionnel";
+const NOM_TABLE_AVIS = "_avis";
 const VUE_ACTIVITE = "activite";
 const VUE_RESTO = "restauration";
 const VUE_VISITE = "visite";
