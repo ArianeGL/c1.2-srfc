@@ -45,17 +45,13 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     </script> <?php
             }
 
-if (est_membre($email)){
+if (!est_membre($email)){
     ?> <script>
-        window.location = "consultation_membre-3.php";
+        window.location = "consultation_pro-3.php";
     </script> <?php
 }
+$schemaCompte=VUE_MEMBRE;
 
-if (est_prive($email)){
-    $schemaCompte=VUE_PRO_PRIVE;
-}else{
-    $schemaCompte=VUE_PRO_PUBLIQUE;
-}
 $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
@@ -71,12 +67,13 @@ if ($compte) {
     $ville = $compte['villecompte'];
     $codePostal = $compte['codepostalcompte'];
     $telephone = $compte['telephone'];
-    $denomination = $compte['denomination'];
-    $IBAN = $compte['iban'];
+    $nom = $compte['nommembre'];
+    $prenom = $compte['prenommembre'];
+    $pseudo = $compte['pseudo'];
     $image = $compte['urlimage'];
 } else {    
 ?> <script>
-        window.location = "consultation_liste_offres_pro-1.php";
+        window.location = "consultation_liste_offres_cli-1.php";
     </script> <?php
             }
 
@@ -143,8 +140,15 @@ if ($compte) {
             </div>
             <div class="profile-row">
                 <form>
-                    <div class="input-group">
-                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
+
+                    <div id="code-postal-ville">
+                        <div class="input-group">
+                            <input type="text" id="nom" value="<?php echo htmlspecialchars($nom) ?>" readonly>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="text" id="prenom" value="<?php echo htmlspecialchars($prenom) ?>" readonly>
+                        </div>
                     </div>
 
                     <div class="input-group">
@@ -167,10 +171,6 @@ if ($compte) {
                         <div class="input-group">
                             <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
                         </div>
-                    </div>
-
-                    <div class="input-group">
-                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
                     </div>
                 </form>
 

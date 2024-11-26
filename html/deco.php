@@ -1,5 +1,5 @@
 <?php
     session_start();
     session_destroy();
-    header("Location: connection_pro-3.php");
+    header("Location: consulter_liste_offres_cli-1.php");
 ?>
