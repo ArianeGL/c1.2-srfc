@@ -58,15 +58,6 @@ ALTER TABLE sae._compteprofessionnel
    PRIMARY KEY (idcompte);
 
 
-CREATE TABLE IF NOT EXISTS sae._imageoffre
-(
-   urlversimage  varchar(100)   NOT NULL,
-   idoffre       varchar(7)     NOT NULL
-);
-
-ALTER TABLE sae._imageoffre
-   ADD CONSTRAINT _imageoffre_pkey
-   PRIMARY KEY (urlversimage);
 
 CREATE TABLE IF NOT EXISTS sae._langue
 (
@@ -109,6 +100,16 @@ CREATE TABLE IF NOT EXISTS sae._offre
 ALTER TABLE sae._offre
    ADD CONSTRAINT _offre_pkey
    PRIMARY KEY (idoffre);
+
+CREATE TABLE IF NOT EXISTS sae._imageoffre
+(
+   urlimage  varchar(100)   NOT NULL,
+   idoffre       varchar(7)     NOT NULL
+);
+
+ALTER TABLE sae._imageoffre
+   ADD CONSTRAINT _imageoffre_pkey
+   PRIMARY KEY (urlimage);
 
 CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
@@ -1266,26 +1267,18 @@ create or replace function sae.placerTagof()
   AS
 $$
 BEGIN
-  IF (TG_OP = 'INSERT') THEN
-    if ( (select count(nomtag) from sae._tag where nomtag = NEW.nomtag) = 1 ) THEN
-      insert into sae._tagpouroffre(nomtag,idoffre)
-      values(NEW.nomtag,NEW.idoffre);
-    else
-      insert into sae._tag(nomtag)
-      values(NEW.nomtag);
-      
-      insert into sae._tagpouroffre(nomtag,idoffre)
-      values(NEW.nomtag,NEW.idoffre);
-    END IF;
+  if ( (select count(nomtag) from sae._tag where nomtag = NEW.nomtag) = 1 ) THEN
+    insert into sae._tagpouroffre(nomtag,idoffre)
+    values(NEW.nomtag,NEW.idoffre);
+  else
+    insert into sae._tag(nomtag)
+    values(NEW.nomtag);
+    
+    insert into sae._tagpouroffre(nomtag,idoffre)
+    values(NEW.nomtag,NEW.idoffre);
+  END IF;
   
   RETURN NEW;
-      
-  ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE sae._tagpouroffre SET nomtag = NEW.nomtag
-    WHERE NEW.idoffre = idoffre;
-
-    RETURN NEW;
-  END IF;
 END;
 $$ language plpgsql;
 
@@ -1306,20 +1299,18 @@ create or replace function sae.placerTagre()
   AS
 $$
 BEGIN
-  IF (TG_OP = 'INSERT') THEN
-    insert into sae._tagrestauration(nomtag)
-    values(NEW.nomtag);
-
+  if ( (select count(nomtag) from sae._tagrestauration where nomtag = NEW.nomtag) = 1 ) THEN
     insert into sae._tagpourrestauration(nomtag,idoffre)
     values(NEW.nomtag,NEW.idoffre);
-  RETURN NEW;
-      
-  ELSIF (TG_OP = 'UPDATE') THEN
-    UPDATE sae._tagpourrestauration SET nomtag = NEW.nomtag
-    WHERE NEW.idoffre = idoffre;
-
-    RETURN NEW;
+  else
+    insert into sae._tagrestauration(nomtag)
+    values(NEW.nomtag);
+    
+    insert into sae._tagpourrestauration(nomtag,idoffre)
+    values(NEW.nomtag,NEW.idoffre);
   END IF;
+  
+  RETURN NEW;
 END;
 $$ language plpgsql;
 
@@ -1339,6 +1330,73 @@ VALUES ('Co-0009', 'john.doe@gmail.com', 'motdepasse', '54', 'Imp. Covenant Pasq
 -- tg facture avis notere reponse
 
 
+--- AVIS 
+create or replace view sae.avis AS
+  select * from sae._avis 
+  where idoffre <> (select idoffre from sae._offre where categorie = 'Restauration');
+
+create or replace function sae.posteravis()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+
+  INSERT INTO sae._avis(idavis,titre,datevisite,contexte,idoffre,idcompte,
+                        commentaire,noteavis,nblike,nbdislike,blacklist,signale)
+  VALUES(NEW.idavis,NEW.titre,NEW.datevisite,NEW.contexte,NEW.idoffre,NEW.idcompte,
+        NEW.commentaire,NEW.noteavis,0,0,false,false);
+
+  UPDATE sae._offre SET nbavis = nbavis + 1,
+                        note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
+    WHERE idoffre = NEW.idoffre;
+
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_posteravis
+  INSTEAD OF INSERT ON sae.avis
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.posteravis();
 
 
 -------------------------------------------------------------------------------------------
+
+create or replace view sae.avisre AS
+  select * from sae._avis natural join sae._notere;
+
+create or replace function sae.posteravisre()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+
+  INSERT INTO sae._avis(idavis,titre,datevisite,contexte,idoffre,idcompte,
+                        commentaire,noteavis,nblike,nbdislike,blacklist,signale)
+  VALUES(NEW.idavis,NEW.titre,NEW.datevisite,NEW.contexte,NEW.idoffre,NEW.idcompte,
+        NEW.commentaire,0,0,0,false,false);
+
+  INSERT INTO sae._noterestauration(idavis,idoffre,notecuisine,noteservice,noteambiance,noterapportqp)
+  VALUES(NEW.idavis,NEW.idoffre,NEW.notecuisine,NEW.noteservice,NEW.noteambiance,NEW.noterapportqp);
+
+  UPDATE sae._restauration SET 
+    moycuisine = (select SUM(notecuisine) from sae._notere where idoffre = NEW.idoffre) / (select count(notecuisine) from sae._notere where idoffre = NEW.idoffre),
+    moyservice = (select SUM(noteservice) from sae._notere where idoffre = NEW.idoffre) / (select count(noteservice) from sae._notere where idoffre = NEW.idoffre),
+    moyambiance = (select SUM(noteambiance) from sae._notere where idoffre = NEW.idoffre) / (select count(noteambiance) from sae._notere where idoffre = NEW.idoffre),
+    moyqp = (select SUM(noterapportqp) from sae._notere where idoffre = NEW.idoffre) / (select count(noterapportqp) from sae._notere where idoffre = NEW.idoffre)
+    WHERE idoffre = NEW.idoffre;
+    
+  UPDATE sae._avis SET noteavis = (select moycuisine + moyservice + moyambiance + moyqp from sae._restauration where idoffre = NEW.idoffre) / 4 where idoffre = NEW.idoffre;
+
+  UPDATE sae._offre SET nbavis = nbavis + 1,
+                        note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
+    WHERE idoffre = NEW.idoffre;
+
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_posteravisre
+  INSTEAD OF INSERT ON sae.avisre
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.posteravisre();
