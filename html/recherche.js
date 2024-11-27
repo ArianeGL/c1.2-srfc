@@ -1,3 +1,4 @@
+
 function rechercheOffre() {
     console.log("Fonction rechercherOffres appelée !");
     const input = document.getElementById('rechercheOffre').value.toUpperCase().trim();

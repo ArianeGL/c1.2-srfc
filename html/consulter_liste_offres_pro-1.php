@@ -4,6 +4,21 @@ require_once "db_connection.inc.php";
 
 try {
     global $dbh;
+    // Récupère le tri
+    $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
+    $ordreTri = "";
+    $ListeTris = ['noteCroissante', 'noteDecroissante'];
+    switch ($triOption) {
+        case 'noteCroissante':
+            $ordreTri = "ORDER BY note ASC"; 
+            break;
+        case 'noteDecroissante':
+            $ordreTri = "ORDER BY note DESC"; 
+            break;
+        default:
+            $ordreTri = ""; 
+    }
+
     /*
     // requete offre
     $query1 = 'SELECT * FROM '.NOM_SCHEMA.'._offre NATURAL JOIN '.NOM_SCHEMA.'._compteProfessionnel';// INNER JOIN NOM_SCHEMA._imageoffre    sae._offre NATURAL JOIN sae._compteProfessionnel
@@ -34,6 +49,7 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <script src="main.js"></script>
+    <script src="recherche.js"></script>
 
     <script>
         function loadInfoOffre(idoffre) {
@@ -70,16 +86,37 @@ try {
         </div>
         <button onclick="loadCreaOffre()" class="clopButton">Créer une offre</button>
         <button onclick="loadSesOffresPro()" class="clopButton">Afficher vos offres</button>
-        <div class="clopRecherche">
-            <button class="searchButton"><img src="blabla.png" alt="Rechercher"></button>
-            <input id="searchText" placeholder="Rechercher une offre"></input>
-            <button class="filterButton">Filtrer</button>
-            <button class="sortButton">Trier</button>
-        </div>
+        <div class="barre_recherche">
+            <input type="text" id="rechercheOffre" placeholder="Rechercher offre..." onkeyup="rechercheOffre()">
+            <div class="filtre">
+                <!-- A ajouter dans le select pour les filtres : id="SelectionFiltre" onchange="filtreOffre()" -->
+                <select>
+                    <option value="" disabled selected>FILTRES</option>
+                    <option value="categorie1">Filtre 1</option>
+                    <option value="categorie2">Filtre 2</option>
+                </select>
+            </div>
+            <div class="tri">
+                <select id="SelectionTri" onchange="triOffre()">
+                    <option value="" disabled selected>TRIS</option>
+                    <option value="noteCroissante">Note (↑)</option>
+                    <option value="noteDecroissante">Note (↓)</option>
+                 </select>
+</div>
+
+<script>
+    function triOffre() {
+        const optionTri = document.getElementById('SelectionTri').value;
+        const urlActuelle = new URL(window.location.href);
+        urlActuelle.searchParams.set('tri', optionTri); // Met à jour le paramètre "tri"
+        window.location.href = urlActuelle; // Redirige avec la nouvelle URL
+    }
+</script>
+
 
         <div id="clopRangement">
             <?php
-            $query1 = 'SELECT * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel';
+             $query1 = 'SELECT * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel ' . $ordreTri;
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
