@@ -459,7 +459,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createProfessionnelPublique
-  INSTEAD OF INSERT ON sae.compteProfessionnelPublique
+  INSTEAD OF INSERT OR UPDATE ON sae.compteProfessionnelPublique
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createProfessionnelPublique();
   
@@ -658,7 +658,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateParcAttraction
-  INSTEAD OF INSERT ON sae.parcattraction
+  INSTEAD OF INSERT OR UPDATE ON sae.parcattraction
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateParcAttraction();
 
@@ -757,7 +757,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateVisite
-  INSTEAD OF INSERT ON sae.visite
+  INSTEAD OF INSERT OR UPDATE ON sae.visite
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateVisite();
 
@@ -856,7 +856,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateActivite
-  INSTEAD OF INSERT ON sae.activite
+  INSTEAD OF INSERT OR UPDATE ON sae.activite
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateActivite();
 
@@ -980,7 +980,7 @@ END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createUpdateRestauration
-  INSTEAD OF INSERT ON sae.restauration
+  INSTEAD OF INSERT OR UPDATE ON sae.restauration
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateRestauration();
 
