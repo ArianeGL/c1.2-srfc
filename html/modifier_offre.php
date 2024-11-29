@@ -1,10 +1,40 @@
 <?php
 require_once("db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
-print_r($idoffre);
 global $dbh;
+const IMAGE_DIR = "./images_importee\\";
+
+
+function upload_images_offre($url, $id)
+{
+    global $dbh;
+    $query = "INSERT INTO " . NOM_SCHEMA . "." . "_imageoffre(urlimage, idoffre) VALUES (:url, :id)";
+    $stmt = $dbh->prepare($query);
+
+    $stmt->bindParam(":url", $url);
+    $stmt->bindParam(":id", $id);
+
+    $stmt->execute();
+}
 
 if (isset($_POST["titre"])) {
+
+
+
+    try{
+        $destUrl = IMAGE_DIR . $idoffre;
+        mkdir($destUrl, 0777, true);
+        $files = $_FILES['images_offre'];
+        $file_count = count($files['name']);
+        for ($i = 0; $i < $file_count; $i++) {
+            $ext = explode('/', $files['type'][$i])[1];
+            $upload_name = explode('\\', $files['tmp_name'][$i])[sizeof(explode('\\', $files['tmp_name'][$i]))-1];
+            $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
+            upload_images_offre($upload_url, $idoffre);
+            move_uploaded_file($files['tmp_name'][$i], $upload_url);
+        }
+
+
 
     $string_tags = $_POST["tags"];
     $post_tags = explode(",", $string_tags);
@@ -21,8 +51,15 @@ if (isset($_POST["titre"])) {
     $post_datedebut = $_POST['datedebut'];
     $post_datefin = $_POST['datefin'];
     $post_categorie = $_POST['categorie'];
-  
-    try{
+
+    if($post_datedebut == ""){
+        $post_datedebut = NULL;
+    }
+
+    if($post_datefin == ""){
+        $post_datefin = NULL;
+    }
+
     if($post_categorie == "restauration"){
         $query_delete_tags = "DELETE FROM ". NOM_SCHEMA . "._tagpourrestauration
                             WHERE idoffre = '" . $post_idoffre . "';";
@@ -38,25 +75,30 @@ if (isset($_POST["titre"])) {
 
     if($post_categorie == "restauration"){
         foreach($post_tags as $value){
-            $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagre (nomtag,idoffre)
-                            VALUES(:nomtag, :idoffre);";
-            $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
-            $stmt_envoie_tags->bindParam(':nomtag', $value);
-            $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
-            $stmt_envoie_tags->execute();
+            if(trim($value) != ""){
+                $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagre (nomtag,idoffre)
+                                VALUES(:nomtag, :idoffre);";
+                $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
+                $stmt_envoie_tags->bindParam(':nomtag', $value);
+                $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
+                $stmt_envoie_tags->execute();
+            }
         }
     }else{
         foreach($post_tags as $key => $value){
-            $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagof(nomtag,idoffre)
-                            VALUES(:nomtag, :idoffre);";
-            $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
-            $stmt_envoie_tags->bindParam(':nomtag', $value);
-            $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
-            $stmt_envoie_tags->execute();
+            if(trim($value) != ""){
+                $query_envoie_tags = "INSERT INTO ". NOM_SCHEMA . ".tagof(nomtag,idoffre)
+                                VALUES(:nomtag, :idoffre);";
+                $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
+                $stmt_envoie_tags->bindParam(':nomtag', $value);
+                $stmt_envoie_tags->bindParam(':idoffre', $post_idoffre);
+                $stmt_envoie_tags->execute();
+            }
         }
     }
     }catch(PDOException $e){
         print_r($e);
+        die();
     }
     //print_r($_POST["categorie"]."|");
 
@@ -81,7 +123,8 @@ if (isset($_POST["titre"])) {
     }
 
     try{
-    $query_envoie = "UPDATE " . NOM_SCHEMA . "._offre
+
+    $query_envoie = "UPDATE " . NOM_SCHEMA . ".". $table ."
                     SET nomoffre = :post_titre,
                         numadresse = :post_numadresse,
                         rueoffre = :post_rueoffre,
@@ -105,6 +148,7 @@ if (isset($_POST["titre"])) {
     $stmt_envoie->execute();
     }catch(PDOException $e){
         print_r($e);
+        die();
     }
 
     
@@ -115,14 +159,7 @@ if (isset($_POST["titre"])) {
     exit();
 } else {
 
-
-
-    /*$query_email = "SELECT email FROM ".NOM_SCHEMA."_compte 
-                    INNER JOIN sae._offre ON _compte.idcompte = _offre.idoffre
-                    WHERE idoffre = '$idoffre''";
-    $stmt_email = $dbh->prepare($query_email);
-    $email = $stmt_email->execute();
-    */
+    try{
     $query_titre = "SELECT nomoffre FROM " . NOM_SCHEMA . "._offre
                     WHERE idoffre = '$idoffre'";
     $stmt_titre = $dbh->prepare($query_titre);
@@ -196,21 +233,17 @@ if (isset($_POST["titre"])) {
     $stmt_datefin->execute();
     $datefin = $stmt_datefin->fetch(PDO::FETCH_ASSOC)["datefin"];
 
-    /*
-    $query_description = "SELECT description FROM ".NOM_SCHEMA."_offre
-                    WHERE _offre.idoffre = '$idoffre'";
-    $stmt_description = $dbh->prepare($query_description);
-    $stmt_description->execute();
-    $description = $stmt_description->fetch(PDO::FETCH_ASSOC)["description"];
-    */
 
-    /*$query_image = "SELECT urlversimage FROM ".NOM_SCHEMA."_offre
+    $query_image = "SELECT urlimage FROM ".NOM_SCHEMA."._offre
                     INNER JOIN _imageoffre ON _offre.idoffre = _imageoffre.idoffre
                     WHERE _offre.idoffre = '$idoffre'";
     $stmt_image = $dbh->prepare($query_image);
     $stmt_image->execute();
-    $image = $stmt_image->fetch(PDO::FETCH_ASSOC);//["urlversimage"];
-    print_r($image);*/
+    $url_image = $stmt_image->fetchall();
+    }catch(PDOException $e){
+        print_r($e);
+        die();
+    }
 ?>
 
     <!DOCTYPE html>
@@ -238,7 +271,7 @@ if (isset($_POST["titre"])) {
         <!-- Main content -->
         <main id="top">
             <h1>Modifier une offre</h1>
-            <form action="modifier_offre.php" method="POST" enctype="multipart/form-data" id="modifier_offre">
+            <form action="modifier_offre.php?idoffre=<?php echo $idoffre ?>" method="POST" enctype="multipart/form-data" id="modifier_offre">
                 <div class="element_form row-form">
                     
                         <label for="titre">Titre : </label>
@@ -292,14 +325,21 @@ if (isset($_POST["titre"])) {
                         <input type="date" id="datefin" name="datefin" value="<?php echo $datefin ?>">
                     
                 </div>
+                <label for="resume">Résumé</label>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
+                <label for="tags">Tags</label>
                 <textarea name="tags" id="tags"><?php foreach($tags as $key => $value){ echo $value[0].",";} ?></textarea>
                 
                 <div class="boutonimages">
-                    <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
-                    <input type="file" id="fichier" name="fichier">
+                    <label for="images_offre">Importer des images</label>
+                    <input type="file" id="images_offre" name="images_offre[]" multiple>
                     <input type="hidden" name="idoffre" value="<?php echo $idoffre; ?>">
-                </div>
+                </div>  
+
+                <?php foreach($url_image as $value){ ?> 
+                    <img src="<?php echo $value ?>" alt="<?php echo $value ?>">
+                <?php }; ?>
+
                 <div id="divVal">
                     <button type="submit" id="bnVal">Valider</button>
                 </div>
