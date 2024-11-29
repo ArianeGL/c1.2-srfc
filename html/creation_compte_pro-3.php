@@ -150,7 +150,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-    <?php require_once 'header_inc.html'; ?>
+<header>
+        <div id="homeButtonID" class="homeButton">
+            <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
+            <h2>PACT</h2>
+            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
+        </div>
+        <div>
+            <div class="container">
+                <button class="buttons header-button1">
+                    <h4>Offres</h4>
+                </button>
+
+                <!-- Button for back office -->
+                <button class="buttons header-button2">
+                    <h4>Factures</h4>
+                </button>
+
+                <!-- Button for front office -->
+                <button style="display: none;" class="buttons header-button2">
+                    <h4>R&eacute;cent</h4>
+                </button>
+
+                <button class="buttons header-button3">
+                    <h4>Compte</h4>
+                </button>
+            </div>
+            <div class="indicator">
+                <div id="div1" class="hidden"></div>
+                <div id="div2" class="hidden"></div>
+                <div id="div3" class="hidden"></div>
+            </div>
+        </div>
+    </header>
 
     <section>
         <h1>Création du compte professionnel</h1>
@@ -187,29 +219,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" class="input-creation" id="rib" name="rib" placeholder="RIB" />
                     </div>
                 </div>
-
-                <div id="photo-profil" class="form-right">
-                    <?php if (isset($_SESSION['photo'])) { ?>
-                        <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
-                    <?php } else { ?>
-                        <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
-                    <?php } ?>
+                <div id="form-photo">
+                    <div id="photo-profil" class="form-right">
+                        <?php if (isset($_SESSION['photo'])) { ?>
+                            <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
+                        <?php } else { ?>
+                            <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
+                        <?php } ?>
+                    </div>
+                        <label class="smallButton" for="photo">Importer une image</label>
+                        <input type="file" id="photo" name="photo" style="display:none;" />
+                    </div>
                 </div>
-                <label class="bouton" for="photo">Importer une image</label>
-                <input type="file" id="photo" name="photo" style="display:none;" />
-            </div>
-            </div>
 
 
             <div id="form-footer">
                 <p id="obligation">* Obligatoire</p>
-                <input class="bouton" id="bouton-modifier" type="submit" value="Valider" />
-                <div class="accepte">
-                    <input type="checkbox" value="communication" id="communication">
-                    <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
+                <input class="button" id="bouton-modifier" type="submit" value="Valider" />
+                <div id="accepte">
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="communication" id="communication">
+                        <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
+                    </div>
                     <br />
-                    <input type="checkbox" value="condition" id="condition" required>
-                    <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="condition" id="condition" required>
+                        <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                    </div>
                 </div>
             </div>
         </form>
