@@ -1,19 +1,21 @@
-// Get the current page's filename
-const pageName = window.location.pathname.split("/").pop();
+document.addEventListener('DOMContentLoaded', () => {
+	const pageName = window.location.pathname.split("/").pop();
+	const indicators = {
+		div1: "1",
+		div2: "2",
+		div3: "3"
+	};
+	
+	console.log("Script Loaded");
+	console.log("Page Name:", pageName);
+	console.log("Matching Divs:", indicators);
 
-// Function to show the correct div in the header based on the page's name (1, 2 or 3)
-function showCorrectDiv() {
-	if (pageName.includes("1")) {
-		document.getElementById("div1").classList.add("b1-indicator");
-		document.getElementById("div1").classList.remove("hidden");
-	} else if (pageName.includes("2")) {
-		document.getElementById("div2").classList.add("b2-indicator");
-		document.getElementById("div2").classList.remove("hidden");
-	} else if (pageName.includes("3")) {
-		document.getElementById("div3").classList.add("b3-indicator");
-		document.getElementById("div3").classList.remove("hidden");
-	}
-}
+	Object.keys(indicators).forEach(divId => {
+		if (pageName.includes(indicators[divId])) {
+			document.getElementById(divId).style.backgroundColor = "red";
+		}
+	});
+});
 
 window.onload = function() {
 	// Makes it so the light blue part of the header is a button
@@ -37,7 +39,7 @@ window.onload = function() {
 	}
 
 	// If you create functions, add them here
-	showCorrectDiv();
+	// showCorrectDiv();
 };
 
 

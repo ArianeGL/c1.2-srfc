@@ -1,43 +1,5 @@
 @import "../style.css";
 
-.container {
-    display: flex;
-    background-color: var(--light-grey);
-    width: 100%;
-}
-
-.hidden {
-    width: 33%;
-    background-color: var(--navy-blue);
-}
-
-.homeButton {
-    height: 100%;
-    background-color: var(--light-blue);
-    width: 25%;
-    display: flex;
-    justify-content: normal;
-}
-
-footer {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    background-color: var(--light-grey);
-    height: 10%;
-    align-items: center;
-
-    text-align: center;
-
-    .top-botton {
-        height: 100%;
-        align-items: center;
-        background-color: var(--light-grey);
-        color: none;
-        border: none;
-    }
-}
-
 main{
     padding: 0 10%;
 }
@@ -151,7 +113,13 @@ div button{
 .bouton{
     display: flex;
     flex-direction: row;
-    justify-content: flex-end ;
+    justify-content: flex-end;
+}
+
+.smallButton{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 input[type="file"] {
