@@ -85,11 +85,7 @@ CREATE TABLE IF NOT EXISTS sae._offre
    enligne          boolean       default(true) not null,
    datepublication  date          default(CURRENT_DATE),
    dernieremaj      date          default(CURRENT_DATE),
-   estpremium       boolean       default(false) not null,
-   eststandard      boolean       default(false) not null,
-   estgratuit       boolean       default(true) not null,
-   alaune           BOOLEAN       DEFAULT(false) not null,
-   enrelief         BOOLEAN       default(false) not null,
+   abonnement       varchar(15)   default('Gratuit'),              -- +
    blacklistdispo   integer       default(0) not null,
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(9999) NOT NULL,
@@ -101,10 +97,69 @@ ALTER TABLE sae._offre
    ADD CONSTRAINT _offre_pkey
    PRIMARY KEY (idoffre);
 
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+--Options, abonnement et hisorique de mise en ligne
+
+CREATE TABLE IF NOT EXISTS sae._historique
+(
+  idoffre   varchar(7) NOT NULL primary key REFERENCES sae._offre(idoffre),
+  datedebut DATE       NOT NULL,
+  datefin   DATE
+);
+
+
+CREATE TABLE IF NOT EXISTS sae._abonnement
+(
+  type    varchar(15) PRIMARY KEY,
+  prixHT  real        NOT NULL
+);
+
+-- DECLARATION DES ABONNEMENTS
+INSERT INTO sae._abonnement(type,prixHT) VALUES('Gratuit',0.00);
+INSERT INTO sae._abonnement(type,prixHT) VALUES('Standard',1.67);
+INSERT INTO sae._abonnement(type,prixHT) VALUES('Premium',3.34);
+--
+
+ALTER TABLE sae._offre
+  ADD CONSTRAINT _offre_abonnement_fk
+  FOREIGN KEY (abonnement) REFERENCES sae._abonnement(type);
+
+CREATE TABLE IF NOT EXISTS sae._option
+(
+  type    varchar(15) NOT NULL PRIMARY KEY,
+  prixHT  real        NOT NULL 
+);
+
+
+-- DECLARATION DES OPTIONS
+INSERT INTO sae._option(type,prixHT) VALUES('A la une',16.68);
+INSERT INTO sae._option(type,prixHT) VALUES('En relief',8.34);
+--
+
+CREATE TABLE IF NOT EXISTS sae._souscriptionoption
+(
+  idoffre           varchar(7)    NOT NULL    REFERENCES sae._offre(idoffre),
+  option            varchar(15)   NOT NULL    REFERENCES sae._option(type), 
+  nbsemaine         INTEGER       NOT NULL,
+  semainelancement  DATE          NOT NULL,
+  active            boolean       NOT NULL,
+  CONSTRAINT _souscriptionoption_pkey PRIMARY KEY (idoffre,option)
+);
+
+CREATE TABLE IF NOT EXISTS sae._historiqueoption
+(
+  idoffre   varchar(7) NOT NULL primary key REFERENCES sae._offre(idoffre),
+  option    varchar(15) NOT NULL REFERENCES sae._option(type),
+  debutsem  DATE       NOT NULL,
+  finsem    DATE       NOT NULL
+);
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
    urlimage  varchar(100)   NOT NULL,
-   idoffre       varchar(7)     NOT NULL
+   idoffre   varchar(7)     NOT NULL
 );
 
 ALTER TABLE sae._imageoffre
@@ -280,12 +335,20 @@ CREATE TABLE IF NOT EXISTS sae._attraction
 
 CREATE TABLE IF NOT EXISTS sae._facture
 (
-  idfacture   varchar(7) PRIMARY KEY,
-  prixfacture real not null,
-  datefacture date not null DEFAULT(CURRENT_DATE),
-  idoffre     varchar(7) REFERENCES sae._offre(idoffre),
-  idcompte    varchar(7) REFERENCES sae._professionnelprive(idcompte)
+  idfacture         varchar(7)    PRIMARY KEY,
+  datefacture       date          not null DEFAULT(CURRENT_DATE),
+  idoffre           varchar(7)    REFERENCES sae._offre(idoffre),
+  moisprestation    varchar(15)   not null,
+  echeanceReglement date          not null,
+  nbjoursenligne    integer       not null,
+  abonnementHT      real          not null,
+  abonnementTTC     real          not null,
+  optionHT          real          not null,
+  optionTTC         real          not null,
+  totalHT           real          not null,
+  totalTTC          real          not null
 );
+
 
 CREATE TABLE IF NOT EXISTS sae._avis
 (
@@ -486,44 +549,34 @@ BEGIN
     if (NEW.enligne is null) THEN 
       NEW.enligne = true;
     end if;
-    if (NEW.estpremium is null) THEN
-      NEW.estpremium = false;
-    end if;
-    if (NEW.eststandard is null) THEN
-      NEW.eststandard = false;
-    end if;
-    if (NEW.estgratuit is null) THEN
-      NEW.estgratuit = true;
-    end if;
-    if (NEW.estpremium is null) THEN
-      NEW.blacklistdispo = 0;
-    end if;
     if (NEW.blacklistdispo is null) THEN
       NEW.blacklistdispo = 0;
     end if;
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.alaune is null) THEN
-      NEW.alaune = FALSE;
-    end if;
-    if (NEW.enrelief is null) THEN
-      NEW.enrelief = FALSE;
+    if (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Gratuit';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
+                              prixmin,enligne,blacklistdispo,idcompte,abonnement,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
     values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
+            NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
     insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
     
-    UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
+    UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
+
+    IF (NEW.enligne = true) THEN
+      INSERT INTO sae._historique(idoffre,datedebut)
+      VALUES(NEW.idoffre,CURRENT_DATE);
+    END IF;
 
     RETURN NEW;
     
@@ -582,39 +635,24 @@ BEGIN
     if (NEW.enligne is null) THEN 
       NEW.enligne = true;
     end if;
-    if (NEW.estpremium is null) THEN
-      NEW.estpremium = false;
-    end if;
-    if (NEW.eststandard is null) THEN
-      NEW.eststandard = false;
-    end if;
-    if (NEW.estgratuit is null) THEN
-      NEW.estgratuit = true;
-    end if;
-    if (NEW.estpremium is null) THEN
-      NEW.blacklistdispo = 0;
-    end if;
     if (NEW.blacklistdispo is null) THEN
       NEW.blacklistdispo = 0;
     end if;
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.alaune is null) THEN
-      NEW.alaune = FALSE;
-    end if;
-    if (NEW.enrelief is null) THEN
-      NEW.enrelief = FALSE;
+    if (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Gratuit';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
-    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
+                              prixmin,enligne,blacklistdispo,idcompte,abonnement,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+    values(NEW.idoffre,'Parc attraction',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
+            NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
   if (NEW.nbattractions is null) THEN
     NEW.nbattractions = 1;
@@ -625,7 +663,12 @@ BEGIN
   insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
 
-  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
+
+  IF (NEW.enligne = true) THEN
+    INSERT INTO sae._historique(idoffre,datedebut)
+    VALUES(NEW.idoffre,CURRENT_DATE);
+  END IF;  
 
   RETURN NEW;
       
@@ -685,39 +728,24 @@ BEGIN
     if (NEW.enligne is null) THEN 
       NEW.enligne = true;
     end if;
-    if (NEW.estpremium is null) THEN
-      NEW.estpremium = false;
-    end if;
-    if (NEW.eststandard is null) THEN
-      NEW.eststandard = false;
-    end if;
-    if (NEW.estgratuit is null) THEN
-      NEW.estgratuit = true;
-    end if;
-    if (NEW.estpremium is null) THEN
-      NEW.blacklistdispo = 0;
-    end if;
     if (NEW.blacklistdispo is null) THEN
       NEW.blacklistdispo = 0;
     end if;
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.alaune is null) THEN
-      NEW.alaune = FALSE;
-    end if;
-    if (NEW.enrelief is null) THEN
-      NEW.enrelief = FALSE;
+    if (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Gratuit';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
-    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
+                              prixmin,enligne,blacklistdispo,idcompte,abonnement,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+    values(NEW.idoffre,'Visite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
+            NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
   if (NEW.estguidee is null) THEN
     NEW.estguidee = false;
@@ -725,7 +753,12 @@ BEGIN
   insert into sae._visite(idoffre,dureevisite,estguidee)
   values(NEW.idoffre,NEW.dureevisite,NEW.estguidee);
 
-  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
+
+    IF (NEW.enligne = true) THEN
+      INSERT INTO sae._historique(idoffre,datedebut)
+      VALUES(NEW.idoffre,CURRENT_DATE);
+    END IF;
 
   RETURN NEW;
       
@@ -784,39 +817,24 @@ BEGIN
     if (NEW.enligne is null) THEN 
       NEW.enligne = true;
     end if;
-    if (NEW.estpremium is null) THEN
-      NEW.estpremium = false;
-    end if;
-    if (NEW.eststandard is null) THEN
-      NEW.eststandard = false;
-    end if;
-    if (NEW.estgratuit is null) THEN
-      NEW.estgratuit = true;
-    end if;
-    if (NEW.estpremium is null) THEN
-      NEW.blacklistdispo = 0;
-    end if;
     if (NEW.blacklistdispo is null) THEN
       NEW.blacklistdispo = 0;
     end if;
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.alaune is null) THEN
-      NEW.alaune = FALSE;
-    end if;
-    if (NEW.enrelief is null) THEN
-      NEW.enrelief = FALSE;
+    if (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Gratuit';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
-    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
+                              prixmin,enligne,blacklistdispo,idcompte,abonnement,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+    values(NEW.idoffre,'Activite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
+            NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
   if (NEW.agerequis is null) THEN
     NEW.agerequis = 0;
@@ -824,7 +842,12 @@ BEGIN
   insert into sae._activite(idoffre,agerequis,dureeactivite)
   values(NEW.idoffre,NEW.agerequis,NEW.dureeactivite);
 
-  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
+
+    IF (NEW.enligne = true) THEN
+      INSERT INTO sae._historique(idoffre,datedebut)
+      VALUES(NEW.idoffre,CURRENT_DATE);
+    END IF;
 
   RETURN NEW;
       
@@ -883,39 +906,24 @@ BEGIN
     if (NEW.enligne is null) THEN 
       NEW.enligne = true;
     end if;
-    if (NEW.estpremium is null) THEN
-      NEW.estpremium = false;
-    end if;
-    if (NEW.eststandard is null) THEN
-      NEW.eststandard = false;
-    end if;
-    if (NEW.estgratuit is null) THEN
-      NEW.estgratuit = true;
-    end if;
-    if (NEW.estpremium is null) THEN
-      NEW.blacklistdispo = 0;
-    end if;
     if (NEW.blacklistdispo is null) THEN
       NEW.blacklistdispo = 0;
     end if;
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.alaune is null) THEN
-      NEW.alaune = FALSE;
-    end if;
-    if (NEW.enrelief is null) THEN
-      NEW.enrelief = FALSE;
+    if (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Gratuit';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
-                              prixmin,enligne,estpremium,eststandard,estgratuit,blacklistdispo,idcompte,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin,alaune,enrelief)
-    values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
+                              prixmin,enligne,blacklistdispo,idcompte,abonnement,
+                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+    values(NEW.idoffre,'Restauration',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
-            NEW.prixmin,NEW.enligne,NEW.estpremium,NEW.eststandard,NEW.estgratuit,NEW.blacklistdispo,NEW.idcompte,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin,NEW.alaune,NEW.enrelief);
+            NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
 
   if (NEW.petitdejeuner is null) THEN
@@ -939,7 +947,12 @@ BEGIN
   values(NEW.idoffre,NEW.urlverscarte,NEW.gammeprix,NEW.petitdejeuner,NEW.dejeuner,NEW.diner,
          NEW.boisson,NEW.brunch,NEW.moycuisine,NEW.moyservice,NEW.moyambiance,NEW.moyqp);
 
-  UPDATE sae._offre set blacklistdispo = 3 where estpremium = true;
+  UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
+
+    IF (NEW.enligne = true) THEN
+      INSERT INTO sae._historique(idoffre,datedebut)
+      VALUES(NEW.idoffre,CURRENT_DATE);
+    END IF;
 
   RETURN NEW;
       
@@ -1346,8 +1359,8 @@ BEGIN
   VALUES(NEW.idavis,NEW.titre,NEW.datevisite,NEW.contexte,NEW.idoffre,NEW.idcompte,
         NEW.commentaire,NEW.noteavis,0,0,false,false);
 
-  UPDATE sae._offre SET nbavis = nbavis + 1,
-                        note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
+  UPDATE sae._offre SET nbavis = nbavis + 1 WHERE idoffre = NEW.idoffre;
+  UPDATE sae._offre SET note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
     WHERE idoffre = NEW.idoffre;
 
   RETURN NEW;
@@ -1388,8 +1401,8 @@ BEGIN
     
   UPDATE sae._avis SET noteavis = (select moycuisine + moyservice + moyambiance + moyqp from sae._restauration where idoffre = NEW.idoffre) / 4 where idoffre = NEW.idoffre;
 
-  UPDATE sae._offre SET nbavis = nbavis + 1,
-                        note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
+  UPDATE sae._offre SET nbavis = nbavis + 1 WHERE idoffre = NEW.idoffre;
+  UPDATE sae._offre SET note = (select SUM(noteavis) from sae._avis where idoffre = NEW.idoffre) / nbavis
     WHERE idoffre = NEW.idoffre;
 
   RETURN NEW;
@@ -1400,3 +1413,145 @@ CREATE OR REPLACE TRIGGER tg_posteravisre
   INSTEAD OF INSERT ON sae.avisre
   FOR EACH ROW
   EXECUTE PROCEDURE sae.posteravisre();
+
+
+-------------------------------------------------------------------------------------
+-- Reponses
+create or replace view sae.reponse AS
+  select * from sae._reponse;
+
+create or replace function sae.posterreponse()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  INSERT INTO sae._reponse(idrep,idcompte,idavis,reponse)
+  VALUES(NEW.idrep,NEW.idcompte,NEW.idavis,NEW.reponse);
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_posterreponse
+  INSTEAD OF INSERT ON sae.reponse
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.posterreponse();
+
+-------------------------------------------------------------------------------------
+
+create or replace view sae.facture as
+  select * from sae._facture;
+
+create or replace function sae.genfacture()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+
+  UPDATE sae._historique SET datefin = CURRENT_DATE - 1 where (select idoffre from sae._historique where datefin is null) = NEW.idoffre;
+  INSERT INTO sae._historique(idoffre,datedebut)
+  VALUES(NEW.idoffre,CURRENT_DATE);
+
+  IF (EXTRACT(MONTH FROM CURRENT_DATE) = 1) THEN
+    NEW.moisprestation = 12;
+  ELSE
+    NEW.moisperstation = EXTRACT(MONTH FROM CURRENT_DATE - 1);
+  END IF;
+  
+  NEW.nbjoursenligne = (
+      SELECT SUM(datefin - datedebut)
+      FROM sae._historique
+      WHERE EXTRACT(MONTH FROM datedebut) = NEW.moisprestation
+        AND idoffre = NEW.idoffre
+  );
+
+  NEW.abonnementHT = NEW.nbjoursenligne * (
+      SELECT prixht
+      FROM sae._abonnement
+      WHERE type = (
+          SELECT abonnement
+          FROM sae._offre
+          WHERE idoffre = NEW.idoffre
+      )
+  );
+  NEW.abonnementTTC =  NEW.abonnementHT * 1.2;
+
+  NEW.optionHT = (
+      (SELECT prix 
+      FROM sae._option 
+      NATURAL JOIN sae._souscriptionoption
+      WHERE option = 'A la une')
+      *
+      (SELECT COUNT(*)
+      FROM sae._historiqueoption 
+      NATURAL JOIN sae._souscriptionoption
+      WHERE EXTRACT(MONTH FROM debutsem) = NEW.moisprestation
+        AND idoffre = NEW.idoffre
+        AND option = 'A la une')
+  ) + (
+      (SELECT prix 
+      FROM sae._option 
+      NATURAL JOIN sae._souscription 
+      WHERE option = 'En relief')
+      *
+      (SELECT COUNT(*)
+      FROM sae._historiqueoption 
+      NATURAL JOIN sae._souscriptionoption
+      WHERE EXTRACT(MONTH FROM debutsem) = NEW.moisprestation
+        AND idoffre = NEW.idoffre
+        AND option = 'En relief')
+  );
+  NEW.optionTTC = NEW.optionHT * 1.2;
+
+  NEW.totalHT = NEW.abonnementHT + NEW.optionHT;
+  NEW.totalTTC = NEW.abonnementTTC + NEW.optionTTC;
+
+  INSERT INTO sae._facture(idfacture,datefacture,idoffre,moisprestation,echeancereglement,
+                          nbjoursenligne,abonnementHT,abonnementTTC,optionHT,optionTTC,
+                          totalHT,totalTTC)
+  VALUES(NEW.idfacture,CURRENT_DATE,NEW.idoffre,NEW.moisprestation,CURRENT_DATE + 30,
+        NEW.nbjoursenligne,NEW.abonnementHT,NEW.abonnementTTC,NEW.optionHT,NEW.optionTTC,
+        NEW.totalHT,NEW.totalTTC);
+
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_genfacture
+  INSTEAD OF INSERT ON sae.facture
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.genfacture();
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+create or replace view sae.option AS
+  select * from sae._souscriptionoption;
+
+create or replace function sae.prendreoption()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+
+  IF (NEW.active is null) THEN
+    NEW.active = false;
+  END IF;
+
+  INSERT INTO sae._souscriptionoption(idoffre,option,nbsemaine,semainelancement,active)
+  VALUES(NEW.idoffre,NEW.option,4,NEW.semainelancement,active);
+
+  IF (active = true) THEN
+    INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
+    VALUES(NEW.idoffre,NEW.option,NEW.semainelancement,NEW.semainelancement + 7);
+  END IF;
+
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_prendreoption
+  INSTEAD OF INSERT ON sae.option
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.prendreoption();
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
