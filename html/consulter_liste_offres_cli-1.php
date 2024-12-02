@@ -35,7 +35,7 @@ try {
     <script src="main.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
-            window.location.href = `info_offre-1.php?idoffre=${idoffre}`;
+            window.location.href = `informations_offre-1.php?idoffre=${idoffre}`;
         }
 
         alert(articles[0].firstElementChild.children[1].innerHTML);
@@ -43,32 +43,6 @@ try {
         let clopButtonsRedirige = document.getElementsByClassName("clopButton");
         clopButtonsRedirige[0].addEventListener("click", loadCreaOffre);
         clopButtonsRedirige[1].addEventListener("click", loadSesOffresPro);
-
-        let bouton_filtre = document.getElementsByClassName("filterButton");
-        bouton_filtre.addEventListener("click", hideAndShow);
-
-        function hideAndShow(){
-            if (bouton_filtre.style.display == "none"){
-                bouton_filtre.style.display = "flex";
-            } else {
-                bouton_filtre.style.display = "none";
-            }
-        }
-
-        let activite = document.querySelector("#activite");
-        let visite = document.querySelector("#visite");
-        let parc_attraction = document.querySelector("#parcAttraction");
-        let spectacle = document.querySelector("#spectacle");
-        let restauration = document.querySelector("#restauration");
-
-        function apply_filter(event, changement){
-            // get changed element
-            // refresh and apply change: load(url)
-            // get current url: window.location.href
-            if (changement == "categorie"){
-
-            }
-        }
         /*
         for (article in articles){
             let nom = document.querySelector();
@@ -121,27 +95,128 @@ try {
         <div class="clopRecherche">
             <button class="searchButton"><img src="blabla.png" alt="Rechercher"></button>
             <input id="searchText" placeholder="Rechercher une offre"></input>
-            <button class="filterButton">Filtrer</button>
+            <div id="clopFiltre">
+                <button id="filterButton">Filtrer</button>
+                <fieldset id="filterOptions">
+                    <h3>Par Catégorie :</h3>
+                    
+                        <?php
+                        $query1 = 'SELECT * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel';
+                        if (isset($_GET['categorie'])){
+                            if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr'){
+                                $filtre_cat = "";
+                            
+                                $categorie = $_GET['categorie'];
+
+                                if (str_contains($categorie,'a')) {
+                                    ?>
+                                    <label for="activite">
+                                        <input type="checkbox" id="activite" name="activite" value="activite" checked />Activit&eacute;</label>
+                                    <?php
+                                    if ($filtre_cat === ""){
+                                        $filtre_cat = " WHERE categorie='Activite'";
+                                    } else {
+                                        $filtre_cat = $filtre_cat . " OR categorie='Activite'";
+                                    }
+                                } else {
+                                    ?>
+                                    <label for="activite">
+                                        <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                                    <?php
+                                }
+
+                                if (str_contains($categorie,'v')) {
+                                    ?>
+                                    <label for="visite">
+                                        <input type="checkbox" id="visite" name="visite" value="visite" checked />Visite</label>
+                                    <?php
+                                    if ($filtre_cat === ""){
+                                        $filtre_cat = " WHERE categorie='Visite'";
+                                    } else {
+                                        $filtre_cat = $filtre_cat . " OR categorie='Visite'";
+                                    }
+                                } else {
+                                    ?>
+                                    <label for="visite">
+                                        <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                                    <?php
+                                }
+
+                                if (str_contains($categorie,'p')) {
+                                    ?>
+                                    <label for="parcAttraction">
+                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" checked />Parc d'Attraction</label>
+                                    <?php
+                                    if ($filtre_cat === ""){
+                                        $filtre_cat = " WHERE categorie='Parc attraction'";
+                                    } else {
+                                        $filtre_cat = $filtre_cat . " OR categorie='Parc attraction'";
+                                    }
+                                } else {
+                                    ?>
+                                    <label for="parcAttraction">
+                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                                    <?php
+                                }
+
+                                if (str_contains($categorie,'s')) {
+                                    ?>
+                                    <label for="spectacle">
+                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" checked />Spectacle</label>
+                                    <?php
+                                    if ($filtre_cat === ""){
+                                        $filtre_cat = " WHERE categorie='Spectacle'";
+                                    } else {
+                                        $filtre_cat = $filtre_cat . " OR categorie='Spectacle'";
+                                    }
+                                } else {
+                                    ?>
+                                    <label for="spectacle">
+                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                                    <?php
+                                }
+
+                                if (str_contains($categorie,'r')) {
+                                    ?>
+                                    <label for="restauration">
+                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" checked />Restauration</label>
+                                    <?php
+                                    if ($filtre_cat === ""){
+                                        $filtre_cat = " WHERE categorie='Restauration'";
+                                    } else {
+                                        $filtre_cat = $filtre_cat . " OR categorie='Restauration'";
+                                    }
+                                } else {
+                                    ?>
+                                    <label for="restauration">
+                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                                    <?php
+                                }
+                            
+                                $query1 = $query1 . $filtre_cat;
+                            }
+                        } else {
+                            ?>
+                            <label for="activite">
+                                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                            <label for="visite">
+                                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                            <label for="parcAttraction">
+                                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                            <label for="spectacle">
+                                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                            <label for="restauration">
+                                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                            <?php
+                        }
+                        ?>
+                </fieldset>
+            </div>
             <button class="sortButton">Trier</button>
         </div>
 
-        <fieldset display="none" id="filter_offer">
-            <h3>Par Catégorie :</h3>
-            <label for="activite">
-                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-            <label for="visite">
-                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-            <label for="parcAttraction">
-                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-            <label for="spectacle">
-                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-            <label for="restauration">
-                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-        </fieldset>
-
         <div id="clopRangement">
             <?php
-            $query1 = 'SELECT * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel';
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -179,11 +254,72 @@ try {
             }
             ?>
         </div>
-
     </main>
 
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
+<script>
+    let bouton_filtre = document.querySelector("#filterButton");
+    let champs_filtres = document.querySelector("#filterOptions");
+    bouton_filtre.addEventListener("click", hideAndShow);
+    
+    document.addEventListener('click', (e) => {
+        if (!bouton_filtre.contains(e.target) && !champs_filtres.contains(e.target)) {
+            champs_filtres.style.display = 'none';
+        }
+    });
 
+    function hideAndShow(){
+        const isVisible = window.getComputedStyle(champs_filtres).display === 'block';
+        champs_filtres.style.display = isVisible ? 'none' : 'block';
+    }
+    var activite = document.querySelector("#activite");
+    var visite = document.querySelector("#visite");
+    var parc_attraction = document.querySelector("#parcAttraction");
+    var spectacle = document.querySelector("#spectacle");
+    var restauration = document.querySelector("#restauration");
+
+    activite.addEventListener("click", categorie_filter);
+    visite.addEventListener("click", categorie_filter);
+    parc_attraction.addEventListener("click", categorie_filter);
+    spectacle.addEventListener("click", categorie_filter);
+    restauration.addEventListener("click", categorie_filter);
+
+    function categorie_filter(){
+        // get changed element
+        // refresh and apply change: load(url)
+        // get current url: window.location.href
+
+        let cible = 'categorie';
+
+        let url = new URL(window.location.href);
+        let params = url.searchParams;
+
+        let categorie_query = "";
+
+        if ((activite.checked)){
+            categorie_query += "a";
+        }
+        if ((visite.checked)){
+            categorie_query += "v";
+        }
+        if ((parc_attraction.checked)){
+            categorie_query += "p";
+        }
+        if ((spectacle.checked)){
+            categorie_query += "s";
+        }
+        if ((restauration.checked)){
+            categorie_query += "r";
+        }
+        if (categorie_query === "" || categorie_query === "avpsr"){
+            params.delete(cible);
+        } else {
+            params.set(cible, categorie_query);
+        }
+        
+        window.location.href = url.toString();
+    }
+</script>
 </html>
