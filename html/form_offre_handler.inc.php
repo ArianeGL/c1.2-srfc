@@ -6,6 +6,7 @@ session_start();
 require_once "db_connection.inc.php";
 
 const IMAGE_DIR = "./images_importees/";
+const DAY_TO_SEC = 86400;
 
 class FunctionException extends Exception
 {
@@ -112,43 +113,46 @@ function bind_type_offre($stmt)
 
         switch ($_POST['type']) {
             case 'premium':
-                $premium = true;
-                $standard = false;
+                $stmt->bindParam(":abo", "Premium");
                 break;
             case 'standard':
-                $standard = true;
-                $premium = false;
+                $stmt->bindParam(":abo", "Standard");
                 break;
         }
-        $stmt->bindParam(":estpremium", $premium, PDO::PARAM_BOOL);
-        $stmt->bindParam(":eststandard", $standard, PDO::PARAM_BOOL);
-    } else {
-        $stmt->bindParam(":estpremium", false, PDO::PARAM_BOOL);
-        $stmt->bindParam(":eststandard", false, PDO::PARAM_BOOL);
-    }
+    } else $stmt->bindParam(":abo", "Gratuit");
 }
 
-function bind_option($stmt)
+function bind_option($id)
 {
     if (isset($_POST['opt'])) {
+        global $dbh;
+        $query = "INSERT INTO " . NOM_SCHEMA . "." . NOM_TABLE_SOUSCRI_OPTION . "(idoffre, option, nbsemaine, semainelancement) VALUES(:id, :option, :nbsem, :startsem)";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam("id", $id);
+
         switch ($_POST['opt']) {
             case 'relief':
-                $relief = true;
-                $une = false;
+                $option = "En relief";
                 break;
             case 'une':
-                $relief = false;
-                $une = true;
+                $option = "A la une";
                 break;
             default:
-                $relief = false;
-                $une = false;
+                $stmt = null;
         }
-        $stmt->bindParam(":relief", $relief, PDO::PARAM_BOOL);
-        $stmt->bindParam(":une", $une, PDO::PARAM_BOOL);
-    } else {
-        $stmt->bindParam(":relief", false, PDO::PARAM_BOOL);
-        $stmt->bindParam(":une", false, PDO::PARAM_BOOL);
+
+        if ($stmt != null) {
+            $stmt->bindParam(":option", $option);
+            $today = getdate();
+
+            if ($today['weekday'] != "Monday") {
+                $startsem = $today[0] + ((7 - $today[0]) + 1) * DAY_TO_SEC; //date du lundi suivant le jour actuel
+            } else $startsem = $today[0];
+
+            $stmt->bindParam(":nbsem", 4, PDO::PARAM_INT);
+            $stmt->bindparam(":startsem", date("Y-m-d", $startsem));
+            $stmt->execute();
+        }
     }
 }
 
@@ -179,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $age = $_POST['age'];
                 $duree = $_POST['duree'];
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_ACTIVITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, estpremium, eststandard, alaune, enrelief, agerequis, dureeactivite) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :estpremium, :eststandard, :une, :relief, :age, :duree);";
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_ACTIVITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement, alaune, enrelief, agerequis, dureeactivite) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo, :une, :relief, :age, :duree);";
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(":id", $id);
@@ -193,11 +197,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":resume", $resume);
                 $stmt->bindParam(":description", $description);
                 bind_type_offre($stmt);
-                bind_option($stmt);
                 $stmt->bindParam(":age", $age);
                 $stmt->bindParam(":duree", $duree);
 
                 $stmt->execute();
+                bind_option($id);
                 $stmt = null;
 
                 $categorie = VUE_ACTIVITE;
@@ -206,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $url_carte = upload_carte($id);
                 $gammeprix = $_POST['gammeprix'];
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_RESTO . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, estpremium, eststandard, alaune, enrelief, urlverscarte, gammeprix) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :estpremium, :eststandard, :une, :relief, :url_carte, :gammeprix);";
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_RESTO . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement, alaune, enrelief, urlverscarte, gammeprix) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo, :une, :relief, :url_carte, :gammeprix);";
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(":id", $id);
@@ -220,11 +224,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":resume", $resume);
                 $stmt->bindParam(":description", $description);
                 bind_type_offre($stmt);
-                bind_option($stmt);
                 $stmt->bindParam(":url_carte", $url_carte);
                 $stmt->bindParam(":gammeprix", $gammeprix);
 
                 $stmt->execute();
+                bind_option($id);
                 $stmt = null;
 
                 $categorie = VUE_RESTO;
@@ -234,7 +238,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 else $guidee = FALSE;
                 $duree = $_POST['duree'];
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_VISITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, estpremium, eststandard, alaune, enrelief, estguidee, dureevisite) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :estpremium, :eststandard, :une, :relief, :guidee, :dureevisite);";
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_VISITE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement, alaune, enrelief, estguidee, dureevisite) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo, :une, :relief, :guidee, :dureevisite);";
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(":id", $id);
@@ -248,11 +252,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":resume", $resume);
                 $stmt->bindParam(":description", $description);
                 bind_type_offre($stmt);
-                bind_option($stmt);
                 $stmt->bindParam(":guidee", $guidee, PDO::PARAM_BOOL);
                 $stmt->bindParam(":dureevisite", $duree);
 
                 $stmt->execute();
+                bind_option($id);
                 $stmt = null;
 
                 $categorie = VUE_VISITE;
@@ -262,7 +266,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $nb_attrac = $_POST['nb_attrac'];
                 $url_plan = upload_plan($id);
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, estpremium, eststandard, alaune, enrelief, ageminparc, nbattractions, urlversplan) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :estpremium, :eststandard, :une, :relief, :age, :nb_attrac, :url_plan);";
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement, alaune, enrelief, ageminparc, nbattractions, urlversplan) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo, :une, :relief, :age, :nb_attrac, :url_plan);";
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(":id", $id);
@@ -276,12 +280,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":resume", $resume);
                 $stmt->bindParam(":description", $description);
                 bind_type_offre($stmt);
-                bind_option($stmt);
                 $stmt->bindParam(":age", $age);
                 $stmt->bindParam(":nb_attrac", $nb_attrac);
                 $stmt->bindParam(":url_plan", $url_plan);
 
                 $stmt->execute();
+                bind_option($id);
                 $stmt = null;
 
                 $categorie = VUE_PARC_ATTRACTIONS;
@@ -290,7 +294,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $nb_places = $_POST['nb_places'];
                 $duree = $_POST['duree'];
 
-                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_SPECTACLE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, estpremium, eststandard, alaune, enrelief, placesspectacle, dureespectacle) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :estpremium, :eststandard, :une, :relief, :nb_places, :duree);";
+
+                $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_SPECTACLE . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement, alaune, enrelief, placesspectacle, dureespectacle) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo, :une, :relief, :nb_places, :duree);";
 
                 $stmt = $dbh->prepare($query);
 
@@ -305,11 +310,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":resume", $resume);
                 $stmt->bindParam(":description", $description);
                 bind_type_offre($stmt);
-                bind_option($stmt);
                 $stmt->bindParam(":nb_places", $nb_places);
                 $stmt->bindParam(":duree", $duree);
 
                 $stmt->execute();
+                bind_option($id);
                 $stmt = null;
 
                 $categorie = VUE_SPECTACLE;
