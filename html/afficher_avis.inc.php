@@ -21,8 +21,9 @@ function afficher_avis($avis)
     <div class="avis">
         <h3 class="titre_avis"><?php echo $avis['titre']; ?></h3>
         <p class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </p> <!-- a modifier avec le bon affichage de la note -->
+        <p class="date_visite"> <?php echo $avis
+        <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
     </div>
 <?php
 }
-
