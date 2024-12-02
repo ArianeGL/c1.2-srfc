@@ -2,8 +2,7 @@
 require_once("db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
 global $dbh;
-const IMAGE_DIR = "./images_importee/";
-
+const IMAGE_DIR = "images_importee\\";
 
 function upload_images_offre($url, $id)
 {
@@ -17,33 +16,51 @@ function upload_images_offre($url, $id)
     $stmt->execute();
 }
 
-function delete_image(){
+function delete_image($nom_image){
     global $dbh;
     $idoffre = $_GET['idoffre'];
-
+    
     $query_delete_image = "DELETE FROM ". NOM_SCHEMA . "._imageoffre
-                            WHERE idoffre = '" . $idoffre . "';";
+    WHERE idoffre = '" . $idoffre . "'and urlimage = '". $nom_image ."';";
     $stmt_delete_image = $dbh->prepare($query_delete_image);
     $stmt_delete_image->execute();
 }
+
 
 if (isset($_POST["titre"])) {
 
 
 
     try{
+
+        $query_image = "SELECT urlimage FROM ".NOM_SCHEMA."._imageoffre
+                        WHERE idoffre = '$idoffre'";
+        $stmt_image = $dbh->prepare($query_image);
+        $stmt_image->execute();
+        $url_image = $stmt_image->fetchall();
+
+        foreach($url_image as $value[0]){
+            print_r($value);
+            print_r($_POST);
+            die();
+            if($_POST["supprimer". $value[0]] == "oui"){
+                delete_image("$value[0]");
+            }
+        }
+
         $destUrl = IMAGE_DIR . $idoffre;
         mkdir($destUrl, 0777, true);
         $files = $_FILES['images_offre'];
         $file_count = count($files['name']);
         for ($i = 0; $i < $file_count; $i++) {
             $ext = explode('/', $files['type'][$i])[1];
-            $upload_name = explode('//', $files['tmp_name'][$i])[sizeof(explode('//', $files['tmp_name'][$i]))-1];
-            $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
-            upload_images_offre($upload_url, $idoffre);
-            move_uploaded_file($files['tmp_name'][$i], $upload_url);
+            $upload_name = explode('\\', $files['tmp_name'][$i])[sizeof(explode('\\', $files['tmp_name'][$i]))-1];
+            $upload_url = $destUrl . "\\" . $upload_name . '.' . $ext;
+            if($upload_url != "images_importee\Of-0002\."){
+                upload_images_offre($upload_url, $idoffre);
+                move_uploaded_file($files['tmp_name'][$i], $upload_url);
+            }
         }
-
 
 
     $string_tags = $_POST["tags"];
@@ -170,86 +187,94 @@ if (isset($_POST["titre"])) {
 } else {
 
     try{
-    $query_titre = "SELECT nomoffre FROM " . NOM_SCHEMA . "._offre
-                    WHERE idoffre = '$idoffre'";
-    $stmt_titre = $dbh->prepare($query_titre);
-    $stmt_titre->execute();
-    $titre = $stmt_titre->fetch(PDO::FETCH_ASSOC)["nomoffre"];
 
-    $query_tags = "SELECT nomtag FROM ".NOM_SCHEMA.".tagof
-                    WHERE idoffre = '$idoffre'";
+        
+        $query_titre = "SELECT nomoffre FROM " . NOM_SCHEMA . "._offre
+        WHERE idoffre = '$idoffre'";
+        $stmt_titre = $dbh->prepare($query_titre);
+        $stmt_titre->execute();
+        $titre = $stmt_titre->fetch(PDO::FETCH_ASSOC)["nomoffre"];
+        
+        $query_tags = "SELECT nomtag FROM ".NOM_SCHEMA.".tagof
+        WHERE idoffre = '$idoffre'";
     $stmt_tags = $dbh->prepare($query_tags);
     $stmt_tags->execute();
     $tags = $stmt_tags->fetchall();
-
+    
     if($tags == ""){
         print_r("idoffre = $idoffre ;   pas de tags");
     }
 
     $query_categorie = "SELECT categorie FROM " . NOM_SCHEMA . "._offre
-                    WHERE idoffre = '$idoffre'";
+    WHERE idoffre = '$idoffre'";
     $stmt_categorie = $dbh->prepare($query_categorie);
     $stmt_categorie->execute();
     $categorie = $stmt_categorie->fetch(PDO::FETCH_ASSOC)["categorie"];
-
+    
     $query_numadresse = "SELECT numadresse FROM " . NOM_SCHEMA . "._offre
-                    WHERE idoffre = '$idoffre'";
+    WHERE idoffre = '$idoffre'";
     $stmt_numadresse = $dbh->prepare($query_numadresse);
     $stmt_numadresse->execute();
     $numadresse = $stmt_numadresse->fetch(PDO::FETCH_ASSOC)["numadresse"];
-
-
+    
+    
     $query_rueoffre = "SELECT rueoffre FROM " . NOM_SCHEMA . "._offre
-                    WHERE idoffre = '$idoffre'";
+    WHERE idoffre = '$idoffre'";
     $stmt_rueoffre = $dbh->prepare($query_rueoffre);
     $stmt_rueoffre->execute();
     $rueoffre = $stmt_rueoffre->fetch(PDO::FETCH_ASSOC)["rueoffre"];
-
-
+    
+    
     $query_ville = "SELECT villeoffre FROM " . NOM_SCHEMA . "._offre
-                    WHERE idoffre = '$idoffre'";
+    WHERE idoffre = '$idoffre'";
     $stmt_ville = $dbh->prepare($query_ville);
     $stmt_ville->execute();
     $ville = $stmt_ville->fetch(PDO::FETCH_ASSOC)["villeoffre"];
-
-
+    
+    
     $query_codepostal = "SELECT codepostaloffre FROM " . NOM_SCHEMA . "._offre
-                        WHERE idoffre = '$idoffre'";
+    WHERE idoffre = '$idoffre'";
     $stmt_codepostal = $dbh->prepare($query_codepostal);
     $stmt_codepostal->execute();
     $codepostal = $stmt_codepostal->fetch(PDO::FETCH_ASSOC)["codepostaloffre"];
-
+    
     $query_resume = "SELECT resume FROM " . NOM_SCHEMA . "._offre
-                    WHERE _offre.idoffre = '$idoffre'";
+    WHERE _offre.idoffre = '$idoffre'";
     $stmt_resume = $dbh->prepare($query_resume);
     $stmt_resume->execute();
     $resume = $stmt_resume->fetch(PDO::FETCH_ASSOC)["resume"];
-
+    
     $query_prixmin = "SELECT prixmin FROM " . NOM_SCHEMA . "._offre
-                    WHERE _offre.idoffre = '$idoffre'";
+    WHERE _offre.idoffre = '$idoffre'";
     $stmt_prixmin = $dbh->prepare($query_prixmin);
     $stmt_prixmin->execute();
     $prixmin = $stmt_prixmin->fetch(PDO::FETCH_ASSOC)["prixmin"];
-
+    
     $query_datedebut = "SELECT datedebut FROM " . NOM_SCHEMA . "._offre
-                    WHERE _offre.idoffre = '$idoffre'";
+    WHERE _offre.idoffre = '$idoffre'";
     $stmt_datedebut = $dbh->prepare($query_datedebut);
     $stmt_datedebut->execute();
     $datedebut = $stmt_datedebut->fetch(PDO::FETCH_ASSOC)["datedebut"];
-
+    
     $query_datefin = "SELECT datefin FROM " . NOM_SCHEMA . "._offre
-                    WHERE _offre.idoffre = '$idoffre'";
+    WHERE _offre.idoffre = '$idoffre'";
     $stmt_datefin = $dbh->prepare($query_datefin);
     $stmt_datefin->execute();
     $datefin = $stmt_datefin->fetch(PDO::FETCH_ASSOC)["datefin"];
-
-
+    
+    
     $query_image = "SELECT urlimage FROM ".NOM_SCHEMA."._offre
                     INNER JOIN _imageoffre ON _offre.idoffre = _imageoffre.idoffre
                     WHERE _offre.idoffre = '$idoffre'";
     $stmt_image = $dbh->prepare($query_image);
     $stmt_image->execute();
     $url_image = $stmt_image->fetchall();
+
+    /*foreach($url_image as $value){
+        print_r($value[0]);
+    }
+    die();*/
+
     }catch(PDOException $e){
         print_r($e);
         die();
@@ -281,7 +306,7 @@ if (isset($_POST["titre"])) {
         <!-- Main content -->
         <main id="top">
             <h1>Modifier une offre</h1>
-            <form action="modifier_offre.php?idoffre=<?php echo $idoffre ?>" method="POST" enctype="multipart/form-data" id="modifier_offre">
+            <form action="modifier_offre-1.php?idoffre=<?php echo $idoffre ?>" method="POST" enctype="multipart/form-data" id="modifier_offre">
                 <div class="element_form row-form">
                     
                         <label for="titre">Titre : </label>
@@ -346,11 +371,24 @@ if (isset($_POST["titre"])) {
                     <input type="hidden" name="idoffre" value="<?php echo $idoffre; ?>">
                 </div>  
 
-                <?php foreach($url_image as $value){ ?> 
-                    <img src="<?php echo $value ?>" alt="<?php echo $value ?>">
-                <?php }; ?>
+                <table>
+                    <tr><td>Photo</td>
+                    <td>Supprimer</td></tr>
+                    <?php foreach($url_image as $value){ ?> 
+                        <tr>
+                            <td><img src="<?php echo $value[0] ?>" alt="<?php echo $value[0] ?>"></td>
+                            <td>
+                                <input type="radio" id="Oui" name="supprimer<?php echo $value[0] ?>" value="oui" />
+                                <label for="supprimer<?php echo $value[0] ?>">Oui</label>
+                                <input type="radio" id="Non" name="supprimer<?php echo $value[0] ?>" value="non" checked />
+                                <label for="supprimer<?php echo $value[0] ?>">Non</label>
 
-                <div id="divVal">
+                            </td>
+                        </tr>
+                    <?php }; ?>
+                </table>
+                        
+                        <div id="divVal">
                     <button type="submit" id="bnVal">Valider</button>
                 </div>
             </form>
