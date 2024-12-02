@@ -1,0 +1,195 @@
+:root {
+    --red: #CC0000;
+    --red-hover: #890c0c;
+    --light-blue: #E7FDFD;
+    --grey-blue: #9ABBDB;
+    --navy-blue: #254766; 
+    --navy-blue-hover: #133147;
+    --light-grey: #8599AD;
+    --dark-grey: #52667A;
+    --white : #ffffff;
+    --black: black;
+    --round-corners: 15px;
+}
+
+p {
+    font-size: 40px;
+    text-align: center;
+}
+#red-text{
+    color:var(--red);
+}
+
+h1{
+    font-size:64px;
+    text-align: center;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--white);
+    margin: 0;
+}
+
+/* Disposition des éléments du profil */
+
+#box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    padding: 20px;
+}
+
+/* Positionnement centré des infos du profil */
+
+.profile {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: var(--round-corners);
+    box-shadow: inset 0px 4px 4px 0 rgba(0,0,0,0.25);
+    width: auto;
+}
+
+
+.profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Style des inputs*/
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+
+/* Positionnement du code et de la ville*/
+
+#code-postal-ville {
+    display: flex;
+    justify-content: space-between;
+}
+
+#code-postal-ville .input-group {
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style des champs de saisie*/
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--light-grey);
+    border-radius: var(--round-corners);
+    background-color: var(--white);
+    color: var(--black);
+    font-size: 40px;
+}
+
+a {
+    color: var(--navy-blue);
+}
+
+/* Positionnement de l'image et des boutons */
+.actions-profil {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 342px;
+}
+
+/* Style de la photo de profil*/
+
+.photo-profil {
+    border-radius: 50%;
+    width: 300px;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+/* Positionnement des boutons */
+
+#bouton-modifier, #bouton-supprimer {
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+    border: none;
+    border-radius: var(--round-corners);
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: var(--white);
+}
+
+.pop-up{
+    display: flex;
+    
+    flex-direction: row;
+    align-items: center;
+}
+
+.big-button{
+    font-size:40px;
+    margin: 10px;
+    width: 200px;
+    height: 100px;
+}
+#bouton-modifier {
+    background-color: var(--navy-blue);
+    
+}
+
+#bouton-modifier:hover {
+    background-color: var(--navy-blue-hover);
+}
+
+#bouton-supprimer {
+    background-color: var(--red);
+}
+
+#bouton-supprimer:hover {
+    background-color: var(--red-hover);
+}
+
+
+/* Longueur des différents champs */
+
+#nom-societe {
+    width: 760px;
+    height: 75px;
+}
+
+#courriel {
+    width: 760px;
+    height: 75px;
+}
+
+#telephone {
+    width: 365px;
+    height: 75px;
+}
+
+#adresse {
+    width: 950px;
+    height: 75px;
+}
+
+#code-postal {
+    width: 160px;
+    height: 75px;
+}
+
+#ville {
+    width: 750px;
+    height: 75px;
+}
+
+#IBAN {
+    width: 950px;
+    height: 75px;
+}
