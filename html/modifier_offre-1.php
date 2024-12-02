@@ -2,7 +2,7 @@
 require_once("db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
 global $dbh;
-const IMAGE_DIR = "images_importee\\";
+const IMAGE_DIR = "images_importee/";
 
 function upload_images_offre($url, $id)
 {
@@ -16,46 +16,45 @@ function upload_images_offre($url, $id)
     $stmt->execute();
 }
 
-function delete_image($nom_image){
-    global $dbh;
-    $idoffre = $_GET['idoffre'];
-    
-    $query_delete_image = "DELETE FROM ". NOM_SCHEMA . "._imageoffre
-    WHERE idoffre = '" . $idoffre . "'and urlimage = '". $nom_image ."';";
-    $stmt_delete_image = $dbh->prepare($query_delete_image);
-    $stmt_delete_image->execute();
-}
-
-
 if (isset($_POST["titre"])) {
 
 
 
     try{
 
-        $query_image = "SELECT urlimage FROM ".NOM_SCHEMA."._imageoffre
-                        WHERE idoffre = '$idoffre'";
+        $query_image = "SELECT urlimage FROM ".NOM_SCHEMA."._offre
+                    INNER JOIN _imageoffre ON _offre.idoffre = _imageoffre.idoffre
+                    WHERE _offre.idoffre = '$idoffre'";
         $stmt_image = $dbh->prepare($query_image);
         $stmt_image->execute();
         $url_image = $stmt_image->fetchall();
 
-        foreach($url_image as $value[0]){
+        foreach($url_image as $value){
+            /*print_r($url_image);
+            print_r(" | ");
             print_r($value);
-            print_r($_POST);
-            die();
-            if($_POST["supprimer". $value[0]] == "oui"){
-                delete_image("$value[0]");
+            print_r(" | ");
+            print_r($_POST); 
+            print_r(" | ");
+            print_r($_POST["supprimer".str_replace(".","_",$value[0])]);   
+            die();*/
+            if($_POST["supprimer".str_replace(".","_",$value[0])] == "oui"){
+                $query_delete_image = "DELETE FROM ". NOM_SCHEMA . "._imageoffre
+                WHERE urlimage = :url ;";
+                $stmt_delete_image = $dbh->prepare($query_delete_image);
+                $stmt_delete_image->bindParam(':url',$value[0]);
+                $stmt_delete_image->execute();
             }
         }
-
+        
         $destUrl = IMAGE_DIR . $idoffre;
         mkdir($destUrl, 0777, true);
         $files = $_FILES['images_offre'];
         $file_count = count($files['name']);
         for ($i = 0; $i < $file_count; $i++) {
             $ext = explode('/', $files['type'][$i])[1];
-            $upload_name = explode('\\', $files['tmp_name'][$i])[sizeof(explode('\\', $files['tmp_name'][$i]))-1];
-            $upload_url = $destUrl . "\\" . $upload_name . '.' . $ext;
+            $upload_name = explode('/', $files['tmp_name'][$i])[sizeof(explode('/', $files['tmp_name'][$i]))-1];
+            $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
             if($upload_url != "images_importee\Of-0002\."){
                 upload_images_offre($upload_url, $idoffre);
                 move_uploaded_file($files['tmp_name'][$i], $upload_url);
