@@ -75,6 +75,19 @@
                             <button class="button-facture" type="button">Factures</button>
                         </div>
                         <p><?php echo $offre['resume']; ?></p>
+                        <?php 
+                            $queryOption = "SELECT \"option\" FROM " . NOM_SCHEMA . "._souscriptionoption WHERE idoffre = :idoffre AND active = true";
+                            $sthOption = $dbh->prepare($queryOption);
+                            $sthOption->execute(['idoffre' => $offre['idoffre']]);
+                            $option = $sthOption->fetch(PDO::FETCH_ASSOC);
+
+                            if ($option){ ?>
+                                <form action="annuler_option.php" method="POST">
+                                    <input type="hidden" name="idoffre" value="<?php echo $offre['idoffre']; ?>">
+                                    <input type="hidden" name="option" value="<?php echo htmlspecialchars($option['option']); ?>">
+                                    <button type="submit" class="button">Annuler l'option</button>
+                                </form>
+                        <?php }  ?>
                     </div>
                 </div>
         <?php
