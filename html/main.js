@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		div2: "2",
 		div3: "3"
 	};
-	
+
 	console.log("Script Loaded");
 	console.log("Page Name:", pageName);
 	console.log("Matching Divs:", indicators);
@@ -58,7 +58,7 @@ window.onresize = function() {
 	}
 }
 
-function detect_category() {
+function detect_category(tagre) {
 	let elem = document.getElementById("categorie");
 	let value = elem.value;
 	let div = document.getElementById("depends_select");
@@ -84,6 +84,32 @@ function detect_category() {
 		gammeprix.setAttribute("name", "gammeprix");
 		gammeprix.setAttribute("required", "");
 		div.appendChild(gammeprix);
+
+		let tag_select = document.createElement("select");
+		tag_select.setAttribute("name", "tagre");
+		tag_select.setAttribute("id", "tagre");
+		tag_select.setAttribute("required", "");
+
+		let no_tag = document.createElement("option");
+		no_tag.setAttribute("value", "");
+		no_tag.setAttribute("disabled", "");
+		no_tag.setAttribute("selected", "");
+		no_tag.setAttribute("hidden", "");
+		no_tag.innerHTML = "Type de cuisine *"
+		tag_select.appendChild(no_tag);
+
+		for (i = 0; i < tagre.length; i++) {
+			let tag = document.createElement("option");
+			tag.setAttribute("value", tagre[i]);
+			tag.innerHTML = tagre[i];
+			tag_select.appendChild(tag);
+		}
+
+		let other_tag = document.createElement("option");
+		other_tag.setAttribute("value", "autre");
+		other_tag.innerHTML = "Autre"
+		tag_select.appendChild(other_tag);
+		div.appendChild(tag_select);
 
 		let image_carte = document.createElement("img");
 		image_carte.setAttribute("alt", "");

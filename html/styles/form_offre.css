@@ -94,7 +94,7 @@ textarea{
 
 #ville_code {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     width: 47.5%;
 }
 
@@ -178,4 +178,8 @@ legend {
 
 #opt {
     width: 11%;
+}
+
+#tagre {
+    width: 30%;
 }
