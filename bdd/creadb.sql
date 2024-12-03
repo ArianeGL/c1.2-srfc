@@ -77,15 +77,15 @@ CREATE TABLE IF NOT EXISTS sae._offre
    rueoffre         varchar(50)   NOT NULL,
    villeoffre       varchar(50)   NOT NULL,
    codepostaloffre  integer       NOT NULL,
+   datedebut        DATE,
+   datefin          DATE,
    nbavis           integer       default(0) not null,
    note             real          default(0) not null,
    prixmin          real          default(0) not NULL,
-   datedebut        date          ,
-   datefin          date          ,
    enligne          boolean       default(true) not null,
    datepublication  date          default(CURRENT_DATE),
    dernieremaj      date          default(CURRENT_DATE),
-   abonnement       varchar(15)   default('Gratuit'),              -- +
+   abonnement       varchar(15)   default('Gratuit'),
    blacklistdispo   integer       default(0) not null,
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(9999) NOT NULL,
@@ -299,8 +299,18 @@ CREATE TABLE IF NOT EXISTS sae._tarif
 
 ALTER TABLE sae._tarif
    ADD CONSTRAINT _tarif_pkey
-   PRIMARY KEY (nomtarif);
+   PRIMARY KEY (nomtarif,idoffre);
 
+CREATE TABLE IF NOT EXISTS sae._horraire
+(
+   jour  varchar(20) NOT NULL,
+   heuredebut1   TIME        NOT NULL,
+   heurefin1     TIME        NOT NULL,
+   heuredebut2   TIME        NOT NULL,
+   heurefin2     TIME        NOT NULL,
+   idoffre      varchar(7) NOT NULL,
+   CONSTRAINT _horraire_pkey PRIMARY KEY (jour,idoffre)
+);
 
 CREATE TABLE IF NOT EXISTS sae._visite
 (
@@ -365,6 +375,12 @@ CREATE TABLE IF NOT EXISTS sae._avis
   blacklist boolean not null,
   signale boolean not null,
   CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
+);
+
+CREATE TABLE IF NOT EXISTS sae._imageavis
+(
+   urlimage  varchar(100)   NOT NULL PRIMARY KEY,
+   idavis   varchar(7)     NOT NULL REFERENCES sae._avis(idavis)
 );
 
 CREATE TABLE IF NOT EXISTS sae._notere
@@ -1315,12 +1331,8 @@ BEGIN
   if ( (select count(nomtag) from sae._tagrestauration where nomtag = NEW.nomtag) = 1 ) THEN
     insert into sae._tagpourrestauration(nomtag,idoffre)
     values(NEW.nomtag,NEW.idoffre);
-  else
-    insert into sae._tagrestauration(nomtag)
-    values(NEW.nomtag);
-    
-    insert into sae._tagpourrestauration(nomtag,idoffre)
-    values(NEW.nomtag,NEW.idoffre);
+  ELSE
+    RAISE EXCEPTION 'tag inconnu';
   END IF;
   
   RETURN NEW;
@@ -1354,6 +1366,9 @@ create or replace function sae.posteravis()
 $$
 BEGIN
 
+  IF (datevisite is null) THEN 
+    NEW.datevisite = CURRENT_DATE;
+  END IF;
   INSERT INTO sae._avis(idavis,titre,datevisite,contexte,idoffre,idcompte,
                         commentaire,noteavis,nblike,nbdislike,blacklist,signale)
   VALUES(NEW.idavis,NEW.titre,NEW.datevisite,NEW.contexte,NEW.idoffre,NEW.idcompte,
@@ -1383,6 +1398,10 @@ create or replace function sae.posteravisre()
   AS
 $$
 BEGIN
+
+  IF (datevisite is null) THEN 
+    NEW.datevisite = CURRENT_DATE;
+  END IF;
 
   INSERT INTO sae._avis(idavis,titre,datevisite,contexte,idoffre,idcompte,
                         commentaire,noteavis,nblike,nbdislike,blacklist,signale)
@@ -1538,9 +1557,9 @@ BEGIN
   END IF;
 
   INSERT INTO sae._souscriptionoption(idoffre,option,nbsemaine,semainelancement,active)
-  VALUES(NEW.idoffre,NEW.option,4,NEW.semainelancement,active);
+  VALUES(NEW.idoffre,NEW.option,4,NEW.semainelancement,NEW.active);
 
-  IF (active = true) THEN
+  IF (NEW.active = true) THEN
     INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
     VALUES(NEW.idoffre,NEW.option,NEW.semainelancement,NEW.semainelancement + 7);
   END IF;
