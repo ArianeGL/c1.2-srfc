@@ -35,12 +35,6 @@ if (isset($_GET['idoffre'])) {
         $isOnline = $offer['enligne'];
         $dateUpload = $offer['datepublication'];
         $dateLastUpdate = $offer['dernieremaj'];
-?>
-
-<<<<<<< HEAD
-        <!DOCTYPE html>
-        <html lang="en">
-=======
         ?> 
         <!DOCTYPE html>
         <html lang="en">
@@ -53,33 +47,6 @@ if (isset($_GET['idoffre'])) {
         </head>
         <body>
             <?php require_once 'header_inc.html';
-
-        switch ($categorie) {
-            case "Activite":
-                $queryOffreCategorisee = 'SELECT * FROM sae.activite WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
->>>>>>> 1cff456 (ff)
-
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="./style.css">
-
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-            <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;family=Concert+One&display=swap" rel="stylesheet">
-
-            <title>PACT</title>
-            <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-        </head>
-
-        <body>
-            <?php
-            require_once "./header_inc.html";
             switch ($categorie) {
                 case "Activite":
                     $queryOffreCategorisee = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_ACTIVITE . " WHERE idoffre = :offerId";
@@ -139,49 +106,20 @@ if (isset($_GET['idoffre'])) {
                     $nbAttractions = $offreCategorisee['nbattractions'];
                     $ageRequierement = $offreCategorisee['ageminparc'];
 
-<<<<<<< HEAD
-                    require_once './pages-info-offres/parc-attraction.php';
-
-                    break;
-
-                case "Spectacle":
-                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_SPECTACLE . ' WHERE idoffre = :offerId';
-                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                    $sthOffreCategorisee->execute();
-                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
-
-                    $duration = $offreCategorisee['dureespectacle'];
-                    $nbSeats = $offreCategorisee['placesspectacle'];
-
-                    require_once './pages-info-offres/spectacle.php';
-
                     break;
             }
-
             require_once "./afficher_avis.inc.php";
-            require_once "./footer_inc.html";
             ?>
-        </body>
-
-        </html>
-        ?>
-        <div id="liste_avis">
-            <?php
-            afficher_liste_avis($offerId);
-            ?>
-        </div>
-<?php
-    } else {
-=======
-                break;
-        }
-           require_once 'footer_inc.html'; ?>
+            <div>
+                <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+                <?php afficher_liste_avis($offerId);?>
+            </div>
+            </main>
+            <?php require_once 'footer_inc.html'; ?>
         </body>
         </html>
         <?php
         } else {
->>>>>>> 1cff456 (ff)
         echo "No offer found with the specified ID.";
     }
 } else {

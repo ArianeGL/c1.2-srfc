@@ -282,9 +282,9 @@ form textarea{
     position: relative; /* Allows positioning of the gradient overlay */
     max-height: 155px; /* Set the maximum height */
     overflow: hidden; /* Hide the overflowing text */
-  }
+}
   
-  .fade-out-container::after {
+.fade-out-container::after {
     content: ""; /* Create an overlay */
     position: absolute;
     bottom: 0; /* Position at the bottom */
@@ -292,4 +292,46 @@ form textarea{
     right: 0;
     height: 20px; /* Adjust height for the fade effect */
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff); /* Fade effect */
-  }
+}
+
+.avis {
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: var(--round-corners);
+    width: 95%;
+
+    .avis-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .avis-titre {
+            font-weight: bold;
+            justify-content: left;
+            align-items: center;
+            width: 50%;
+            h1 {
+                margin-left: 10px;
+            }
+        }
+
+        .avis-infos {
+            display: flex;
+            flex-direction: column;
+            justify-content: right;
+            align-items: right;
+            margin-right: 10px;
+            text-align: right;
+
+            h3 {
+                margin-bottom: 0px;
+            }
+        }
+    }
+
+    margin-bottom: 20px;
+}
+    
+    

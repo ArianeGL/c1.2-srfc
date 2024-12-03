@@ -20,11 +20,19 @@ function afficher_avis($avis)
     $date_visite = getdate(strtotime($avis['datevisite']));
 ?>
     <div class="avis">
-        <h3 class="titre_avis"><?php echo $avis['titre']; ?></h3>
-        <p class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </p> <!-- a modifier avec le bon affichage de la note -->
-        <p class="date_visite"> <?php echo format_date($date_visite); ?> </p>
-        <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
+        <div class="avis-header">
+            <section class="avis-titre">
+                <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
+                <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
+            </section>            
+            <section class="avis-infos">
+                <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
+                <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
+            </section>
+        </div>
+
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
+        <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
 }
