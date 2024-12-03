@@ -1237,11 +1237,11 @@ VALUES('Francaise');
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Gastronomique');
 INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Italieomique');
+VALUES('Italienne');
 INSERT INTO sae._tagrestauration(nomtag)
 VALUES('Europeenne');
 INSERT INTO sae._tagrestauration(nomtag)
-VALUES('Mexicnne');
+VALUES('Mexicaine');
 
 INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
