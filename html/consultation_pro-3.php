@@ -176,7 +176,7 @@ if ($compte) {
 
                 <div class="actions-profil">
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
-                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
+                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro-3.php'">Modifier informations</button>
                     <button id="bouton-supprimer" type="button">Supprimer le compte</button>
                     <form action="deco.php" method="post" enctype="multipart/form-data">
                         <input id="bouton-supprimer" type="submit" value="Se déconnecter">

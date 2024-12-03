@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once  "db_connection.inc.php";
 
 class FunctionException extends Exception
@@ -56,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rue = substr(trim($_POST['rue']), 0, 50);
     $ville = substr(trim($_POST['compteville']), 0, 30);
     $code = substr(trim($_POST['code']), 0, 5);
-    //$iban = substr(trim($_POST['iban']), 0, 5);
+    $iban = substr(trim($_POST['iban']), 0, 5);
 
 
     if (strlen($tel) > 10) {
@@ -78,8 +79,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        $sql_compte = "INSERT INTO " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . "(idcompte, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage) 
-        VALUES (:idcompte, :tel, :mdp, :email, :num, :rue, :ville, :code_postal, :urlimage)";
+        if(isset($iban)){
+            $schemaCompte=VUE_PRO_PRIVE;
+        }else{
+            $schemaCompte=VUE_PRO_PUBLIQUE;
+        }
+        $sql_compte = "INSERT INTO " . NOM_SCHEMA . "." . $schemaCompte . "(idcompte, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage, denomination) 
+        VALUES (:idcompte, :tel, :mdp, :email, :num, :rue, :ville, :code_postal, :urlimage, :raison)";
         $stmt_compte = $dbh->prepare($sql_compte);
         $stmt_compte->execute([
             ':idcompte' => $idcompte,
@@ -90,23 +96,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':rue' => $rue,
             ':ville' => $ville,
             ':code_postal' => $code,
-            ':urlimage' => 'default.png'
+            ':urlimage' => '/docker/sae/data/html/IMAGES/photoProfileDefault.png',
+            ':raison' => $raison
+
         ]);
 
         /*
         $stmt = $dbh->prepare($sql);
         $stmt->execute([':denomination' => $raison,':tel' => $tel,':mdp' => $mdp,':email' => $email,
         ':adresse' => $adresse,':ville' => $ville,':code_postal' => $code_postal,':urlimage' => 'default.png']);
-        */
 
-        $sql_pro = "INSERT INTO " . NOM_SCHEMA . "._compteprofessionnel (idcompte, denomination) 
+        $sql_pro = "INSERT INTO " . NOM_SCHEMA . ".".$schemaCompte." (idcompte, denomination) 
         VALUES (:idcompte, :raison)";
         $sql_pro = $dbh->prepare($sql_pro);
         $sql_pro->execute([
             ':idcompte' => $idcompte,
             ':raison' => $raison
         ]);
-
+        */
 
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
@@ -128,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]);
             }
         }
-
+        $_SESSION['identifiant']=$email;
         header('Location: consultation_pro-3.php');
         die();
     } catch (PDOException $e) {
