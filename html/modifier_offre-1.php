@@ -1,9 +1,19 @@
 <?php
+session_start();
 require_once("db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
 global $dbh;
 const IMAGE_DIR = "images_importee/";
 
+$query_compte = "SELECT email FROM ".NOM_SCHEMA."._offre
+                    WHERE _offre.idoffre = :idcompte";
+        $stmt_compte = $dbh->prepare($query_compte);
+        $stmt_compte->bindParam(':idcompte',$idcompte);
+        $stmt_compte->execute();
+        $compte = $stmt_compte->fetch(PDO::FETCH_ASSOC)["email"];
+
+
+if($compte == $_SESSION["identifiant"]){
 function upload_images_offre($url, $id)
 {
     global $dbh;
@@ -46,7 +56,7 @@ if (isset($_POST["titre"])) {
                 $stmt_delete_image->execute();
             }
         }
-        
+
         $destUrl = IMAGE_DIR . $idoffre;
         mkdir($destUrl, 0777, true);
         $files = $_FILES['images_offre'];
@@ -398,5 +408,9 @@ if (isset($_POST["titre"])) {
     <script src="main.js"></script>
     </html>
 <?php
+}
+}
+else{
+    echo("vous n'avez pas le droit de modifier cette page");
 }
 ?>
