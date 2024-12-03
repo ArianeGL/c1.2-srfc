@@ -1,4 +1,7 @@
-#clop{
+@import "../style.css";
+
+
+main {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;

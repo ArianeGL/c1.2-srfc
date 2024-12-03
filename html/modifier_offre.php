@@ -158,59 +158,48 @@ if (isset($_POST["titre"])) {
         <main id="top">
             <h1>Modifier une offre</h1>
             <form action="modifier_offre.php" method="POST" enctype="multipart/form-data" id="modifier_offre">
-                <div class="element_form">
-                    <div class="row-form">
-                        <label for="titre">Titre : </label>
-                        <input name="titre" type="text" id="titre" value="<?php echo $titre ?>">
-                    </div>
-                    <div class="row-form">
-                        <label for="catégorie">Catégorie : </label>
-                        <select name="categorie" id="categorie">
-                            <option value="activite" <?php //if(!strcmp($select_categorie,"activite")) echo "selected"
-                                                        ?>>Activité</option>
-                            <option value="restauration" <?php //if(!strcmp($select_categorie,"restauration")) echo "selected"
-                                                            ?>>Réstauration</option>
-                            <option value="visite" <?php //if(!strcmp($select_categorie,"visite")) echo "selected"
-                                                    ?>>Visite</option>
-                            <option value="parc_attractions" <?php //if(!strcmp($select_categorie,"parc_attraction")) echo "selected"
-                                                                ?>>Parc d'attractions</option>
-                            <option value="spectacle" <?php //if(!strcmp($select_categorie,"spectacle")) echo "selected"
-                                                        ?>>Spectacle</option>
-                        </select>
-                    </div>
+                <div class="element_form row-form">
+                    <label for="titre">Titre : </label>
+                    <input name="titre" type="text" id="titre" value="<?php echo $titre ?>">
+                    <label for="catégorie">Catégorie : </label>
+                    <select name="categorie" id="categorie">
+                        <option value="activite" <?php //if(!strcmp($select_categorie,"activite")) echo "selected"
+                                                    ?>>Activité</option>
+                        <option value="restauration" <?php //if(!strcmp($select_categorie,"restauration")) echo "selected"
+                                                        ?>>Réstauration</option>
+                        <option value="visite" <?php //if(!strcmp($select_categorie,"visite")) echo "selected"
+                                                ?>>Visite</option>
+                        <option value="parc_attractions" <?php //if(!strcmp($select_categorie,"parc_attraction")) echo "selected"
+                                                            ?>>Parc d'attractions</option>
+                        <option value="spectacle" <?php //if(!strcmp($select_categorie,"spectacle")) echo "selected"
+                                                    ?>>Spectacle</option>
+                    </select>
                 </div>
                 <!--<textarea name="tags" id="tags"><?php echo $tags ?></textarea>-->
-                <div class="element_form">
-                    <div class="row-form">
-                        <label for="code_postal">Code postal : </label>
-                        <input name="code_postal" type="numeric" id="code_postal" value="<?php echo $codepostal ?>" required maxlenght="5">
-                    </div>
-                    <div class="row-form">
-                        <label for="ville">Ville : </label>
-                        <input name="ville" type="text" id="ville" value="<?php echo $ville ?>">
-                    </div>
+                <div class="element_form row-form">
+                    <label for="code_postal">Code postal : </label>
+                    <input name="code_postal" type="numeric" id="code_postal" value="<?php echo $codepostal ?>" required maxlenght="5">
+                    <label for="ville">Ville : </label>
+                    <input name="ville" type="text" id="ville" value="<?php echo $ville ?>">
                 </div>
-                <div class="element_form">
-                    <div class="row-form">
-                        <label for="numadresse">Numéro de rue : </label>
-                        <input name="numadresse" type="text" id="adresse" value="<?php echo $numadresse ?>">
-                    </div>
-                    <div class="row-form">
-                        <label for="rueoffre">Rue : </label>
-                        <input name="rueoffre" type="text" id="rueoffre" value="<?php echo $rueoffre ?>">
-                    </div>
+                <div class="element_form row-form">
+                    <label for="numadresse">Numéro de rue : </label>
+                    <input name="numadresse" type="text" id="adresse" value="<?php echo $numadresse ?>">
+                    <label for="rueoffre">Rue : </label>
+                    <input name="rueoffre" type="text" id="rueoffre" value="<?php echo $rueoffre ?>">
                 </div>
                 <div class="element_form">
 
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
                 <div class="boutonimages">
-                    <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
-                    <input type="file" id="fichier" name="fichier">
+                    <p>Importer une Grille Tarifaire, un Menu et/ou un Plan</p>
+                    <label for="fichier" class="smallButton">Importer</label>
+                    <input type="file" id="fichier" name="fichier" >
                     <input type="hidden" name="idoffre" value="<?php echo $idoffre; ?>">
                 </div>
                 <div id="divVal">
-                    <button type="submit" id="bnVal">Valider</button>
+                    <button type="submit" id="bnVal" class="bigButton">Valider</button>
                 </div>
             </form>
         </main>
