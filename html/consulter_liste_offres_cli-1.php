@@ -210,6 +210,7 @@ try {
                             <?php
                         }
                         ?>
+                    <button id="retirerFiltres">Enlever les fitres</button>
                 </fieldset>
             </div>
             <button class="sortButton">Trier</button>
@@ -274,6 +275,12 @@ try {
         const isVisible = window.getComputedStyle(champs_filtres).display === 'block';
         champs_filtres.style.display = isVisible ? 'none' : 'block';
     }
+
+    let retirerFiltres = document.querySelector("#retirerFiltres");
+    retirerFiltres.addEventListener('click', () => {
+        window.location.href = `consulter_liste_offres_cli-1.php`;
+    }
+    
     var activite = document.querySelector("#activite");
     var visite = document.querySelector("#visite");
     var parc_attraction = document.querySelector("#parcAttraction");
