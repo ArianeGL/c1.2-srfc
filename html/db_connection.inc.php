@@ -5,6 +5,7 @@ const NOM_TABLE_OFFRE = "_offre";
 const NOM_TABLE_COMPTE = "_compte";
 const NOM_TABLE_COMPTE_PRO = "_compteprofessionnel";
 const NOM_TABLE_SOUSCRI_OPTION = "_souscriptionoption";
+const NOM_TABLE_AVIS = "_avis";
 const NOM_TABLE_TAGS = "_tag";
 const NOM_TABLE_TAGSRE = "_tagrestauration";
 const NOM_TABLE_IMGOF = "_imageoffre";
