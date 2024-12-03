@@ -1,62 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+<!-- Main content -->
+<main id="top">
+    <div>
+        <h1>
+            <?php echo $categorie; ?> &#x2022; <?php echo $name; ?>
+        </h1>
+    </div>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <h3><?php echo $address; ?></h3>
     
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;family=Concert+One&display=swap" rel="stylesheet">
-
-    <title>PACT</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-</head>
-
-<body>
-<?php require_once 'header_inc.html'; ?>
-
-
-    <!-- Main content -->
-    <main id="top">
-        <div>
-            <h1>
-                <?php echo $categorie; ?> &#x2022; <?php echo $name; ?> &#x2022; <?php echo $address; ?>
-            </h1>
+    <p><?php echo $resume; ?></p>
+    
+    <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+    
+    <section>
+        <div class="img-container">
+            <img src="https://photographe-en-herbe.com/wp-content/uploads/2019/03/paysage-montagne-photographe-en-herbe-1024x576.jpg" alt="Nom_image">
         </div>
-
         
-        <p><?php echo $resume; ?></p>
-        
-        <div>
-            <div class="info">
-                <p>Age requis: <?php echo $ageRequierement; ?></p>
-                <p>Nombre d'Attractions<?php echo $nbAttractions; ?></p>
-                <p><?php echo $description; ?></p>
+        <section class="info">
+            <p>Age requis: <?php echo $ageRequierement; ?></p>
+            <p>Nombre d'Attractions: <?php echo $nbAttractions; ?></p>
+            <h3><?php echo $description; ?></h3>
+        </section>
+    </section>
 
-                <botton onclick="window.open('<?php echo $menuURL; ?>', '_blank')" class="buttons">
-                    <h3>Menu</h3>
-                </botton> 
-            </div>
+    <div>
+        <div class="info">
+            <p>Age requis: <?php echo $ageRequierement; ?></p>
+            <p>Nombre d'Attractions<?php echo $nbAttractions; ?></p>
+            <h3><?php echo $description; ?></h3>
+
+            <botton onclick="window.open('<?php echo $menuURL; ?>', '_blank')" class="buttons">
+                <h3>Menu</h3>
+            </botton> 
         </div>
-    </main>
+    </div>
 
-    <?php require_once "footer_inc,html"; ?>
+    <section class="buttons">
+        <?php
+        $query_compte = "SELECT email FROM sae._compte 
+        INNER JOIN sae._offre on _compte.idcompte = _offre.idcompte
+        WHERE _offre.idoffre = :idoffre";
+        $stmt_compte = $dbh->prepare($query_compte);
+        $stmt_compte -> bindParam(':idoffre', $id, PDO::PARAM_STR);
+        $stmt_compte->execute();
+        $compte = $stmt_compte->fetch(PDO::FETCH_ASSOC)["email"];
 
-</body>
-<script src="main.js">
-if (pageName.includes("1")) {
-    document.getElementById("div1").classList.add("b1-indicator");
-    document.getElementById("div1").classList.remove("hidden");
-    } else 
-    if (pageName.includes("2")) {
-    document.getElementById("div2").classList.add("b2-indicator");
-    document.getElementById("div2").classList.remove("hidden");
-    } else 
-    if (pageName.includes("3")) {
-    document.getElementById("div3").classList.add("b3-indicator");
-    document.getElementById("div3").classList.remove("hidden");
-    }
-</script>
-</html>
+        if($compte == $_SESSION['identifiant']){
+            if($isOnline){
+                ?><button class="redButton" onclick="window.location='mettre_hors_ligne.php?idoffre=<?php echo $id ?>'">Mettre hors-ligne</button><?php
+            }
+            else{
+                ?><button class="redButton" onclick="window.location='mettre_en_ligne.php?idoffre=<?php echo $id ?>'">Mettre en ligne</button><?php
+            }
+            ?><button class="button" onclick="window.location='modifier_offre.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
+        }?>
+    </section>
+</main>

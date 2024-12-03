@@ -192,7 +192,7 @@ if (isset($_POST["titre"])) {
 
                 </div>
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
-                <div class="boutonimages">
+                <div>
                     <p>Importer une Grille Tarifaire, un Menu et/ou un Plan</p>
                     <label for="fichier" class="smallButton">Importer</label>
                     <input type="file" id="fichier" name="fichier" >

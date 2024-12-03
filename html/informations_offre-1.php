@@ -1,6 +1,8 @@
 <?php
 require_once("db_connection.inc.php");
 
+session_start();
+
 global $dbh;
 
 if (isset($_GET['idoffre'])) {
@@ -33,6 +35,19 @@ if (isset($_GET['idoffre'])) {
         $isOnline = $offer['enligne'];
         $dateUpload = $offer['datepublication'];
         $dateLastUpdate = $offer['dernieremaj'];
+
+        ?> 
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title><?php echo $name;?></title>
+            <link rel="stylesheet" href="./styles/infos-offres.css">
+            <link rel="icon" type="image/x-icon" href="favicon.ico">
+        </head>
+        <body>
+            <?php require_once 'header_inc.html';
 
         switch ($categorie) {
             case "Activite":
@@ -111,7 +126,11 @@ if (isset($_GET['idoffre'])) {
 
                 break;
         }
-    } else {
+           require_once 'footer_inc.html'; ?>
+        </body>
+        </html>
+        <?php
+        } else {
         echo "No offer found with the specified ID.";
     }
 } else {
