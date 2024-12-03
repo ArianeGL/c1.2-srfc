@@ -45,8 +45,13 @@ class FunctionException extends Exception
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //$prenom = substr(trim($_POST['prenom']), 0, 20); 
     //$nom = substr(trim($_POST['nom']), 0, 20); 
+    $modif=false;
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_PRO_PRIVE . " WHERE email = '" . $_SESSION["identifiant"] . "';";
+    $row = $dbh->query($query)->fetch();
+
     $idcompte=$_POST['idcompte'];
-    $raison = substr(trim($_POST['raison']), 0, 40);
+    //$raison = substr(trim($_POST['raison']), 0, 40);
+
     $tel = $_POST['tel'];
     //$mdp = substr(trim($_POST['mdp']), 0, 20);
     $email = substr(trim($_POST['email']), 0, 50);
@@ -55,6 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ville = substr(trim($_POST['ville']), 0, 30);
     $code = substr(trim($_POST['code']), 0, 5);
     //$iban = substr(trim($_POST['iban']), 0, 5);
+    if($tel!=$row["telephone"] || 
+        $email!=$row["email"] ||
+        $num!=$row["numadressecompte"] || 
+        $rue!=$row["ruecompte"] || 
+        $ville!=$row["villecompte"] || 
+        $code!=$row["codepostalcompte"]){
+            ?> <script>
+            alert("valeur de base modif");
+            </script> <?php
+            $modif=true;
+    }
     if (isset($_FILES['photo'])) {
         $user_dir = './images_importees/' . $idcompte;
         if (!file_exists($user_dir)) {
@@ -65,6 +81,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
             $urlimage = 'images_importees/' . $idcompte . '/' . $filename;
+            $modif=true;
+    }
+    if(!$modif){
+        ?> <script>
+            alert("Aucune valeur n'a été modifiée");
+        window.location = "modification_pro-3.php";
+    </script> <?php
+        die();
     }
 }
 
@@ -147,6 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $_SESSION['identifiant'] = $email;
+        
         header('Location: consultation_pro-3.php');
         die();
     } catch (PDOException $e) {
