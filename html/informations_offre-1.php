@@ -1,6 +1,8 @@
 <?php
 require_once("db_connection.inc.php");
 
+session_start();
+
 global $dbh;
 
 if (isset($_GET['idoffre'])) {
@@ -35,8 +37,31 @@ if (isset($_GET['idoffre'])) {
         $dateLastUpdate = $offer['dernieremaj'];
 ?>
 
+<<<<<<< HEAD
         <!DOCTYPE html>
         <html lang="en">
+=======
+        ?> 
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title><?php echo $name;?></title>
+            <link rel="stylesheet" href="./styles/infos-offres.css">
+            <link rel="icon" type="image/x-icon" href="favicon.ico">
+        </head>
+        <body>
+            <?php require_once 'header_inc.html';
+
+        switch ($categorie) {
+            case "Activite":
+                $queryOffreCategorisee = 'SELECT * FROM sae.activite WHERE idoffre = :offerId';
+                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                $sthOffreCategorisee->execute();
+                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+>>>>>>> 1cff456 (ff)
 
         <head>
             <meta charset="UTF-8">
@@ -114,6 +139,7 @@ if (isset($_GET['idoffre'])) {
                     $nbAttractions = $offreCategorisee['nbattractions'];
                     $ageRequierement = $offreCategorisee['ageminparc'];
 
+<<<<<<< HEAD
                     require_once './pages-info-offres/parc-attraction.php';
 
                     break;
@@ -147,6 +173,15 @@ if (isset($_GET['idoffre'])) {
         </div>
 <?php
     } else {
+=======
+                break;
+        }
+           require_once 'footer_inc.html'; ?>
+        </body>
+        </html>
+        <?php
+        } else {
+>>>>>>> 1cff456 (ff)
         echo "No offer found with the specified ID.";
     }
 } else {

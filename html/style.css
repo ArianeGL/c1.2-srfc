@@ -14,6 +14,7 @@
 body {
     height: 1024px;
     margin-top: 7%; /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */
+    margin-bottom: 7%; 
 
     font-size: 1.5em;
     font-family: "SUSE", sans-serif;
@@ -70,6 +71,22 @@ body {
     font-style: normal;
 }
 
+.redButton {
+    background-color: var(--red);
+    height: 100px;
+    width: 500px;
+    color: white;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: var(--round-corners);
+
+    font-size: 1.5em;
+    font-family: "SUSE", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 .smallButton:hover {
     background-color: var(--grey-blue);
 }
@@ -79,6 +96,10 @@ body {
 }
 
 .bigButton:hover {
+    background-color: var(--grey-blue);
+}
+
+.redButton:hover {
     background-color: var(--grey-blue);
 }
 
@@ -209,6 +230,22 @@ footer {
     height: 10%;
     align-items: center;
     text-align: center;
+    
+    p {
+        font-size: 1em;
+        margin-bottom: 5px;
+    }
+
+    a {
+        color: var(--light-blue);
+        text-decoration: none;
+        font-size: 0.85em;
+        margin-left: 10px;
+    }
+    
+    a:hover {
+        color: var(--grey-blue);
+    }
 
     .container {
         display: flex;
@@ -226,7 +263,7 @@ footer {
 
     .top-botton {
         height: 100%;
-         background-color: var(--light-grey);
+        background-color: var(--light-grey);
         color: none;
         border: none;
     }
@@ -234,8 +271,25 @@ footer {
 
 main {
     background: white;
+    margin-bottom: 7%;
 }
 
 form textarea{
     resize: none;
 }
+
+.fade-out-container {
+    position: relative; /* Allows positioning of the gradient overlay */
+    max-height: 155px; /* Set the maximum height */
+    overflow: hidden; /* Hide the overflowing text */
+  }
+  
+  .fade-out-container::after {
+    content: ""; /* Create an overlay */
+    position: absolute;
+    bottom: 0; /* Position at the bottom */
+    left: 0;
+    right: 0;
+    height: 20px; /* Adjust height for the fade effect */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff); /* Fade effect */
+  }
