@@ -42,34 +42,32 @@ class FunctionException extends Exception
  */
 
 if(est_membre($_SESSION["identifiant"])){
-    ?> <script>
-        window.location = "modification_membre-3.php";
-    </script> <?php
-}else if(est_prive($_SESSION["identifiant"])){
-    $schemaCompte=VUE_PRO_PRIVE;
+    $schemaCompte=VUE_MEMBRE;
 }else{
-    $schemaCompte=VUE_PRO_PUBLIQUE;
+    ?> <script>
+        window.location = "modification_pro-3.php";
+    </script> <?php
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //$prenom = substr(trim($_POST['prenom']), 0, 20); 
-    //$nom = substr(trim($_POST['nom']), 0, 20); 
     $modif=false;
     $query = "SELECT * FROM " . NOM_SCHEMA . "." . $schemaCompte . " WHERE email = '" . $_SESSION["identifiant"] . "';";
     $row = $dbh->query($query)->fetch();
-
+    
+    $prenom = substr(trim($_POST['prenom']), 0, 20); 
+    $nom = substr(trim($_POST['nom']), 0, 20); 
+    $pseudo = substr(trim($_POST['pseudo']), 0, 20); 
     $idcompte=$_POST['idcompte'];
-    //$raison = substr(trim($_POST['raison']), 0, 40);
-
     $tel = $_POST['tel'];
-    //$mdp = substr(trim($_POST['mdp']), 0, 20);
     $email = substr(trim($_POST['email']), 0, 50);
     $num = substr(trim($_POST['num']), 0, 4);
     $rue = substr(trim($_POST['rue']), 0, 50);
     $ville = substr(trim($_POST['ville']), 0, 30);
     $code = substr(trim($_POST['code']), 0, 5);
-    //$iban = substr(trim($_POST['iban']), 0, 5);
-    if($tel!=$row["telephone"] || 
+    if( $pseudo!=$row["pseudo"] || 
+        $prenom!=$row["prenommembre"] || 
+        $nom!=$row["nommembre"] || 
+        $tel!=$row["telephone"] || 
         $email!=$row["email"] ||
         $num!=$row["numadressecompte"] || 
         $rue!=$row["ruecompte"] || 
@@ -92,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(!$modif){
         ?> <script>
             alert("Aucune valeur n'a été modifiée");
-        window.location = "modification_pro-3.php";
+        window.location = "modification_membre-3.php";
     </script> <?php
         die();
     }
@@ -120,24 +118,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ruecompte= :rue, 
             villecompte= :ville, 
             codepostalcompte= :code_postal, 
-            urlimage= :urlimage
+            urlimage= :urlimage,
+            nommembre= :nom,
+            prenommembre= :prenom,
+            pseudo= :pseudo
         WHERE idcompte= :idcompte;";
         $stmt_compte = $dbh->prepare($sql_compte);
         
-        /*
-        $stmt_compte->execute([
-            ':tel' => $tel,
-            ':email' => $email,
-            ':num' => $num,
-            ':rue' => $rue,
-            ':ville' => $ville,
-            ':code_postal' => $code,
-            ':urlimage' => '/docker/sae/data/html/IMAGES/photoProfileDefault.png',
-            ':raison' => $raison,
-            ':idcompte' => $idcompte
-
-        ]);
-        */
 
         $stmt_compte->bindParam(':tel', $tel);
         $stmt_compte->bindParam(':email', $email);
@@ -146,6 +133,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_compte->bindParam(':ville', $ville);
         $stmt_compte->bindParam(':code_postal', $code);
         $stmt_compte->bindParam(':urlimage', $urlimage);
+        $stmt_compte->bindParam(':nom', $nom);
+        $stmt_compte->bindParam(':prenom', $prenom);
+        $stmt_compte->bindParam(':pseudo', $pseudo);
         $stmt_compte->bindParam(':idcompte', $idcompte);
 
         $stmt_compte->execute();
@@ -186,7 +176,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $_SESSION['identifiant'];
         $requeteCompte = $dbh->prepare("SELECT idcompte, email FROM sae._compte WHERE email = '" . $email."';"); //, PDO::FETCH_ASSOC
         $requeteCompte->execute();
-        //$idCompte = $requeteCompte['idcompte'];
         $idCompte = $requeteCompte->fetch(PDO::FETCH_ASSOC)["idcompte"];
     
     }else{
@@ -195,17 +184,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </script> <?php
                 }
     
-    if (est_membre($email)){
+    if (!est_membre($email)){
         ?> <script>
-            window.location = "modification_membre-3.php";
+            window.location = "modification_pro-3.php";
         </script> <?php
     }
-    
-    if (est_prive($email)){
-        $schemaCompte=VUE_PRO_PRIVE;
-    }else{
-        $schemaCompte=VUE_PRO_PUBLIQUE;
-    }
+
     $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
     $sthCompte = $dbh->prepare($queryCompte);
     $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
@@ -214,18 +198,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
     
     if ($compte) {
+        $prenom = $compte["prenommembre"];
+        $nom = $compte["nommembre"];
         $email = $compte["email"];
         $num=$compte['numadressecompte'];
         $rue =$compte['ruecompte'];
         $ville = $compte['villecompte'];
         $codePostal = $compte['codepostalcompte'];
         $telephone = $compte['telephone'];
-        $denomination = $compte['denomination'];
+        $pseudo = $compte['pseudo'];
         $image = $compte['urlimage'];
-        //$iban = $compte['iban'];
     } else {    
     ?> <script>
-            window.location = "consultation_liste_offres_pro-1.php";
+            window.location = "consultation_liste_offres_cli-1.php";
         </script> <?php
                 }
 }
@@ -238,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/creation.css">
-    <title>Modification compte professionnel</title>
+    <title>Modification compte membre</title>
 </head>
 
 <body>
@@ -246,21 +231,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php require_once 'header_inc.html'; ?>
 
     <section>
-        <h1>Modification du compte professionnel</h1>
-        <form action="modification_pro-3.php" method="post" enctype="multipart/form-data">
+        <h1>Modification du compte membre</h1>
+        <form action="modification_membre-3.php" method="post" enctype="multipart/form-data">
             <div class="form-container">
                 <div id="groupeInput" class="form-left">
-                    <!--
-                <div class="form-row">
-                    <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
-                    <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" required />
-                </div>
-                -->
+                    <div class="form-row">
+                        <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" value="<?php echo $prenom ?>" required />
+                        <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" value="<?php echo $nom ?>" required />
+                    </div>
                     <div class="form-row">
                         <input type="hidden" class="input-creation" id="idcompte" name="idcompte" placeholder="idcompte" value="<?php echo $idCompte ?>" required />
                     </div>
                     <div class="form-row">
-                        <input type="text" class="input-creation" id="raison" name="raison" placeholder="Raison sociale *" value="<?php echo $denomination ?>" readonly />
+                    <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudo *" value="<?php echo $pseudo ?>" required />
                         <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" value="<?php echo $telephone ?>" required />
                     </div>
                     <div class="form-row">
