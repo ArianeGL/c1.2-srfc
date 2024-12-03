@@ -99,7 +99,7 @@ function upload_plan($id)
 function upload_images_offre($url, $id)
 {
     global $dbh;
-    $query = "INSERT INTO " . NOM_SCHEMA . "." . "_imageoffre(urlversimage, idoffre) VALUES (:url, :id)";
+    $query = "INSERT INTO " . NOM_SCHEMA . "." . NOM_TABLE_IMGOF . "(urlimage, idoffre) VALUES (:url, :id)";
     $stmt = $dbh->prepare($query);
 
     $stmt->bindParam(":url", $url);
@@ -133,7 +133,7 @@ function bind_option($id)
     if (isset($_POST['opt'])) {
         global $dbh;
         try {
-            $query = "INSERT INTO " . NOM_SCHEMA . "." . NOM_TABLE_SOUSCRI_OPTION . "(idoffre, option, nbsemaine, semainelancement) VALUES(:id, :option, :nbsem, :startsem)";
+            $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_OPTION . "(idoffre, option, semainelancement) VALUES(:id, :option, :startsem)";
             $stmt = $dbh->prepare($query);
             $stmt->bindParam("id", $id);
 
@@ -153,11 +153,9 @@ function bind_option($id)
                 $today = getdate();
 
                 if ($today['weekday'] != "Monday") {
-                    $startsem = $today[0] + ((7 - $today[0]) + 1) * DAY_TO_SEC; //date du lundi suivant le jour actuel
+                    $startsem = $today[0] + ((7 - $today['wday']) + 1) * DAY_TO_SEC; //date du lundi suivant le jour actuel
                 } else $startsem = $today[0];
 
-                $nb_sem = NB_SEM_OPTION;
-                $stmt->bindParam(":nbsem", $nb_sem, PDO::PARAM_INT);
                 $startsem = date("Y-m-d", $startsem);
                 $stmt->bindparam(":startsem", $startsem);
                 $stmt->execute();
@@ -166,6 +164,56 @@ function bind_option($id)
             die("SQL query error : " . $e->getMessage());
         }
     }
+}
+
+function tag_exists($tag): bool
+{
+    global $dbh;
+    $exists = true;
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_TAGS_OF . " WHERE nomtag = '" . $tag . "';";
+
+    $res = $dbh->query($query);
+    if (!$res->fetch()) $exists = false;
+
+    return $exists;
+}
+
+function add_tags($tags, $id)
+{
+    if ($tags != null) {
+        global $dbh;
+
+        $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_TAGS_OF . "(nomtag, idoffre) VALUES(:tag, :id);";
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+            $stmt = null;
+
+            $stmt = $dbh->prepare($query);
+            $stmt->bindParam(":tag", $tag);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+        }
+    }
+}
+
+function tag_resto($id, $tag)
+{
+    global $dbh;
+
+    if ($tag != "autre" && $tag != "") {
+        try {
+            $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_TAGS_RE . "(nomtag, idoffre) VALUES(:tag, :id)";
+
+            $stmt = $dbh->prepare($query);
+            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":tag", $tag);
+            $stmt->execute();
+
+            $stmt = null;
+        } catch (PDOException $e) {
+            throw $e;
+        }
+    };
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
@@ -180,6 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
     $description = $_POST['description'];
     $telephone = $_POST['telephone'];
     $site_web = $_POST['site_web'];
+    $tags = $_POST['tags'];
 
     try {
         $id = generate_id();
@@ -221,6 +270,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
             case "restauration":
                 $url_carte = upload_carte($id);
                 $gammeprix = $_POST['gammeprix'];
+                $tag_resto = $_POST['tagre'];
 
                 $query = "INSERT INTO " . NOM_SCHEMA . "." . VUE_RESTO . "(idOffre, idCompte, categorie, nomOffre, numAdresse, rueOffre, villeOffre, codePostalOffre, resume, description, abonnement,  urlverscarte, gammeprix) VALUES (:id, :id_compte, :categorie, :titre, :numAdresse, :rue, :ville, :codePost, :resume, :description, :abo,  :url_carte, :gammeprix);";
                 $stmt = $dbh->prepare($query);
@@ -241,6 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
                 $stmt->execute();
                 bind_option($id);
+                tag_resto($id, $tag_resto);
                 $stmt = null;
 
                 $categorie = VUE_RESTO;
@@ -338,6 +389,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
         }
         echo "data imported";
 
+        add_tags(explode(",", $tags), $id);
+
         //importe les images
         $destUrl = IMAGE_DIR . $id;
         mkdir($destUrl, 0777, true);
@@ -354,8 +407,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
         //rediriger vers consultation avec les infos
         echo "<script>location.href='./informations_offre-1.php?idoffre=" . $id . "'</script>";
-?>
-<?php
     } catch (PDOException $e) {
         die("SQL Query failed : " . $e->getMessage());
     }
