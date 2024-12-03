@@ -22,16 +22,16 @@ function afficher_avis($avis)
     <div class="avis">
         <h3 class="titre_avis"><?php echo $avis['titre']; ?></h3>
         <p class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </p> <!-- a modifier avec le bon affichage de la note -->
-        <p class="date_visite"> <?php echo $avis['datevisite']; ?> </p>
+        <p class="date_visite"> <?php echo format_date($date_visite); ?> </p>
         <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
     </div>
 <?php
 }
 
-function get_jour($date_visite): string
+function get_jour($date): string
 {
-    switch ($date_visite['wday']) {
+    switch ($date['wday']) {
         case 0:
             $ret = "Dimanche";
             break;
@@ -54,7 +54,57 @@ function get_jour($date_visite): string
             $ret = "Samedi";
             break;
     }
+
     return $ret;
 }
 
-function get_mois(): string {}
+function get_mois($date): string | bool
+{
+    $ret = false;
+
+    switch ($date['mon']) {
+        case 1:
+            $ret = "Janvier";
+            break;
+        case 2:
+            $ret = "Février";
+            break;
+        case 3:
+            $ret = "Mars";
+            break;
+        case 4:
+            $ret = "Avril";
+            break;
+        case 5:
+            $ret = "Mai";
+            break;
+        case 6:
+            $ret = "Juin";
+            break;
+        case 7:
+            $ret = "Juillet";
+            break;
+        case 8:
+            $ret = "Aout";
+            break;
+        case 9:
+            $ret = "Septembre";
+            break;
+        case 10:
+            $ret = "Octobre";
+            break;
+        case 11:
+            $ret = "Novembre";
+            break;
+        case 12:
+            $ret = "Decembre";
+            break;
+    }
+
+    return $ret;
+}
+
+function format_date($date): string
+{
+    return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
+}
