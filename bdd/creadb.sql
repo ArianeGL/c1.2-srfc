@@ -21,6 +21,7 @@ ALTER TABLE sae._activite
 CREATE TABLE IF NOT EXISTS sae._compte
 (
    idcompte          varchar(7)    NOT NULL,
+   typecompte        varchar(30)   NOT NULL,
    email             varchar(50)   NOT NULL,
    motdepasse        varchar(20)   NOT NULL,
    numadressecompte  varchar(4)    NOT NULL,
@@ -364,7 +365,7 @@ CREATE TABLE IF NOT EXISTS sae._avis
 (
   idavis varchar(7) PRIMARY KEY,
   titre   varchar(50) NOT NULL,
-  datevisite DATE DEFAULT(CURRENT_DATE) NOT NULL,
+  datevisite DATE DEFAULT(CURRENT_DATE),
   contexte varchar(20) NOT NULL,
   idoffre varchar(7) REFERENCES sae._offre(idoffre),
   idcompte varchar(7) REFERENCES sae._comptemembre(idcompte),
@@ -456,25 +457,43 @@ create or replace function sae.createMembre()
   AS
 $$
 BEGIN
-  if (NEW.urlimage is null) THEN
-    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
-  end if;
-  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
-  values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
-  
-  IF(NEW.pseudo is null) THEN
-    NEW.pseudo = CONCAT(NEW.nommembre,NEW.prenommembre);
-  end if;
 
-  insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
-  values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
+  IF (TG_OP = 'INSERT') THEN
+    if (NEW.urlimage is null) THEN
+      NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+    end if;
+    insert into sae._compte(idCompte,typecompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+    values(NEW.idCompte,'Membre',NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
+    
+    IF(NEW.pseudo is null) THEN
+      NEW.pseudo = CONCAT(NEW.nommembre,NEW.prenommembre);
+    end if;
+
+    insert into sae._compteMembre(idCompte,nomMembre,prenomMembre,pseudo)
+    values(NEW.idCompte,NEW.nomMembre,NEW.prenomMembre,NEW.pseudo);
+
+  ELSEIF (TG_OP = 'UPDATE') THEN
+
+    UPDATE sae._compte SET email = NEW.email,
+                           numadressecompte = NEW.numadressecompte,
+                           ruecompte = NEW.ruecompte,
+                           villecompte = NEW.villecompte,
+                           codepostalcompte = NEW.codepostalcompte,
+                           telephone = NEW.telephone
+    WHERE idcompte = NEW.idcompte;
+
+    UPDATE sae._compteMembre SET nommembre = NEW.nommembre,
+                                 prenommembre = NEW.nommembre,
+                                 pseudo = NEW.pseudo
+    WHERE idcompte = idcompte;
+  END IF;
 
   RETURN NEW;
 END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createMembre
-  INSTEAD OF INSERT ON sae.compteMembre
+  INSTEAD OF INSERT OR UPDATE ON sae.compteMembre
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createMembre();
 
@@ -489,25 +508,39 @@ create or replace function sae.createProfessionnelPrive()
   AS
 $$
 BEGIN
+  IF (TG_OP = 'INSERT') THEN
 
-  if (NEW.urlimage is null) THEN
-    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
-  end if;
-  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
-  values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
-  
-  insert into sae._compteProfessionnel(idCompte,denomination)
-  values(NEW.idCompte,NEW.denomination);
-  
-  insert into sae._professionnelPrive(siren,iban,idCompte)
-  values(NEW.siren,NEW.iban,NEW.idCompte);
+    if (NEW.urlimage is null) THEN
+      NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+    end if;
+    insert into sae._compte(idCompte,typecompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+    values(NEW.idCompte,'Professionnel prive',NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
+    
+    insert into sae._compteProfessionnel(idCompte,denomination)
+    values(NEW.idCompte,NEW.denomination);
+    
+    insert into sae._professionnelPrive(siren,iban,idCompte)
+    values(NEW.siren,NEW.iban,NEW.idCompte);
 
+  ELSEIF (TG_OP = 'UPDATE') THEN
+
+    UPDATE sae._compte SET email = NEW.email,
+                           numadressecompte = NEW.numadressecompte,
+                           ruecompte = NEW.ruecompte,
+                           villecompte = NEW.villecompte,
+                           codepostalcompte = NEW.codepostalcompte,
+                           telephone = NEW.telephone
+    WHERE idcompte = NEW.idcompte;
+
+    UPDATE sae._compteprofessionnel SET denomination = NEW.denomination WHERE idcompte = NEW.idcompte;
+
+  END IF;
   RETURN NEW;
 END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_createProfessionnelPrive
-  INSTEAD OF INSERT ON sae.compteProfessionnelPrive
+  INSTEAD OF INSERT OR UPDATE ON sae.compteProfessionnelPrive
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createProfessionnelPrive();
   
@@ -523,16 +556,29 @@ create or replace function sae.createProfessionnelPublique()
   AS
 $$
 BEGIN
-  if (NEW.urlimage is null) THEN
-    NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
-  end if;
-  insert into sae._compte(idCompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
-  values(NEW.idCompte,NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
-  
-  insert into sae._compteProfessionnel(idCompte,denomination)
-  values(NEW.idCompte,NEW.denomination);
+  IF (TG_OP = 'INSERT') THEN
+    if (NEW.urlimage is null) THEN
+      NEW.urlimage = '/docker/sae/data/html/IMAGES/photoProfileDefault.png';
+    end if;
+    insert into sae._compte(idCompte,typecompte,email,motDePasse,numAdresseCompte,rueCompte,villeCompte,codePostalCompte,telephone,urlimage)
+    values(NEW.idCompte,'Professionnel publique',NEW.email,NEW.motDePasse,NEW.numAdresseCompte,NEW.rueCompte,NEW.villeCompte,NEW.codePostalCompte,NEW.telephone,NEW.urlimage);
+    
+    insert into sae._compteProfessionnel(idCompte,denomination)
+    values(NEW.idCompte,NEW.denomination);
 
+  ELSEIF (TG_OP = 'UPDATE') THEN
 
+    UPDATE sae._compte SET email = NEW.email,
+                           numadressecompte = NEW.numadressecompte,
+                           ruecompte = NEW.ruecompte,
+                           villecompte = NEW.villecompte,
+                           codepostalcompte = NEW.codepostalcompte,
+                           telephone = NEW.telephone
+    WHERE idcompte = NEW.idcompte;
+
+    UPDATE sae._compteprofessionnel SET denomination = NEW.denomination WHERE idcompte = NEW.idcompte;
+
+  END IF;
   RETURN NEW;
 END;
 $$ language plpgsql;
@@ -571,8 +617,10 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.abonnement is null) THEN
+    IF (NEW.idcompte = (select idcompte from sae.compteprofessionnelpublique where idcompte = NEW.idcompte)) THEN
       NEW.abonnement = 'Gratuit';
+    elseif (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Standard';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
@@ -596,7 +644,7 @@ BEGIN
 
     RETURN NEW;
     
-  ELSIF (TG_OP = 'UPDATE') THEN
+  ELSEIF (TG_OP = 'UPDATE') THEN
     UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
@@ -657,8 +705,10 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.abonnement is null) THEN
+    IF (NEW.idcompte = (select idcompte from sae.compteprofessionnelpublique where idcompte = NEW.idcompte)) THEN
       NEW.abonnement = 'Gratuit';
+    elseif (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Standard';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
@@ -688,7 +738,7 @@ BEGIN
 
   RETURN NEW;
       
-  ELSIF (TG_OP = 'UPDATE') THEN
+  ELSEIF (TG_OP = 'UPDATE') THEN
     UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
@@ -750,8 +800,10 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.abonnement is null) THEN
+    IF (NEW.idcompte = (select idcompte from sae.compteprofessionnelpublique where idcompte = NEW.idcompte)) THEN
       NEW.abonnement = 'Gratuit';
+    elseif (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Standard';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
@@ -778,7 +830,7 @@ BEGIN
 
   RETURN NEW;
       
-  ELSIF (TG_OP = 'UPDATE') THEN
+  ELSEIF (TG_OP = 'UPDATE') THEN
     UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
@@ -839,8 +891,10 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.abonnement is null) THEN
+    IF (NEW.idcompte = (select idcompte from sae.compteprofessionnelpublique where idcompte = NEW.idcompte)) THEN
       NEW.abonnement = 'Gratuit';
+    elseif (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Standard';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
@@ -867,7 +921,7 @@ BEGIN
 
   RETURN NEW;
       
-  ELSIF (TG_OP = 'UPDATE') THEN
+  ELSEIF (TG_OP = 'UPDATE') THEN
     UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
@@ -928,8 +982,10 @@ BEGIN
     if (NEW.accesibilite is null) THEN
       NEW.accesibilite = 'non adapte pour personne a mobilite reduite';
     end if;
-    if (NEW.abonnement is null) THEN
+    IF (NEW.idcompte = (select idcompte from sae.compteprofessionnelpublique where idcompte = NEW.idcompte)) THEN
       NEW.abonnement = 'Gratuit';
+    elseif (NEW.abonnement is null) THEN
+      NEW.abonnement = 'Standard';
     end if;
 
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
@@ -972,7 +1028,7 @@ BEGIN
 
   RETURN NEW;
       
-  ELSIF (TG_OP = 'UPDATE') THEN
+  ELSEIF (TG_OP = 'UPDATE') THEN
     UPDATE sae._offre SET nomoffre = NEW.nomoffre,
                               numadresse = NEW.numadresse,
                               rueoffre = NEW.rueoffre,
@@ -1205,7 +1261,7 @@ VALUES('Famille','Of-0006');
 
 INSERT INTO spectacle(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
 prixmin,idcompte,resume,description,dureespectacle,placesspectacle)
-VALUES('Of-0007','La Magie des arbres,','0','plage de Tourony',
+VALUES('Of-0007','La Magie des arbres','0','plage de Tourony',
 'Perros-Guirec',22700,5.00,'Co-0004',
 'Sur le site exceptionnel de la plage de Tourony, au cœur de la côte de Granit rose, ce festival 
 concert son et lumière se déroule dans les arbres les 26 et 27 août.',
@@ -1238,7 +1294,7 @@ VALUES('Co-0007','village.gaulois@gmail.com','motdepasse','0','Parc du Radome',
 
 INSERT INTO parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
 prixmin,idcompte,resume,urlversplan)
-VALUES('Of-0008','Le Village Gaulois,','0','Parc du Radome',
+VALUES('Of-0008','Le Village Gaulois','0','Parc du Radome',
 'Pleumeur-Bodou',22560,5.00,'Co-0007',
 'Petit parc de loisirs pour enfants sur le thème du village avec jeux, activités et lieu de restauration.',
 'https://parcduradome.com/wp-content/uploads/2023/02/illustration_parc-768x453.jpg');
@@ -1366,7 +1422,7 @@ create or replace function sae.posteravis()
 $$
 BEGIN
 
-  IF (datevisite is null) THEN 
+  IF (NEW.datevisite is null) THEN 
     NEW.datevisite = CURRENT_DATE;
   END IF;
   INSERT INTO sae._avis(idavis,titre,datevisite,contexte,idoffre,idcompte,
@@ -1399,7 +1455,7 @@ create or replace function sae.posteravisre()
 $$
 BEGIN
 
-  IF (datevisite is null) THEN 
+  IF (NEW.datevisite is null) THEN 
     NEW.datevisite = CURRENT_DATE;
   END IF;
 
@@ -1574,3 +1630,14 @@ CREATE OR REPLACE TRIGGER tg_prendreoption
   EXECUTE PROCEDURE sae.prendreoption();
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
+
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre)
+VALUES ('Co-0010', 'evan.dart@gmail.com', 'motdepasse', '6', 'rue Louis Bleriot', 'Plouneventer', '29400', '0754934884', 'Evan', 'Dart');
+
+-- INSERT AVIS
+
+INSERT INTO sae.avis(idavis,titre,contexte,idoffre,idcompte,commentaire,noteavis)
+VALUES('Av-0001','Magnifique archipel !','En amoureux','Of-0001','Co-0009','Tres sympa a faire je vous le recommande fortement, l archipel est magnifique je vous le conseil si vous voulez faire un petit tour en kayak',4);
+
+INSERT INTO sae.avis(idavis,titre,contexte,idoffre,idcompte,commentaire,noteavis)
+VALUES('Av-0002','Kayak abime','Seul','Of-0001','Co-0010','Belle ballade mais le kayak etait legerement abime ce qui etait un petit peu inconfortable a la longue, cela reste cependant un belle endroit breton a visite',3);
