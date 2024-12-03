@@ -1,6 +1,7 @@
 <?php
 session_start();
-include('db_connection.inc.php');
+require_once "db_connection.inc.php";
+
 try {
     global $dbh;
     /*

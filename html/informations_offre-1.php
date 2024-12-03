@@ -5,7 +5,7 @@ global $dbh;
 
 if (isset($_GET['idoffre'])) {
     $offerId = $_GET['idoffre'];
-    $queryOffer = 'SELECT * FROM sae._offre WHERE idoffre = :offerId';
+    $queryOffer = 'SELECT * FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
     $sthOffer = $dbh->prepare($queryOffer);
     $sthOffer->bindParam(':offerId', $offerId, PDO::PARAM_STR);
     $sthOffer->execute();
@@ -33,101 +33,122 @@ if (isset($_GET['idoffre'])) {
         $isOnline = $offer['enligne'];
         $dateUpload = $offer['datepublication'];
         $dateLastUpdate = $offer['dernieremaj'];
+?>
 
-        // Display the offer details
-        echo "Offer Details: <br>";
-        echo "ID: $id <br>";
-        echo "Category: $categorie <br>";
-        echo "Name: $name <br>";
-        echo "Address: $address <br>";
-        echo "Min Price: $minPrice <br>";
-        echo "Start Date: $dateStart <br>";
-        echo "End Date: $dateEnd <br>";
-        echo "Is Online: $isOnline <br>";
-        echo "Uploaded On: $dateUpload <br>";
-        echo "Last Updated On: $dateLastUpdate <br>";
+        <!DOCTYPE html>
+        <html lang="en">
 
-        switch ($categorie) {
-            case "Activite":
-                $queryOffreCategorisee = 'SELECT * FROM sae.activite WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="./style.css">
 
-                $ageRequierement = $offreCategorisee['agerequis'];
-                $duration = $offreCategorisee['dureeactivite'];
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-                require_once './pages-info-offres/activite.php';
+            <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;family=Concert+One&display=swap" rel="stylesheet">
 
-                break;
+            <title>PACT</title>
+            <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+        </head>
 
-            case "Restauration":
-                $queryOffreCategorisee = 'SELECT * FROM sae.restauration WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+        <body>
+            <?php
+            require_once "./header_inc.html";
+            switch ($categorie) {
+                case "Activite":
+                    $queryOffreCategorisee = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_ACTIVITE . " WHERE idoffre = :offerId";
+                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                    $sthOffreCategorisee->execute();
+                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
 
-                $menuUrl = $offreCategorisee['urlverscarte'];
-                $priceRange = $offreCategorisee['gammeprix'];
-                $breakfast = $offreCategorisee['petitdejeuner'];
-                $lunch = $offreCategorisee['dejeuner'];
-                $dinner = $offreCategorisee['diner'];
-                $drinks = $offreCategorisee['boisson'];
-                $brunch = $offreCategorisee['brunch'];
+                    $ageRequierement = $offreCategorisee['agerequis'];
+                    $duration = $offreCategorisee['dureeactivite'];
 
-                require_once './pages-info-offres/restauration.php';
+                    require_once './pages-info-offres/activite.php';
 
-                break;
+                    break;
 
-            case "Visite":
-                $queryOffreCategorisee = 'SELECT * FROM sae.visite WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+                case "Restauration":
+                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_RESTO . ' WHERE idoffre = :offerId';
+                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                    $sthOffreCategorisee->execute();
+                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
 
-                $duration = $offreCategorisee['dureevisite'];
-                $isGuided = $offreCategorisee['estguidee'];
+                    $menuUrl = $offreCategorisee['urlverscarte'];
+                    $priceRange = $offreCategorisee['gammeprix'];
+                    $breakfast = $offreCategorisee['petitdejeuner'];
+                    $lunch = $offreCategorisee['dejeuner'];
+                    $dinner = $offreCategorisee['diner'];
+                    $drinks = $offreCategorisee['boisson'];
+                    $brunch = $offreCategorisee['brunch'];
 
-                require_once './pages-info-offres/visite.php';
+                    require_once './pages-info-offres/restauration.php';
 
-                break;
+                    break;
 
-            case "Parc attraction":
-                $queryOffreCategorisee = 'SELECT * FROM sae.parcattraction WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+                case "Visite":
+                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.visite WHERE idoffre = :offerId';
+                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                    $sthOffreCategorisee->execute();
+                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
 
-                $mapUrl = $offreCategorisee['urlversplan'];
-                $nbAttractions = $offreCategorisee['nbattractions'];
-                $ageRequierement = $offreCategorisee['ageminparc'];
+                    $duration = $offreCategorisee['dureevisite'];
+                    $isGuided = $offreCategorisee['estguidee'];
 
-                require_once './pages-info-offres/parc-attraction.php';
+                    require_once './pages-info-offres/visite.php';
 
-                break;
+                    break;
 
-            case "Spectacle":
-                $queryOffreCategorisee = 'SELECT * FROM sae.spectacle WHERE idoffre = :offerId';
-                $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
-                $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
-                $sthOffreCategorisee->execute();
-                $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+                case "Parc attraction":
+                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_PARC_ATTRACTIONS . 'WHERE idoffre = :offerId';
+                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                    $sthOffreCategorisee->execute();
+                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
 
-                $duration = $offreCategorisee['dureespectacle'];
-                $nbSeats = $offreCategorisee['placesspectacle'];
+                    $mapUrl = $offreCategorisee['urlversplan'];
+                    $nbAttractions = $offreCategorisee['nbattractions'];
+                    $ageRequierement = $offreCategorisee['ageminparc'];
 
-                require_once './pages-info-offres/spectacle.php';
+                    require_once './pages-info-offres/parc-attraction.php';
 
-                break;
-        }
+                    break;
+
+                case "Spectacle":
+                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_SPECTACLE . ' WHERE idoffre = :offerId';
+                    $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
+                    $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
+                    $sthOffreCategorisee->execute();
+                    $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
+
+                    $duration = $offreCategorisee['dureespectacle'];
+                    $nbSeats = $offreCategorisee['placesspectacle'];
+
+                    require_once './pages-info-offres/spectacle.php';
+
+                    break;
+            }
+
+            require_once "./afficher_avis.inc.php";
+            require_once "./footer_inc.html";
+            ?>
+        </body>
+
+        </html>
+        ?>
+        <div id="liste_avis">
+            <?php
+            afficher_liste_avis($offerId);
+            ?>
+        </div>
+<?php
     } else {
         echo "No offer found with the specified ID.";
     }
 } else {
     echo "No offer ID provided in the URL.";
 }
-
