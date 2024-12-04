@@ -76,9 +76,10 @@ function detect_category(tagre) {
 	} else if (value == "restauration") {
 		let gammeprix = document.createElement("input");
 		gammeprix.setAttribute("type", "text");
-		gammeprix.setAttribute("placeholder", "Gamme de prix * (Ex : entre 10€ et 20€)");
+		gammeprix.setAttribute("placeholder", "Gamme de prix * (€ ou €€ ou €€€)");
 		gammeprix.setAttribute("name", "gammeprix");
 		gammeprix.setAttribute("required", "");
+		gammeprix.setAttribute("maxlength", "3");
 		div.appendChild(gammeprix);
 
 		let tag_select = document.createElement("select");

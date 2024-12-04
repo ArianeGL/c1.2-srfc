@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once "db_connection.inc.php";
 
 function est_pro(): bool
 {
@@ -24,11 +25,13 @@ function est_pro(): bool
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
 </head>
+
 <body>
     <header>
         <div id="homeButtonID" class="homeButton">
@@ -41,16 +44,22 @@ function est_pro(): bool
                 <button onclick="window.location.href='./consulter_liste_offres_cli-1.php'" class="buttons header-button1">
                     <h4>Offres</h4>
                 </button>
-                
+
                 <button style="display: none;" class="buttons header-button2">
                     <h4>Factures</h4>
                 </button>
-                
+
                 <button style="display: none;" class="buttons header-button2">
                     <h4>R&eacute;cent</h4>
                 </button>
 
-                <button class="buttons header-button3" onclick="window.location.href='<?php if(!isset($_SESSION['identifiant'])) { echo "./connection-3.php"; }else if (est_pro()) { echo "./creation_compte_pro-3.php"; }else { echo "./creation_compte_membre-3.php"; }?>'">
+                <button class="buttons header-button3" onclick="window.location.href='<?php if (!isset($_SESSION['identifiant'])) {
+                                                                                            echo "./connection-3.php";
+                                                                                        } else if (est_pro()) {
+                                                                                            echo "./creation_compte_pro-3.php";
+                                                                                        } else {
+                                                                                            echo "./creation_compte_membre-3.php";
+                                                                                        } ?>'">
                     <h4>Compte</h4>
                 </button>
             </div>
@@ -62,4 +71,5 @@ function est_pro(): bool
         </div>
     </header>
 </body>
+
 </html>

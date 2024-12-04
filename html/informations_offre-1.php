@@ -35,18 +35,20 @@ if (isset($_GET['idoffre'])) {
         $isOnline = $offer['enligne'];
         $dateUpload = $offer['datepublication'];
         $dateLastUpdate = $offer['dernieremaj'];
-        ?> 
+?>
         <!DOCTYPE html>
         <html lang="en">
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title><?php echo $name;?></title>
+            <title><?php echo $name; ?></title>
             <link rel="stylesheet" href="./styles/infos-offres.css">
             <link rel="icon" type="image/x-icon" href="favicon.ico">
 
             <script src="./main.js"></script>
         </head>
+
         <body>
             <?php require_once 'header_inc.php';
             switch ($categorie) {
@@ -98,7 +100,7 @@ if (isset($_GET['idoffre'])) {
                     break;
 
                 case "Parc attraction":
-                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_PARC_ATTRACTIONS . 'WHERE idoffre = :offerId';
+                    $queryOffreCategorisee = 'SELECT * FROM ' . NOM_SCHEMA . '.' . VUE_PARC_ATTRACTIONS . ' WHERE idoffre = :offerId';
                     $sthOffreCategorisee = $dbh->prepare($queryOffreCategorisee);
                     $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                     $sthOffreCategorisee->execute();
@@ -114,14 +116,15 @@ if (isset($_GET['idoffre'])) {
             ?>
             <div>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-                <?php afficher_liste_avis($offerId);?>
+                <?php afficher_liste_avis($offerId); ?>
             </div>
             </main>
             <?php require_once 'footer_inc.html'; ?>
         </body>
+
         </html>
-        <?php
-        } else {
+<?php
+    } else {
         echo "No offer found with the specified ID.";
     }
 } else {
