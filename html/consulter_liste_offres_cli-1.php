@@ -33,6 +33,7 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <script src="main.js"></script>
+    <script src="recherche.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
             window.location.href = `info_offre-1.php?idoffre=${idoffre}`;
@@ -92,12 +93,24 @@ try {
     <!-- Main content -->
     <main id="clop">
 
-        <div class="clopRecherche">
-            <button class="searchButton"><img src="blabla.png" alt="Rechercher"></button>
-            <input id="searchText" placeholder="Rechercher une offre"></input>
-            <button class="filterButton">Filtrer</button>
-            <button class="sortButton">Trier</button>
-        </div>
+        <div class="barre_recherche">
+            <input type="text" id="rechercheOffre" placeholder="Rechercher offre..." onkeyup="rechercheOffreConsultation()">
+            <div class="filtre">
+                <!-- A ajouter dans le select pour les filtres : id="SelectionFiltre" onchange="filtreOffre()" -->
+                <select>
+                    <option value="" disabled selected>FILTRES</option>
+                    <option value="categorie1">Filtre 1</option>
+                    <option value="categorie2">Filtre 2</option>
+                </select>
+            </div>
+            <div class="tri">
+                <!-- A ajouter dans le select pour les tris : id="SelectionTri" onchange="triOffre()" -->
+                <select>
+                    <option value="" disabled selected>TRIS</option>
+                    <option value="">Tri 1</option>
+                    <option value="">Tri 2</option>
+                </select>
+            </div>
 
         <div id="clopRangement">
             <?php

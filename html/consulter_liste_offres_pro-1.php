@@ -87,7 +87,7 @@ try {
         <button onclick="loadCreaOffre()" class="clopButton">Créer une offre</button>
         <button onclick="loadSesOffresPro()" class="clopButton">Afficher vos offres</button>
         <div class="barre_recherche">
-            <input type="text" id="rechercheOffre" placeholder="Rechercher offre..." onkeyup="rechercheOffre()">
+            <input type="text" id="rechercheOffre" placeholder="Rechercher offre..." onkeyup="rechercheOffreConsultation()">
             <div class="filtre">
                 <!-- A ajouter dans le select pour les filtres : id="SelectionFiltre" onchange="filtreOffre()" -->
                 <select>
@@ -97,11 +97,13 @@ try {
                 </select>
             </div>
             <div class="tri">
-                <select id="SelectionTri" onchange="triOffre()">
+                <!-- A ajouter dans le select pour les tris : id="SelectionTri" onchange="triOffre()" -->
+                <select>
                     <option value="" disabled selected>TRIS</option>
-                    <option value="noteCroissante">Note (↑)</option>
-                    <option value="noteDecroissante">Note (↓)</option>
-                 </select>
+                    <option value="">Tri 1</option>
+                    <option value="">Tri 2</option>
+                </select>
+            </div>
 </div>
 
 <script>
