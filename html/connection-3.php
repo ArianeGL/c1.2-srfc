@@ -52,43 +52,10 @@ function est_pro(): bool
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/connexion.css">
-    <link rel="stylesheet" href="style.css">
-    <title>PACT - Connexion compte pro</title>
+    <title>PACT - Se Connecter</title>
 </head>
 
 <body>
-    <header>
-        <div id="homeButtonID" class="homeButton">
-            <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
-            <h2>PACT</h2>
-            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
-        </div>
-        <div>
-            <div class="container">
-                <button class="buttons header-button1">
-                    <h4>Offres</h4>
-                </button>
-
-                <!-- Button for back office -->
-                <button class="buttons header-button2">
-                    <h4>Factures</h4>
-                </button>
-
-                <!-- Button for front office -->
-                <button style="display: none;" class="buttons header-button2">
-                    <h4>R&eacute;cent</h4>
-                </button>
-                <button class="buttons header-button3">
-                    <h4>Compte</h4>
-                </button>
-            </div>
-            <div class="indicator">
-                <div id="div1" class="hidden"></div>
-                <div id="div2" class="hidden"></div>
-                <div id="div3" class="hidden"></div>
-            </div>
-        </div>
-    </header>
     <main>
         <?php
         global $dbh;
@@ -115,17 +82,21 @@ function est_pro(): bool
             if (!$connexion) {
                 $attempt++; ?>
                 <form action="connection-3.php" method="post" enctype="multipart/form-data">
-                    <p>Mauvais identifiant et/ou mot de passe</p>
-                    <label class="identifiant"> Identifiant</label>
+                    <label>Identifiant</label>
                     <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required>
-                    <br />
-                    <label class="motdepasse">Mot de passe</label>
-                    <input class="champs" type="password" id="motdepasse" name="motdepasse" required />
-                    <br />
-                    <input class="bouton" type="submit" value="Se connecter" name="connexion">
-                    <input class="bouton" type="submit" value="Mot de passe oublié">
-                    <input class="bouton" type="submit" value="Créer un compte" onclick="window.location.href='creation_compte_pro-3.php'">
+                    <br>
+                    <label>Mot de passe</label>
+                    <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required />
+                    <a href="inscription_pro-1.php">Mot de passe oubli&eacute; ?</a>
+                    <br>
+                    <div>
+                        <button class="smallButton" onclick="window.location.href='./creation_compte.html'">Créer un compte</button>
+                        <input class="smallButton" type="submit" value="Se connecter" name="connexion">
+                    </div>
                 </form>
+                <script>
+                    alert("Mauvais identifiant et/ou mot de passe");
+                </script>
             <?php
             } else {
                 echo "Connexion réussie";
@@ -141,25 +112,25 @@ function est_pro(): bool
         }
 
         if (isset($_SESSION["identifiant"])) {
-            echo '<script>window.location = "consulter_liste_offres_pro-1.php";</script>';
+            echo '<script>window.location = "consulter_liste_offres_cli-1.php";</script>';
         } else if ($attempt == 0) { ?>
             <form action="connection-3.php" method="post" enctype="multipart/form-data">
-                <label class="identifiant"> Identifiant</label>
-                <input type="text" id="identifiant" name="identifiant" required>
-                <br />
-                <label class="motdepasse">Mot de passe</label>
-                <input type="password" id="motdepasse" name="motdepasse" required>
-                <br />
-                <input class="bouton" type="submit" value="Se connecter" name="connexion">
-                <input class="bouton" type="submit" value="Mot de passe oublié">
-                <input class="bouton" type="submit" value="Créer un compte" onclick="window.location.href='creation_compte_pro-3.php'">
+                <label>Identifiant</label>
+                <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required>
+                <br>
+                <label>Mot de passe</label>
+                <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required />
+                <a href="inscription_pro-1.php">Mot de passe oubli&eacute; ?</a>
+
+                <br>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="smallButton" onclick="window.location.href='./creation_compte.html'">Créer un compte</button>
+                    <input class="smallButton" type="submit" value="Se connecter" name="connexion">
+                </div>
             </form>
         <?php } ?>
 
     </main>
-
-    <?php require_once "footer_inc.html"; ?>
-
 </body>
 <script src="main.js"></script>
 

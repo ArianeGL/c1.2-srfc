@@ -137,7 +137,7 @@ try {
 </head>
 <body>
 
-<?php require_once 'header_inc.html'; ?>
+<?php require_once 'header_inc.php'; ?>
 
   <section>
   <h1>Création du compte membre</h1>

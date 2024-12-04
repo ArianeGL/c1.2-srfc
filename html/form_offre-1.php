@@ -23,7 +23,7 @@
 
 <body>
     <?php
-    require_once "header_inc.html";
+    require_once "header_inc.php";
     require_once "verif_connection.inc.php";
 
     session_start();
