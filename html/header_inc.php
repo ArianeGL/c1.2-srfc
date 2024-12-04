@@ -1,5 +1,26 @@
 <?php
 session_start();
+
+function est_pro(): bool
+{
+    $pro = false;
+    global $dbh;
+
+    try {
+        $query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE_PRO . " NATURAL JOIN " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = :email;";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":email", $_SESSION['identifiant']);
+        $stmt->execute();
+
+        if ($stmt->fetchColumn() != false) {
+            $pro = true;
+        }
+    } catch (PDOException $e) {
+        die("PDO Query error : " . $e->getMessage());
+    }
+
+    return $pro;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,14 +49,8 @@ session_start();
                 <button style="display: none;" class="buttons header-button2">
                     <h4>R&eacute;cent</h4>
                 </button>
-                
-                <!-- make it so it show only if the user is a pro otherwise show the same thing but wiht an other href -->
-                 <!--  if (est_pro()) {
-                            echo '<button class="smallButton" onclick="window.location.href="./creation_compte_pro-3.php"">Créer un compte</button>';
-                        } else {
-                            echo '<button class="smallButton" onclick="window.location.href="./creation_compte_membre-3.php"">Créer un compte</button>';
-                        } ?> -->
-                <button onclick="window.location.href='./consultation_pro-3.php'" class="buttons header-button3">
+
+                <button class="buttons header-button3" onclick="window.location.href='<?php if(!isset($_SESSION['identifiant'])) { echo "./connection-3.php"; }else if (est_pro()) { echo "./creation_compte_pro-3.php"; }else { echo "./creation_compte_membre-3.php"; }?>'">
                     <h4>Compte</h4>
                 </button>
             </div>

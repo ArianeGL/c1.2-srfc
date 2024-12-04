@@ -111,7 +111,7 @@ try {
 
     </main>
 
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 
