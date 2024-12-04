@@ -137,7 +137,7 @@ try {
 </head>
 <body>
 
-<?php require_once 'header_inc.html'; ?>
+<?php require_once 'header_inc.php'; ?>
 
   <section>
   <h1>Création du compte membre</h1>
@@ -169,30 +169,34 @@ try {
                 </div>
             </div>
 
-            <div id="photo-profil" class="form-right">
-    <?php if(isset($_SESSION['photo'])) { ?>
-        <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
-    <?php } else { ?>
-        <img src="images/default.png" alt="Photo de profil" id="photo-profil" />
-    <?php } ?>
+            <div id="form-photo">
+                <div id="photo-profil" class="form-right">
+                    <?php if (isset($_SESSION['photo'])) { ?>
+                        <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
+                    <?php } else { ?>
+                        <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
+                    <?php } ?>
+                </div>
+                    <label class="smallButton" for="photo">Importer une image</label>
+                    <input type="file" id="photo" name="photo" style="display:none;" />
+                </div>
+            
             </div>
-            <label class="bouton" for="photo">Importer une image</label>
-            <input type="file" id="photo" name="photo" style="display:none;" />
-            </div>
-        </div>
-
-        
         <div id="form-footer">
-            <p id="obligation">* Obligatoire</p>
-            <input class="bouton" id="bouton-modifier" type="submit" value="Valider" />
-            <div class="accepte">
-                <input type="checkbox" value="communication" id="communication">
-                <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
-                <br/>
-                <input type="checkbox" value="condition" id="condition" required>
-                <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                <p id="obligation">* Obligatoire</p>
+                <input class="button" id="bouton-modifier" type="submit" value="Valider" />
+                <div id="accepte">
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="communication" id="communication">
+                        <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
+                    </div>
+                    <br />
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="condition" id="condition" required>
+                        <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                    </div>
+                </div>
             </div>
-        </div>
     </form>
     
   </section>

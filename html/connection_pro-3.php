@@ -27,7 +27,6 @@ $query1 = "SELECT email, motdepasse FROM " . NOM_SCHEMA . "._compteProfessionnel
 </head>
 
 <body>
-    <!-- <?php require_once "header_inc.html"; ?> -->
     <main>
         <?php
         global $dbh;
