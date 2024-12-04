@@ -29,7 +29,11 @@ CREATE TABLE IF NOT EXISTS sae._compte
    villecompte       varchar(30)   NOT NULL,
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
+<<<<<<< HEAD
    urlimage          varchar(200)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png')
+=======
+   urlimage          varchar(300)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png')
+>>>>>>> main
 );
 
 ALTER TABLE sae._compte
@@ -104,9 +108,16 @@ ALTER TABLE sae._offre
 
 CREATE TABLE IF NOT EXISTS sae._historique
 (
+<<<<<<< HEAD
   idoffre   varchar(7) NOT NULL primary key REFERENCES sae._offre(idoffre),
   datedebut DATE       NOT NULL,
   datefin   DATE
+=======
+  idoffre   varchar(7) NOT NULL REFERENCES sae._offre(idoffre),
+  datedebut DATE       NOT NULL,
+  datefin   DATE,
+  CONSTRAINT _historique_pkey primary key (idoffre,datedebut)
+>>>>>>> main
 );
 
 
@@ -150,16 +161,28 @@ CREATE TABLE IF NOT EXISTS sae._souscriptionoption
 
 CREATE TABLE IF NOT EXISTS sae._historiqueoption
 (
+<<<<<<< HEAD
   idoffre   varchar(7) NOT NULL primary key REFERENCES sae._offre(idoffre),
   option    varchar(15) NOT NULL REFERENCES sae._option(type),
   debutsem  DATE       NOT NULL,
   finsem    DATE       NOT NULL
+=======
+  idoffre   varchar(7) NOT NULL REFERENCES sae._offre(idoffre),
+  option    varchar(15) NOT NULL REFERENCES sae._option(type),
+  debutsem  DATE       NOT NULL,
+  finsem    DATE       NOT NULL,
+  CONSTRAINT _historiqueoption_pkey primary key (idoffre,debutsem)
+>>>>>>> main
 );
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sae._imageoffre
 (
+<<<<<<< HEAD
    urlimage  varchar(100)   NOT NULL,
+=======
+   urlimage  varchar(300)   NOT NULL,
+>>>>>>> main
    idoffre   varchar(7)     NOT NULL
 );
 
@@ -170,7 +193,11 @@ ALTER TABLE sae._imageoffre
 CREATE TABLE IF NOT EXISTS sae._parcattraction
 (
    idoffre        varchar(7)     NOT NULL,
+<<<<<<< HEAD
    urlversplan    varchar(100)   NOT NULL,
+=======
+   urlversplan    varchar(300)   NOT NULL,
+>>>>>>> main
    nbattractions  integer        default(1),
    ageminparc     integer        default(0)
 );
@@ -349,7 +376,11 @@ CREATE TABLE IF NOT EXISTS sae._facture
   idfacture         varchar(7)    PRIMARY KEY,
   datefacture       date          not null DEFAULT(CURRENT_DATE),
   idoffre           varchar(7)    REFERENCES sae._offre(idoffre),
+<<<<<<< HEAD
   moisprestation    varchar(15)   not null,
+=======
+  moisprestation    integer   not null,
+>>>>>>> main
   echeanceReglement date          not null,
   nbjoursenligne    integer       not null,
   abonnementHT      real          not null,
@@ -380,7 +411,11 @@ CREATE TABLE IF NOT EXISTS sae._avis
 
 CREATE TABLE IF NOT EXISTS sae._imageavis
 (
+<<<<<<< HEAD
    urlimage  varchar(100)   NOT NULL PRIMARY KEY,
+=======
+   urlimage  varchar(300)   NOT NULL PRIMARY KEY,
+>>>>>>> main
    idavis   varchar(7)     NOT NULL REFERENCES sae._avis(idavis)
 );
 
@@ -720,14 +755,21 @@ BEGIN
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
             NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
   
+<<<<<<< HEAD
   if (NEW.nbattractions is null) THEN
     NEW.nbattractions = 1;
   end if;
+=======
+>>>>>>> main
   if (NEW.ageminparc is null) THEN
     NEW.ageminparc = 0;
   end if;
   insert into sae._parcattraction(idoffre,urlversplan,nbattractions,ageminparc)
+<<<<<<< HEAD
   values(NEW.idoffre,NEW.urlversplan,NEW.nbattractions,NEW.ageminparc);
+=======
+  values(NEW.idoffre,NEW.urlversplan,0,NEW.ageminparc);
+>>>>>>> main
 
   UPDATE sae._offre set blacklistdispo = 3 where abonnement = 'Premium';
 
@@ -771,6 +813,30 @@ CREATE OR REPLACE TRIGGER tg_createUpdateParcAttraction
   FOR EACH ROW
   EXECUTE PROCEDURE sae.createUpdateParcAttraction();
 
+<<<<<<< HEAD
+=======
+create or replace view sae.attraction AS
+  select * from sae._attraction;
+
+create or replace function sae.creaattraction()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  INSERT INTO sae._attraction(nomattraction,idoffre)
+  VALUES(NEW.nomattraction,NEW.idoffre);
+
+  UPDATE sae._attraction SET nbattraction = nbattraction + 1 where idoffre = NEW.idoffre;
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_creaattraction
+  INSTEAD OF INSERT ON sae.attraction
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.creaattraction();
+
+>>>>>>> main
 
 -- Visite
 create or replace view sae.visite AS
@@ -1119,13 +1185,22 @@ prixmin,idcompte,resume,description,dureeactivite)
 VALUES('Of-0001','Archipel de Brehat en kayak','3B','Hent Penn ar Pave',
 'Le Vieux-Marche',22420,0,'Co-0001',
 'Des îles et paysages qui évoluent sous vos yeux au fil de la marée',
+<<<<<<< HEAD
 'Venez jouer à cache-cache avec les couleurs et les lumières dans les labyrinthes d’îlots et de blocs de granit colorés et découvrir les 
 trésors que Bréhat réserve aux kayakistes curieux !','Prennez votre temps');
+=======
+'Venez jouer à cache-cache avec les couleurs et les lumières dans les labyrinthes d’îlots et de blocs de granit colorés et découvrir les trésors que Bréhat réserve aux kayakistes curieux !',
+'Prennez votre temps');
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.nomade-aventure.com/Content/Images/ImgProduits/FRA/7902/458261_QuatreTiers.ori.jpg','Of-0001');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.randokayak.com/wp-content/uploads/2017/06/manipulation-des-kayaks-sur-le-recif-photo-Jean-Marc-Terrade.jpg?v=1615314431','Of-0001');
+>>>>>>> main
 
 --------------------------------------------------------------------------------------------------------
 
 INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
+<<<<<<< HEAD
 denomination)
 VALUES('Co-0002','tregor,bicyclette@gmail.com','motdepasse','3','Allee des soupirs',
 'Lannion',22300,0712345678,'Tregor Bicyclette');
@@ -1145,6 +1220,22 @@ avec une barre de traction.',
 'Le public en situation de handicap est le bienvenu, ne pas hésiter à nous appeler pour
 préparer la balade',
 12,'6h');
+=======
+denomination,urlimage)
+VALUES('Co-0002','tregor,bicyclette@gmail.com','motdepasse','3','Allee des soupirs',
+'Lannion',22300,0712345678,'Tregor Bicyclette','https://www.tregorbicyclette.fr/images/Logo2024/trebi_couleur_fond_transparent_pour_fond_blanc.png');
+
+INSERT INTO activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+prixmin,idcompte,resume,description,accesibilite,agerequis,dureeactivite,enligne)
+VALUES('Of-0002','Qui m''aime me suive','3','Allee des soupirs',
+'Lannion',22300,0,'Co-0002',
+'Montrer que l''on peut réaliser localement de belles balades à vélo, en empruntant de petites routes tranquilles et sans trop de montées.',
+'Les sorties sont volontairement limitées entre 15 km et 20 km pour permettre à un large public familial de se joindre à nous. A partir de 6 ou 7 ans, un enfant à l''aise sur son vélo, peut en général parcourir une telle distance sans problème : le rythme est suffisamment lent (adapté aux plus faibles), avec des pauses, et le fait d''être en groupe est en général un bon stimulant pour les enfants ... et les plus grands ! Les plus jeunes peuvent aussi participer en charrette, sur un siège vélo ou bien avec une barre de traction.',
+'Le public en situation de handicap est le bienvenu, ne pas hésiter à nous appeler pour préparer la balade',
+12,'6h',false);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe9oPRAczCLSqErot_8570iR1ZDq-SEejBYg&s','Of-0002');
+>>>>>>> main
 
 INSERT INTO sae._prestationincluse(idpresta,idoffre)
 VALUES('Pr-0001','Of-0002');
@@ -1194,6 +1285,13 @@ VALUES('Of-0003','Decouverte du centre-ville historique de Lannion','0','Pl. du 
 'Decouverte du centre-ville historique de Lannion',
 'A votre rythme');
 
+<<<<<<< HEAD
+=======
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.bretagne-cotedegranitrose.com/app/uploads/lannion-tourisme/2020/03/thumbs/lannion-1-640x640.jpg','Of-0003');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://cdt22.media.tourinsoft.eu/upload/-RY8NEE5.jpg','Of-0003');
+
+
+>>>>>>> main
 INSERT INTO compteProfessionnelPublique(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
 denomination)
@@ -1201,11 +1299,22 @@ VALUES('Co-0004','cotedarmor@gmail.com','motdepasse','0','0',
 '0',22000,0296626222,'Departement des cotes d''Armor');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+<<<<<<< HEAD
 prixmin,idcompte,resume,dureevisite)
 VALUES('Of-0004','Parc et Château de la Roche Jagu','0','0',
 'Ploezal',22260,0,'Co-0004',
 'Le parc est en accès libre et gratuit 7j/7 toute l''année ! Tarifs. Entrée château/expo (automne-hiver 2024) Plein tarif : 4,50 €',
 'A votre rythme');
+=======
+prixmin,idcompte,resume,dureevisite,enligne)
+VALUES('Of-0004','Parc et Château de la Roche Jagu','0','0',
+'Ploezal',22260,0,'Co-0004',
+'Le parc est en accès libre et gratuit 7j/7 toute l''année ! Tarifs. Entrée château/expo (automne-hiver 2024) Plein tarif : 4,50 €',
+'A votre rythme',false);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/bf/77/2d/domaine-departemental.jpg?w=1200&h=-1&s=1','Of-0004');
+
+>>>>>>> main
 
 INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
@@ -1214,12 +1323,24 @@ VALUES('Co-0005','leradome.cdt@gmail.com','motdepasse','0','Parc du Radome',
 'Pleumeur-Bodou',22560,0296466380,' Fondation d''Entreprise Cité des Télécoms ',493290506,'FR7630001007941234567890182');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
+<<<<<<< HEAD
 prixmin,idcompte,resume,dureevisite)
 VALUES('Of-0005','Cité des Télécoms','0','Parc du Radome',
 'Pleumeur-Bodou',22560,0,'Co-0005',
 'La Cité des télécoms est un parc français consacré aux télécommunications, des débuts à nos jours.
 Elle est située sur la commune de Pleumeur-Bodou en Bretagne.',
 'A votre rythme');
+=======
+prixmin,idcompte,resume,dureevisite,enligne)
+VALUES('Of-0005','Cité des Télécoms','0','Parc du Radome',
+'Pleumeur-Bodou',22560,0,'Co-0005',
+'La Cité des télécoms est un parc français consacré aux télécommunications, des débuts à nos jours. Elle est située sur la commune de Pleumeur-Bodou en Bretagne.',
+'A votre rythme',false);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.cite-telecoms.com/voy_content/uploads/2023/06/chimair_cite-des-telecoms-82-scaled.jpg','Of-0005');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.cite-telecoms.com/voy_content/uploads/2019/02/terre_connectee-chimair-14md-scaled.jpg','Of-0005');
+
+>>>>>>> main
 
 INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
@@ -1231,6 +1352,7 @@ INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloff
 prixmin,idcompte,resume,description,accesibilite,dureevisite,estguidee)
 VALUES('Of-0006','Excursion vers les 7 Iles','0','Bd Joseph le Bihan',
 'Perros-Guirec',22700,0,'Co-0006',
+<<<<<<< HEAD
 'Découvrez l’archipel des Sept-Îles, la plus grande réserve ornithologique de France, à bord 
 d’une vedette ou d’un bateau de la Ligue de Protection des Oiseaux.',
 'Les Vedettes des 7 Iles proposent des excursions et des visites commentées vers l''archipel 
@@ -1241,6 +1363,17 @@ et les macareux',
 'accueil du public en situation de handicap avec fauteuil roulant manuel',
 '3h',true);
 
+=======
+'Découvrez l’archipel des Sept-Îles, la plus grande réserve ornithologique de France, à bord d’une vedette ou d’un bateau de la Ligue de Protection des Oiseaux.',
+'Les Vedettes des 7 Iles proposent des excursions et des visites commentées vers l''archipel des Sept-Iles, au départ de Perros-Guirec. Le site est protégé et l''accès aux îles réglementé, mais vous pourrez néanmoins fouler le sol de l''Île-aux-Moines et admirer les autres îles depuis le bateau. Les 7 îles sont un véritable sanctuaire pour les oiseaux marins, notamment les goélands, les fous de Bassan et les macareux',
+'accueil du public en situation de handicap avec fauteuil roulant manuel',
+'3h',true);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-635625325660958262-2.jpg?dummy=0&h=800','Of-0006');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-638136995194307876-2.jpg?dummy=0&h=800','Of-0006');
+
+
+>>>>>>> main
 INSERT INTO sae._langueproposes(nomlangue,idoffre)
 VALUES('francais','Of-0006');
 INSERT INTO sae._langueproposes(nomlangue,idoffre)
@@ -1263,6 +1396,7 @@ INSERT INTO spectacle(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostal
 prixmin,idcompte,resume,description,dureespectacle,placesspectacle)
 VALUES('Of-0007','La Magie des arbres','0','plage de Tourony',
 'Perros-Guirec',22700,5.00,'Co-0004',
+<<<<<<< HEAD
 'Sur le site exceptionnel de la plage de Tourony, au cœur de la côte de Granit rose, ce festival 
 concert son et lumière se déroule dans les arbres les 26 et 27 août.',
 'Venez découvrir la Magie des arbres dans ce site exceptionnel de la côte de Granit rose : 
@@ -1271,6 +1405,15 @@ lumière avec la projection sur des voiles de grands mâts tendues dans les arbr
 effets pyrotechniques, lumières et musique, vous entraînera dans un univers exceptionnel.',
 '1h30',300);
 
+=======
+'Sur le site exceptionnel de la plage de Tourony, au cœur de la côte de Granit rose, ce festival concert son et lumière se déroule dans les arbres les 26 et 27 août.',
+'Venez découvrir la Magie des arbres dans ce site exceptionnel de la côte de Granit rose : première partie musicale autour du Bagad de Perros-Guirec, puis, à la nuit tombée, assistez au son et  lumière avec la projection sur des voiles de grands mâts tendues dans les arbres. Ce spectacle mêlant  effets pyrotechniques, lumières et musique, vous entraînera dans un univers exceptionnel.',
+'1h30',300);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://static.actu.fr/uploads/2022/12/da632068fba36fe632068fba311732v-960x640.jpg','Of-0007');
+
+
+>>>>>>> main
 INSERT INTO sae._tagpouroffre(nomtag,idoffre)
 VALUES('Plein air','Of-0007');
 INSERT INTO sae._tagpouroffre(nomtag,idoffre)
@@ -1299,6 +1442,11 @@ VALUES('Of-0008','Le Village Gaulois','0','Parc du Radome',
 'Petit parc de loisirs pour enfants sur le thème du village avec jeux, activités et lieu de restauration.',
 'https://parcduradome.com/wp-content/uploads/2023/02/illustration_parc-768x453.jpg');
 
+<<<<<<< HEAD
+=======
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-634978455280391258-2.jpg?dummy=0&h=800','Of-0008');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj6LcJM7sGXnG_iuzTgtKLT49YGe_At-cUSQ&s','Of-0008');
+>>>>>>> main
 
 -----------------------------------------------------------------------------
 
@@ -1326,6 +1474,7 @@ prixmin,nbavis,note,idcompte,resume,description,urlverscarte,gammeprix,dejeuner,
 moycuisine,moyservice,moyambiance,moyqp)
 VALUES('Of-0009','La Ville Blanche','29','route de Tréguier',
 'Rospez-Lannion',22300,26,753,4.5,'Co-0008',
+<<<<<<< HEAD
 'La Ville Blanche, en plein cœur du Trégor, non loin de la côte de Granit Rose vous accueille
 pour le plaisir des papilles.',
 'Ce petit corps de ferme repris par la famille Jaguin est devenu au fil du temps une Maison
@@ -1335,6 +1484,17 @@ d’histoire, venez continuer de l’écrire avec Maud et Yvan Guglielmetti.',
 'https://cdn.eat-list.fr/establishment/menu/gallery_menu/22300-rospez/la-ville-blanche_77330_b8c.jpg','€€€',true,true,true,
 4.8,4.5,4.3,4.5);
 
+=======
+'La Ville Blanche, en plein cœur du Trégor, non loin de la côte de Granit Rose vous accueille pour le plaisir des papilles.',
+'Ce petit corps de ferme repris par la famille Jaguin est devenu au fil du temps une Maison de renom. D’aventures en aventures, la passion de cette cuisine s’est maintenant transmise, des souvenirs et des moments se sont déroulés dans cette Maison symbolique de Bretagne. Gorgé d’histoire, venez continuer de l’écrire avec Maud et Yvan Guglielmetti.',
+'https://cdn.eat-list.fr/establishment/menu/gallery_menu/22300-rospez/la-ville-blanche_77330_b8c.jpg','€€€',true,true,true,
+4.8,4.5,4.3,4.5);
+
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeHGJOow1oZyvT_l03EpnFCaU1WiIUIQjIVw&s','Of-0009');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnK0mNLtiaE7zl_kFk2Zvpk0WLNlygY_-L0Q&s','Of-0009');
+INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyAxbUKxwW7QK4iXmH6BSit9nrN50ujH4FMw&s','Of-0009');
+
+>>>>>>> main
 INSERT INTO sae._tagpourrestauration(nomtag,idoffre)
 VALUES('Francaise','Of-0009');
 INSERT INTO sae._tagpourrestauration(nomtag,idoffre)
@@ -1522,6 +1682,7 @@ create or replace function sae.genfacture()
 $$
 BEGIN
 
+<<<<<<< HEAD
   UPDATE sae._historique SET datefin = CURRENT_DATE - 1 where (select idoffre from sae._historique where datefin is null) = NEW.idoffre;
   INSERT INTO sae._historique(idoffre,datedebut)
   VALUES(NEW.idoffre,CURRENT_DATE);
@@ -1530,12 +1691,22 @@ BEGIN
     NEW.moisprestation = 12;
   ELSE
     NEW.moisperstation = EXTRACT(MONTH FROM CURRENT_DATE - 1);
+=======
+  IF (EXTRACT(MONTH FROM CURRENT_DATE) = 1) THEN
+    NEW.moisprestation = 12;
+  ELSE
+    NEW.moisprestation = EXTRACT(MONTH FROM CURRENT_DATE) - 1;
+>>>>>>> main
   END IF;
   
   NEW.nbjoursenligne = (
       SELECT SUM(datefin - datedebut)
       FROM sae._historique
+<<<<<<< HEAD
       WHERE EXTRACT(MONTH FROM datedebut) = NEW.moisprestation
+=======
+      WHERE  NEW.moisprestation = EXTRACT(MONTH FROM datedebut) and NEW.moisprestation = EXTRACT(MONTH FROM datefin)
+>>>>>>> main
         AND idoffre = NEW.idoffre
   );
 
@@ -1551,10 +1722,17 @@ BEGIN
   NEW.abonnementTTC =  NEW.abonnementHT * 1.2;
 
   NEW.optionHT = (
+<<<<<<< HEAD
       (SELECT prix 
       FROM sae._option 
       NATURAL JOIN sae._souscriptionoption
       WHERE option = 'A la une')
+=======
+      (SELECT distinct prixHT 
+      FROM sae._option 
+      NATURAL JOIN sae._souscriptionoption
+      WHERE type = 'A la une')
+>>>>>>> main
       *
       (SELECT COUNT(*)
       FROM sae._historiqueoption 
@@ -1563,10 +1741,17 @@ BEGIN
         AND idoffre = NEW.idoffre
         AND option = 'A la une')
   ) + (
+<<<<<<< HEAD
       (SELECT prix 
       FROM sae._option 
       NATURAL JOIN sae._souscription 
       WHERE option = 'En relief')
+=======
+      (SELECT distinct prixHT
+      FROM sae._option 
+      NATURAL JOIN sae._souscriptionoption
+      WHERE type = 'En relief')
+>>>>>>> main
       *
       (SELECT COUNT(*)
       FROM sae._historiqueoption 
@@ -1575,15 +1760,29 @@ BEGIN
         AND idoffre = NEW.idoffre
         AND option = 'En relief')
   );
+<<<<<<< HEAD
   NEW.optionTTC = NEW.optionHT * 1.2;
 
+=======
+
+  if (NEW.optionHT is null) THEN
+    NEW.optionHT = 0;
+  END IF;
+  NEW.optionTTC = NEW.optionHT * 1.2;
+
+
+>>>>>>> main
   NEW.totalHT = NEW.abonnementHT + NEW.optionHT;
   NEW.totalTTC = NEW.abonnementTTC + NEW.optionTTC;
 
   INSERT INTO sae._facture(idfacture,datefacture,idoffre,moisprestation,echeancereglement,
                           nbjoursenligne,abonnementHT,abonnementTTC,optionHT,optionTTC,
                           totalHT,totalTTC)
+<<<<<<< HEAD
   VALUES(NEW.idfacture,CURRENT_DATE,NEW.idoffre,NEW.moisprestation,CURRENT_DATE + 30,
+=======
+  VALUES(NEW.idfacture,CURRENT_DATE,NEW.idoffre,NEW.moisprestation,CURRENT_DATE + 60,
+>>>>>>> main
         NEW.nbjoursenligne,NEW.abonnementHT,NEW.abonnementTTC,NEW.optionHT,NEW.optionTTC,
         NEW.totalHT,NEW.totalTTC);
 
@@ -1631,8 +1830,41 @@ CREATE OR REPLACE TRIGGER tg_prendreoption
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
 
+<<<<<<< HEAD
 INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre)
 VALUES ('Co-0010', 'evan.dart@gmail.com', 'motdepasse', '6', 'rue Louis Bleriot', 'Plouneventer', '29400', '0754934884', 'Evan', 'Dart');
+=======
+UPDATE sae._offre SET datepublication = '2024-11-01', dernieremaj = '2024-11-01' where idoffre = 'Of-0001';
+UPDATE sae._historique set datedebut = '2024-11-01', datefin = '2024-11-22' where idoffre = 'Of-0001';
+INSERT INTO sae._historique(idoffre,datedebut,datefin) VALUES('Of-0001','2024-11-25','2024-11-28');
+INSERT INTO sae.option(idoffre,option,semainelancement,active)
+VALUES('Of-0001','A la une','2024-11-01',true);
+INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
+VALUES('Of-0001','A la une','2024-11-07','2024-11-14');
+INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
+VALUES('Of-0001','A la une',CURRENT_DATE,CURRENT_DATE+7);
+
+
+INSERT INTO sae.option(idoffre,option,semainelancement,active)
+VALUES('Of-0009','En relief',CURRENT_DATE,true);
+
+UPDATE sae._offre SET datepublication = '2024-11-07', dernieremaj = '2024-11-07' where idoffre = 'Of-0006';
+UPDATE sae._historique set datedebut = '2024-11-07' where idoffre = 'Of-0006';
+UPDATE sae._offre SET datepublication = '2024-11-14', dernieremaj = '2024-11-14' where idoffre = 'Of-0009';
+UPDATE sae._historique set datedebut = '2024-11-14' where idoffre = 'Of-0009';
+
+
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre)
+VALUES ('Co-0010', 'evan.dart@gmail.com', 'motdepasse', '6', 'rue Louis Bleriot', 'Plouneventer', '29400', '0754934884', 'Evan', 'Dart');
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre,urlimage)
+VALUES ('Co-0011', 'gamerpfz22@gmail.com', 'sevr@uvo.345?', '3', 'rue Branly', 'Lannion', '22300', '0784050267', 'Pierre', 'Vander',
+'https://static4.depositphotos.com/1000824/337/i/450/depositphotos_3379507-stock-photo-man-in-sunglasses.jpg');
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre)
+VALUES ('Co-0012', 'mathieumahr@gmail.com', 'matmar.67', '2', 'rue Henry Treville', 'Rennes', '35000', '0654546803', 'Mathieu', 'Mahr');
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre,urlimage)
+VALUES ('Co-0013', 'valentineberger69@gmail.com', 'pochaontas?69', '17', 'rue Gilles Fort', 'Lyon', '69000', '0704454693', 'Valentine', 'Berger',
+'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBn_e2w-Ne9dtv4yKthY8Z7nKVXB8R9vEtVg&s');
+>>>>>>> main
 
 -- INSERT AVIS
 

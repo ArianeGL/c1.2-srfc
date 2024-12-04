@@ -1,44 +1,65 @@
-:root{
-  --grisDark: #8599AD;
-  --primaireLight : #52667A;
-  --bleubouton : #254766;
-  --blanc: #FFFFFF;
-  --accentLight: #CC0000;
-  --secondaryLight: #E7FDFD;
-  --caseGrise: #D9D9D9;
-}
+@import "../style.css";
 
-
-.bouton {
-  border:10;
-  padding:5px 20px;
-  background-color: var(--bleubouton);
-  border-radius:20px;
-  color: var(--blanc);
+.smallButton {
+	font-size: 0.8em;
 }
 
 input {
-  display: inline-block;
-  margin: 10px;
-  border:0;
-  box-shadow: inset 0px 4px 4px 0 rgba(0,0,0,0.25);
-  background-color: var(--caseGrise);
+	display: inline-block;
+	margin: 10px;
+	border: 2px solid var(--navy-blue);
+	border-radius: var(--round-corners);
+	width: 50%;
+	height: 2em;
 }
-
-form .label {
-  color: #pink;
-}
-.bouton:hover {
-  background-color: var(--accentLight);
-}
-header{
-  text-align:center;
-}
-
 
 body{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--secondaryLight);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	background-image: url("../IMAGES/Background-co_pro.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-top: 15%;
+	width: 27.5%;
+	height: 30%;
+	background-color: rgba(255, 255, 255, 0.8);
+	border-radius: var(--round-corners);
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	opacity: 1;
+	div {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+.mdp {
+	margin-bottom: 1px;
+}
+
+a {
+	color: var(--navy-blue);
+	text-decoration: none;
+	font-size: small;
+	align-self: self-end;
+	margin-right: 25%;
+	margin-bottom: 3%;
+}
+
+a:hover {
+	color: var(--grey-blue);
 }
