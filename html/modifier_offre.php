@@ -98,6 +98,10 @@ if (isset($_POST["titre"])) {
     $stmt_option->bindParam(':idoffre', $idoffre);
     $stmt_option->execute();
     $option = $stmt_option->fetch(PDO::FETCH_ASSOC);
+
+    if ($option && isset($option['active'])) {
+        $active = $option['active'];
+    }
     
 
     /*$query_telephone = "SELECT telephone FROM ".NOM_SCHEMA."_offre
@@ -213,6 +217,9 @@ if (isset($_POST["titre"])) {
                 <div class="element_form">
 
                 </div>
+                <?php if (!$active){ ?>
+                    <button class="smallButton" onclick="location.href='annuler_option.php?idoffre=<?php echo $idoffre; ?>'">Annuler l'option</button>
+                <?php }?> 
                 <textarea name="resume" id="resume"><?php echo $resume ?></textarea>
                 <div class="boutonimages">
                     <label for="fichier">Importer une grille tarifaire, un menu et/ou un plan</label>
