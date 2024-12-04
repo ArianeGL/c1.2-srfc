@@ -135,5 +135,8 @@ if (isset($_GET['idoffre'])) {
         ?><br><?php
     }
     ?>
+    <form action="generate_pdf.php?idoffre='<?php echo $idoffre;?>'" method="POST">
+        <button type="submit">Download PDF</button>
+    </form>
 </body>
 </html>
