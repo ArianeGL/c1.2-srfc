@@ -20,6 +20,8 @@ const VUE_PRO_PUBLIQUE = "compteprofessionnelpublique";
 const VUE_TAGS_OF = "tagof";
 const VUE_TAGS_RE = "tagre";
 const VUE_OPTION = "option";
+const VUE_AVIS = "avis";
+const VUE_AVIS_RESTAURATION = "avisre";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";
