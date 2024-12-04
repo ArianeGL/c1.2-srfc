@@ -17,13 +17,13 @@
 
     <script src="main.js"></script>
 
-    <script src="scripts/image_preview.js"></script>
+    <script src="./image_preview.js"></script>
     <title>PACT - Cr&eacute;er une offre</title>
 </head>
 
 <body>
     <?php
-    require_once "header_inc.html";
+    require_once "header_inc.php";
     require_once "verif_connection.inc.php";
 
     session_start();
@@ -41,6 +41,17 @@
         return $ret;
     }
 
+    function get_tags_resto(): array
+    {
+        global $dbh;
+        $tags = array();
+
+        $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_TAGSRE . ";";
+        $tags = $dbh->query($query)->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        return $tags;
+    }
+
     if (isset($_SESSION['identifiant']) && valid_account()) {
     ?>
         <main>
@@ -56,10 +67,10 @@
                         </select>
                 </div>
             <?php } ?>
-            <select name="categorie" id="categorie" onchange="detect_category()">
+            <select name="categorie" id="categorie" onchange='detect_category(<?php echo json_encode(get_tags_resto()); ?>)'>
                 <option value="" disabled selected hidden class>Cat&eacute;gorie *</option>
                 <option value="activite">Activit&eacute;</option>
-                <option value="restauration">R&eacute;stauration</option>
+                <option value="restauration">Restauration</option>
                 <option value="visite">Visite</option>
                 <option value="parc_attractions">Parc d'attractions</option>
                 <option value="spectacle">Spectacle</option>
@@ -71,8 +82,8 @@
                 <input type="text" name="rue_addresse" id="rue_addresse" placeholder="Addresse *" required>
             </div>
             <div id="ville_code">
-                <input type="text" name="ville" id="ville" placeholder="Ville *" required>
                 <input type="text" inputmode="numeric" name="code_postal" id="code_postal" placeholder="Code postal *" maxlength="5" required>
+                <input type="text" name="ville" id="ville" placeholder="Ville *" required>
             </div>
 
             <div id="tel_site">
@@ -85,7 +96,7 @@
             <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
 
             <?php if (est_prive($_SESSION['identifiant'])) { ?>
-                <select name="opt" id="opt" onchange="detect_category()">
+                <select name="opt" id="opt">
                     <option value="no_opt" disabled selected hidden class>Options
                     </option>
                     <option value="no_opt">Pas d'option
@@ -102,10 +113,13 @@
 
             <script src="image_preview.js"></script>
             <img id="image_preview" src="" alt="">
-            <label for="images_offre" class="smallButton">Importes vos images</label>
-            <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+            <div class="boutonimages">
+                <p>Importer vos images</p>
+                <label for="images_offre" class="smallButton">Importer</label>
+                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
 
-            <input type="submit" name="valider" value="Valider" class="smallButton" id="valider">
+                <input type="submit" name="valider" value="Valider" class="bigButton" id="valider">
+            </div>
             </form>
         </main>
     <?php

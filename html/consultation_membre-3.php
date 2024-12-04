@@ -45,17 +45,13 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     </script> <?php
             }
 
-if (est_membre($email)){
+if (!est_membre($email)){
     ?> <script>
-        window.location = "consultation_membre-3.php";
+        window.location = "consultation_pro-3.php";
     </script> <?php
 }
+$schemaCompte=VUE_MEMBRE;
 
-if (est_prive($email)){
-    $schemaCompte=VUE_PRO_PRIVE;
-}else{
-    $schemaCompte=VUE_PRO_PUBLIQUE;
-}
 $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
@@ -71,12 +67,13 @@ if ($compte) {
     $ville = $compte['villecompte'];
     $codePostal = $compte['codepostalcompte'];
     $telephone = $compte['telephone'];
-    $denomination = $compte['denomination'];
-    $IBAN = $compte['iban'];
+    $nom = $compte['nommembre'];
+    $prenom = $compte['prenommembre'];
+    $pseudo = $compte['pseudo'];
     $image = $compte['urlimage'];
 } else {    
 ?> <script>
-        window.location = "consultation_liste_offres_pro-1.php";
+        window.location = "consultation_liste_offres_cli-1.php";
     </script> <?php
             }
 
@@ -139,12 +136,19 @@ if ($compte) {
     <main id="box">
         <section class="profile">
             <div class="profile-header">
-                <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>
+                <h1>Bonjour, <?php echo htmlspecialchars($pseudo); ?></h1>
             </div>
             <div class="profile-row">
                 <form>
-                    <div class="input-group">
-                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
+
+                    <div id="code-postal-ville">
+                        <div class="input-group">
+                            <input type="text" id="nom" value="<?php echo htmlspecialchars($nom) ?>" readonly>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="text" id="prenom" value="<?php echo htmlspecialchars($prenom) ?>" readonly>
+                        </div>
                     </div>
 
                     <div class="input-group">
@@ -168,15 +172,11 @@ if ($compte) {
                             <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
                         </div>
                     </div>
-
-                    <div class="input-group">
-                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
-                    </div>
                 </form>
 
                 <div class="actions-profil">
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
-                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro-3.php'">Modifier informations</button>
+                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_membre-3.php'">Modifier informations</button>
                     <button id="bouton-supprimer" type="button">Supprimer le compte</button>
                     <form action="deco.php" method="post" enctype="multipart/form-data">
                         <input id="bouton-supprimer" type="submit" value="Se déconnecter">
