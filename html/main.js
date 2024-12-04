@@ -1,19 +1,17 @@
-// Get the current page's filename
-const pageName = window.location.pathname.split("/").pop();
+document.addEventListener('DOMContentLoaded', () => {
+	const pageName = window.location.pathname.split("/").pop();
+	const indicators = {
+		div1: "1",
+		div2: "2",
+		div3: "3"
+	};
 
-// Function to show the correct div in the header based on the page's name (1, 2 or 3)
-function showCorrectDiv() {
-	if (pageName.includes("1")) {
-		document.getElementById("div1").classList.add("b1-indicator");
-		document.getElementById("div1").classList.remove("hidden");
-	} else if (pageName.includes("2")) {
-		document.getElementById("div2").classList.add("b2-indicator");
-		document.getElementById("div2").classList.remove("hidden");
-	} else if (pageName.includes("3")) {
-		document.getElementById("div3").classList.add("b3-indicator");
-		document.getElementById("div3").classList.remove("hidden");
-	}
-}
+	Object.keys(indicators).forEach(divId => {
+		if (pageName.includes(indicators[divId])) {
+			document.getElementById(divId).style.backgroundColor = "red";
+		}
+	});
+});
 
 window.onload = function() {
 	// Makes it so the light blue part of the header is a button
@@ -37,7 +35,7 @@ window.onload = function() {
 	}
 
 	// If you create functions, add them here
-	showCorrectDiv();
+	// showCorrectDiv();
 };
 
 
@@ -56,7 +54,7 @@ window.onresize = function() {
 	}
 }
 
-function detect_category() {
+function detect_category(tagre) {
 	let elem = document.getElementById("categorie");
 	let value = elem.value;
 	let div = document.getElementById("depends_select");
@@ -78,20 +76,54 @@ function detect_category() {
 	} else if (value == "restauration") {
 		let gammeprix = document.createElement("input");
 		gammeprix.setAttribute("type", "text");
-		gammeprix.setAttribute("placeholder", "Gamme de prix * (Ex : entre 10€ et 20€)");
+		gammeprix.setAttribute("placeholder", "Gamme de prix * (€ ou €€ ou €€€)");
 		gammeprix.setAttribute("name", "gammeprix");
 		gammeprix.setAttribute("required", "");
+		gammeprix.setAttribute("maxlength", "3");
 		div.appendChild(gammeprix);
 
+		let tag_select = document.createElement("select");
+		tag_select.setAttribute("name", "tagre");
+		tag_select.setAttribute("id", "tagre");
+		tag_select.setAttribute("required", "");
+
+		let no_tag = document.createElement("option");
+		no_tag.setAttribute("value", "");
+		no_tag.setAttribute("disabled", "");
+		no_tag.setAttribute("selected", "");
+		no_tag.setAttribute("hidden", "");
+		no_tag.innerHTML = "Type de cuisine *"
+		tag_select.appendChild(no_tag);
+
+		for (i = 0; i < tagre.length; i++) {
+			let tag = document.createElement("option");
+			tag.setAttribute("value", tagre[i]);
+			tag.innerHTML = tagre[i];
+			tag_select.appendChild(tag);
+		}
+
+		let other_tag = document.createElement("option");
+		other_tag.setAttribute("value", "autre");
+		other_tag.innerHTML = "Autre"
+		tag_select.appendChild(other_tag);
+		div.appendChild(tag_select);
+
 		let image_carte = document.createElement("img");
-		image_carte.setAttribute("alt", "votre carte");
+		image_carte.setAttribute("alt", "");
 		image_carte.setAttribute("src", "");
 		image_carte.setAttribute("id", "carte_preview");
 		div.appendChild(image_carte);
 
+		let carte_button = document.createElement("label");
+		carte_button.setAttribute("for", "carte");
+		carte_button.setAttribute("class", "smallButton");
+		carte_button.innerHTML = "Votre carte"
+		div.appendChild(carte_button);
+
 		let carte = document.createElement("input");
 		carte.setAttribute("type", "file");
 		carte.setAttribute("name", "carte");
+		carte.setAttribute("id", "carte");
 		carte.setAttribute("accept", "image/*");
 		carte.setAttribute("required", "");
 		carte.setAttribute("onchange", "preview(carte_preview)");
@@ -146,14 +178,21 @@ function detect_category() {
 
 
 		let image_plan = document.createElement("img");
-		image_plan.setAttribute("alt", "votre plan");
+		image_plan.setAttribute("alt", "");
 		image_plan.setAttribute("src", "");
 		image_plan.setAttribute("id", "plan_preview");
 		div.appendChild(image_plan);
 
+		let plan_button = document.createElement("label");
+		plan_button.setAttribute("for", "plan");
+		plan_button.setAttribute("class", "smallButton");
+		plan_button.innerHTML = "Plan du parc"
+		div.appendChild(plan_button);
+
 		let plan = document.createElement("input");
 		plan.setAttribute("type", "file");
 		plan.setAttribute("name", "plan");
+		plan.setAttribute("id", "plan");
 		plan.setAttribute("accept", "image/*");
 		plan.setAttribute("required", "");
 		plan.setAttribute("onchange", "preview(plan_preview)");

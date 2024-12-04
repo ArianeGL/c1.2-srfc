@@ -1,38 +1,79 @@
 <?php
+session_start();
 require_once "db_connection.inc.php";
 global $dbh;
-session_start();
+
 require_once "verif_connection.inc.php";
 
-if (isset($_SESSION['identifiant']) && valid_account()) {
-    $email = $_SESSION['identifiant'];
-    $requeteCompte = $dbh->prepare('SELECT idcompte, email FROM sae._compte WHERE email = :email');
-    $requeteCompte->bindParam(':email', $email, PDO::PARAM_STR);
-    $requeteCompte->execute();
-    $result = $requeteCompte->fetch(PDO::FETCH_ASSOC);
-    $idCompte = $result['idcompte'];
+function est_membre($email)
+{
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['pseudo'])) $ret = true;
+
+    return $ret;
 }
 
-$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '._compte NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel WHERE idcompte = :idcompte';
+function est_prive($email)
+{
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_PRO_PRIVE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['iban'])) $ret = true;
+
+    return $ret;
+}
+
+print_r ($_SESSION['identifiant']);
+if (isset($_SESSION['identifiant']) && valid_account()) {
+    $email = $_SESSION['identifiant'];
+    $requeteCompte = $dbh->prepare("SELECT idcompte, email FROM sae._compte WHERE email = '" . $email."';"); //, PDO::FETCH_ASSOC
+    $requeteCompte->execute();
+    //$idCompte = $requeteCompte['idcompte'];
+    $idCompte = $requeteCompte->fetch(PDO::FETCH_ASSOC)["idcompte"];
+
+}else{
+    ?> <script>
+        window.location = "connection_pro-3.php";
+    </script> <?php
+            }
+
+if (!est_membre($email)){
+    ?> <script>
+        window.location = "consultation_pro-3.php";
+    </script> <?php
+}
+$schemaCompte=VUE_MEMBRE;
+
+$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
 $sthCompte = $dbh->prepare($queryCompte);
 $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
 $sthCompte->execute();
-$count = $sthCompte->rowCount();
+//$count = $sthCompte->fetchColumn();
+$count = 5;
+$compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
 
-if ($count != 0) {
-    $rows = $sthCompte->fetchAll();
-    $row = $rows[0];
-    $email = $row['email'];
-    $adresse = $row['numadressecompte'] . " " . $row['ruecompte'];
-    $ville = $row['villecompte'];
-    $codePostal = $row['codepostalcompte'];
-    $telephone = $row['telephone'];
-    $denomination = $row['denomination'];
-    $IBAN = $row['iban'];
-    $image = $row['urlimage'];
-} else {
+if ($compte) {
+    //$row = $rows[0];
+    $email = $compte["email"];
+    $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
+    $ville = $compte['villecompte'];
+    $codePostal = $compte['codepostalcompte'];
+    $telephone = $compte['telephone'];
+    $nom = $compte['nommembre'];
+    $prenom = $compte['prenommembre'];
+    $pseudo = $compte['pseudo'];
+    $image = $compte['urlimage'];
+} else {    
 ?> <script>
-        window.location = "connection_pro-3.php";
+        window.location = "consultation_liste_offres_cli-1.php";
     </script> <?php
             }
 
@@ -95,12 +136,19 @@ if ($count != 0) {
     <main id="box">
         <section class="profile">
             <div class="profile-header">
-                <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>
+                <h1>Bonjour, <?php echo htmlspecialchars($pseudo); ?></h1>
             </div>
             <div class="profile-row">
                 <form>
-                    <div class="input-group">
-                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
+
+                    <div id="code-postal-ville">
+                        <div class="input-group">
+                            <input type="text" id="nom" value="<?php echo htmlspecialchars($nom) ?>" readonly>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="text" id="prenom" value="<?php echo htmlspecialchars($prenom) ?>" readonly>
+                        </div>
                     </div>
 
                     <div class="input-group">
@@ -108,7 +156,7 @@ if ($count != 0) {
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="telephone" value=<?php echo htmlspecialchars($telephone) ?>readonly>
+                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" readonly>
                     </div>
 
                     <div class="input-group">
@@ -124,16 +172,15 @@ if ($count != 0) {
                             <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
                         </div>
                     </div>
-
-                    <div class="input-group">
-                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
-                    </div>
                 </form>
 
                 <div class="actions-profil">
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
-                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
+                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_membre-3.php'">Modifier informations</button>
                     <button id="bouton-supprimer" type="button">Supprimer le compte</button>
+                    <form action="deco.php" method="post" enctype="multipart/form-data">
+                        <input id="bouton-supprimer" type="submit" value="Se déconnecter">
+                    </form>
                 </div>
             </div>
 
