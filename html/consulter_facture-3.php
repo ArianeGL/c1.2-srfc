@@ -109,21 +109,31 @@ if (isset($_GET['idoffre'])) {
         $totalht=$facture["totalht"];
         $totalttc=$facture["totalttc"];
 
-        echo $idfacture." : "."idfacture";
-        echo $datefacture." : "."datefacture";
-        echo $idoffre." : "."idoffre";
-        echo $moisprestation." : "."moisprestation";
-        echo $echeancereglement." : "."echeancereglement";
-        echo $nbjoursenligne." : "."nbjoursenligne";
-        echo $abonnementht." : "."abonnementht";
-        echo $abonnementttc." : "."abonnementttc";
-        echo $optionht." : "."optionht";
-        echo $optionttc." : "."optionttc";
-        echo $totalht." : "."totalht";
-        echo $totalttc." : "."totalttc";
+        echo "idfacture : ".$idfacture;
+        ?><br><?php
+        echo "datefacture : ".$datefacture;
+        ?><br><?php
+        echo "idoffre : ".$idoffre;
+        ?><br><?php
+        echo "moisprestation : ".$moisprestation;
+        ?><br><?php
+        echo "echeancereglement : ".$echeancereglement;
+        ?><br><?php
+        echo "nbjoursenligne : ".$nbjoursenligne;
+        ?><br><?php
+        echo "abonnementht : ".$abonnementht;
+        ?><br><?php
+        echo "abonnementttc : ".$abonnementttc;
+        ?><br><?php
+        echo "optionht : ".$optionht;
+        ?><br><?php
+        echo "optionttc : ".$optionttc;
+        ?><br><?php
+        echo "totalht : ".$totalht;
+        ?><br><?php
+        echo "totalttc : ".$totalttc;
+        ?><br><?php
     }
-
-
     ?>
 </body>
 </html>
