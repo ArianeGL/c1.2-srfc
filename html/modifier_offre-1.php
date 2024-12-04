@@ -5,6 +5,32 @@ $idoffre = $_GET["idoffre"];
 global $dbh;
 const IMAGE_DIR = "images_importee/";
 
+function get_categorie($id)
+{
+    global $dbh;
+
+    $query = "SELECT categorie FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = '" . $id . "';";
+    $categorie = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)['categorie'];
+
+    switch ($categorie) {
+        case "Activite":
+            return VUE_ACTIVITE;
+            break;
+        case "Restauration":
+            return VUE_RESTO;
+            break;
+        case "Parc attraction":
+            return VUE_PARC_ATTRACTIONS;
+            break;
+        case "Visite":
+            return VUE_VISITE;
+            break;
+        case "Spectacle":
+            return VUE_SPECTACLE;
+            break;
+    }
+}
+
 function get_tags_resto(): array
 {
     global $dbh;
@@ -29,56 +55,135 @@ function depends_category($categorie, $id)
         $duree = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["dureeactivite"];
 
 ?>
-        <input type="text" name="age" placeholder="Age requis (tout public par defaut)">
-        <input type="text" name="duree" required placeholder="Durée de l'activité *">
+        <input type="text" name="age" placeholder="Age requis (tout public par defaut)" value="<?php echo $age; ?>">
+        <input type="text" name="duree" required placeholder="Durée de l'activité *" value="<?php echo $duree; ?>">
     <?php
-    } else if ($categorie == "restauration") {
+    } else if ($categorie == "Restauration") {
         $tags = get_tags_resto();
+
+        //fetching values
+        $query = "SELECT gammeprix FROM " . NOM_SCHEMA . "." . VUE_RESTO . " WHERE idoffre = '" . $id . "';";
+        $gamme = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["gammeprix"];
+
+        $query = "SELECT nomtag FROM " . NOM_SCHEMA . "." . VUE_TAGS_RE . " WHERE idoffre = '" . $id . "';";
+        $tagre = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["nomtag"];
     ?>
-        <input type="text" name="gammeprix" maxlength="3" required placeholder="Gamme de prix * (€ ou €€ ou €€€)">
+        <input type="text" name="gammeprix" maxlength="3" required placeholder="Gamme de prix * (€ ou €€ ou €€€)" value="<?php echo $gamme ?>">
 
         <select name="tagre" id="tagre" required>
             <?php
             foreach ($tags as $tag) { ?>
-                <option value="<?php echo $tag; ?>"><?php echo $tag; ?></option>
+                <option value="<?php echo $tag; ?>" <?php if ($tag = $tagre) echo "selected"; ?>><?php echo $tag; ?></option>
             <?php
             }
             ?>
         </select>
-
-        <img alt="" src="" id="carte_preview">
-        <label for="carte" class="smallButton">Votre carte</label>
-        <input type="file" name="carte" id="carte" accept="image/*" required onchange="preview(carte_preview)">
     <?php
-    } else if ($categorie == "visite") {
+    } else if ($categorie == "Visite") {
+        //fetching values
+        $query = "SELECT estguidee FROM " . NOM_SCHEMA . "." . VUE_VISITE . " WHERE idoffre = '" . $id . "';";
+        $guidee = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["estguidee"];
+
+        $query = "SELECT dureevisite FROM " . NOM_SCHEMA . "." . VUE_VISITE . " WHERE idoffre = '" . $id . "';";
+        $duree = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["dureevisite"];
     ?>
         <fieldset id="guidee">
             <legend>La visite est elle guidée</legend>
 
-            <input type="radio" name="guidee" value="oui">
+            <input type="radio" name="guidee" value="oui" <?php if ($guidee) echo "checked"; ?>>
             <label>Oui</label>
 
-            <input type="radio" name="guidee" value="non">
+            <input type="radio" name="guidee" value="non" <?php if (!$guidee) echo "checked"; ?>>
             <label>Non</label>
         </fieldset>
 
-        <input type="text" placeholder="Durée de la visite *" name="duree" required>
+        <input type="text" placeholder="Durée de la visite *" name="duree" required value="<?php echo $duree; ?>">
     <?php
-    } else if ($categorie == "parc_attractions") {
-    ?>
-        <input type="text" name="age" placeholder="Age requis (tout public par defaut)">
-        <input type="number" placeholder="Nombre d'attractions *" name="nb_attrac">
+    } else if ($categorie == "Parc attraction") {
+        //fetching values
+        $query = "SELECT ageminparc FROM " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " WHERE idoffre = '" . $id . "';";
+        $age = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["ageminparc"];
 
-
-        <img alt="" src="" id="plan_preview">
-        <label for="plan" class="smallButton">Plan du parc</label>
-        <input type="file" name="plan" id="plan" accept="image/*" required onchange="preview(plan_preview)">
-    <?php
-    } else if ($categorie == "spectacle") {
+        $query = "SELECT nbattractions FROM " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " WHERE idoffre = '" . $id . "';";
+        $nb_attrac = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["nbattractions"];
     ?>
-        <input type="text" placeholder="Nombre de places *" name="nb_places *" required>
-        <input type="text" placeholder="Durée du spectacle *" name="duree" required>
+        <input type=" text" name="age" placeholder="Age requis (tout public par defaut)" value="<?php echo $age; ?>">
+        <input type="number" placeholder="Nombre d'attractions *" name="nb_attrac" value="<?php echo $nb_attrac; ?>">
     <?php
+    } else if ($categorie == "Spectacle") {
+        //fetching values
+        $query = "SELECT placesspectacle FROM " . NOM_SCHEMA . "." . VUE_SPECTACLE . " WHERE idoffre = '" . $id . "';";
+        $places = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["placesspectacle"];
+        $query = "SELECT dureespectacle FROM " . NOM_SCHEMA . "." . VUE_SPECTACLE . " WHERE idoffre = '" . $id . "';";
+        $duree = $dbh->query($query)->fetch(PDO::FETCH_ASSOC)["dureespectacle"];
+    ?>
+        <input type="text" placeholder="Nombre de places *" name="nb_places" required value="<?php echo $places; ?>">
+        <input type="text" placeholder="Durée du spectacle *" name="duree" required value="<?php echo $duree; ?>">
+    <?php
+    }
+}
+
+function update_depend_cate($categorie, $id)
+{
+    global $dbh;
+
+    if ($categorie == VUE_ACTIVITE) {
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_ACTIVITE . " SET agerequis = :age, dureeactivite = :duree WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $age = $_POST['age'];
+        $duree = $_POST['duree'];
+        $stmt->bindParam(":age", $age);
+        $stmt->bindParam(":duree", $duree);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+    } else if ($categorie == VUE_RESTO) {
+        $tags = get_tags_resto();
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_RESTO . " SET gammeprix = :gamme WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $gamme = $_POST['gammeprix'];
+        $stmt->bindParam(":gamme", $gamme);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+
+        $tag = $_POST['tagre'];
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_TAGS_RE . " SET nomtag = :tag WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":tag", $tag);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+    } else if ($categorie == VUE_SPECTACLE) {
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_SPECTACLE . " SET placesspectacle = :nb_places, dureespectacle = :duree WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $nb_places = $_POST['nb_places'];
+        $duree = $_POST['duree'];
+        $stmt->bindParam(":nb_places", $nb_places);
+        $stmt->bindParam(":duree", $duree);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+    } else if ($categorie == VUE_VISITE) {
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_VISITE . " SET estguidee = :guidee, dureevisite = :duree WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $guidee = $_POST['guidee'] == "oui";
+        $duree = $_POST['duree'];
+        $stmt->bindParam(":guidee", $guidee, PDO::PARAM_BOOL);
+        $stmt->bindParam(":duree", $duree);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
+    } else if ($categorie == VUE_PARC_ATTRACTIONS) {
+        $query = "UPDATE " . NOM_SCHEMA . "." . VUE_PARC_ATTRACTIONS . " SET nbattractions = :nb, ageminparc = :age WHERE idoffre = :id;";
+        $stmt = $dbh->prepare($query);
+        $nb = $_POST['nb_attrac'];
+        $age = $_POST['age'];
+        $stmt->bindParam(":nb", $nb);
+        $stmt->bindParam(":age", $age);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $stmt = null;
     }
 }
 
@@ -144,7 +249,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
                 $ext = explode('/', $files['type'][$i])[1];
                 $upload_name = explode('/', $files['tmp_name'][$i])[sizeof(explode('/', $files['tmp_name'][$i])) - 1];
                 $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
-                if ($upload_url != "images_importee\Of-0002\.") {
+                if (explode("/", $upload_url)[2] != ".") {
                     upload_images_offre($upload_url, $idoffre);
                     move_uploaded_file($files['tmp_name'][$i], $upload_url);
                 }
@@ -165,7 +270,6 @@ if (offre_appartient($_SESSION['identifiant'])) {
             $post_prixmin = $_POST['prixmin'];
             $post_datedebut = $_POST['datedebut'];
             $post_datefin = $_POST['datefin'];
-            $post_categorie = $_POST['categorie'];
 
             if ($post_datedebut == "") {
                 $post_datedebut = NULL;
@@ -175,7 +279,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
                 $post_datefin = NULL;
             }
 
-            if ($post_categorie == "restauration") {
+            if (get_categorie($idoffre) == VUE_RESTO) {
                 $query_delete_tags = "DELETE FROM " . NOM_SCHEMA . "._tagpourrestauration
                             WHERE idoffre = '" . $post_idoffre . "';";
                 $stmt_delete_tags = $dbh->prepare($query_delete_tags);
@@ -187,7 +291,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
                 $stmt_delete_tags->execute();
             }
 
-            if ($post_categorie == "restauration") {
+            if (get_categorie($idoffre) == VUE_RESTO) {
                 foreach ($post_tags as $value) {
                     if (trim($value) != "") {
                         $query_envoie_tags = "INSERT INTO " . NOM_SCHEMA . ".tagre (nomtag,idoffre)
@@ -216,29 +320,9 @@ if (offre_appartient($_SESSION['identifiant'])) {
         }
         //print_r($_POST["categorie"]."|");
 
-        switch ($_POST["categorie"]) {
-            case "activite":
-                $table = "activite";
-                break;
-            case "visite":
-                $table = "visite";
-                break;
-            case "parc_attraction";
-                $table = "parcattraction";
-                break;
-            case "spectacle":
-                $table = "spectacle";
-                break;
-            case "restauration":
-                $table = "restauration";
-                break;
-            default:
-                echo ("erreur sur la catégorie");
-        }
-
         try {
 
-            $query_envoie = "UPDATE " . NOM_SCHEMA . "." . $table . "
+            $query_envoie = "UPDATE " . NOM_SCHEMA . "." . get_categorie($idoffre) . "
                     SET nomoffre = :post_titre,
                         numadresse = :post_numadresse,
                         rueoffre = :post_rueoffre,
@@ -260,9 +344,9 @@ if (offre_appartient($_SESSION['identifiant'])) {
             $stmt_envoie->bindparam(':post_datedebut', $post_datedebut);
             $stmt_envoie->bindparam(':post_datefin', $post_datefin);
             $stmt_envoie->execute();
+            update_depend_cate(get_categorie($idoffre), $idoffre);
         } catch (PDOException $e) {
-            print_r($e);
-            die();
+            die($e);
         }
 
 
@@ -394,7 +478,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
         </head>
 
         <body>
-            <?php require_once 'header_inc.html'; ?>
+            <?php require_once 'header_inc.php'; ?>
             <!-- Main content -->
             <main id="top">
                 <h1>Modifier une offre</h1>
@@ -407,19 +491,18 @@ if (offre_appartient($_SESSION['identifiant'])) {
 
                         <label for="catégorie">Catégorie : </label>
                         <select name="categorie" id="categorie" disabled>
-                            <option value="activite" <?php if (!strcmp($categorie, "activite")) echo "selected" ?>>Activité</option>
-                            <option value="restauration" <?php if (!strcmp($categorie, "restauration")) echo "selected" ?>>Restauration</option>
-                            <option value="visite" <?php if (!strcmp($categorie, "visite")) echo "selected" ?>>Visite</option>
-                            <option value="parc_attractions" <?php if (!strcmp($categorie, "parc_attraction")) echo "selected" ?>>Parc d'attractions</option>
-                            <option value="spectacle" <?php if (!strcmp($categorie, "spectacle")) echo "selected" ?>>Spectacle</option>
+                            <option value="activite" <?php if (!strcmp($categorie, "Activite")) echo "selected" ?>>Activité</option>
+                            <option value="restauration" <?php if (!strcmp($categorie, "Restauration")) echo "selected" ?>>Restauration</option>
+                            <option value="visite" <?php if (!strcmp($categorie, "Visite")) echo "selected" ?>>Visite</option>
+                            <option value="parc_attractions" <?php if (!strcmp($categorie, "Parc attraction")) echo "selected" ?>>Parc d'attractions</option>
+                            <option value="spectacle" <?php if (!strcmp($categorie, "Spectacle")) echo "selected" ?>>Spectacle</option>
                         </select>
 
                     </div>
-                    <div id="depends_select">
-                        <?php depends_category($categorie); ?>
+                    <div id="depends_select" class="element_form row_form">
+                        <?php depends_category($categorie, $idoffre); ?>
                     </div>
 
-                    </div>
                     <!--<textarea name="tags" id="tags"><?php //echo $tags 
                                                         ?></textarea>-->
                     <div class="element_form row-form">
