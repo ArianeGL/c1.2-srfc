@@ -35,7 +35,7 @@ function generate_id()
 
 if (isset($_GET['idoffre'])) {
     $idoffre = $_GET['idoffre'];
-    $queryOffer = 'SELECT idcompte FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
+    $queryOffer = 'SELECT idcompte, abonnement FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
     $sthOffer = $dbh->prepare($queryOffer);
     $sthOffer->bindParam(':offerId', $idoffre, PDO::PARAM_STR);
     $sthOffer->execute();
@@ -43,13 +43,19 @@ if (isset($_GET['idoffre'])) {
 
     if ($offer) {
         $idcompte = $offer['idcompte'];
-        $queryCompte = 'SELECT email FROM ' . NOM_SCHEMA . '._compte WHERE idcompte = :idcompte';
+        $abonnement = $offer['abonnement'];
+
+        $queryCompte = 'SELECT email, numadressecompte, ruecompte, denomination FROM ' . NOM_SCHEMA . '._compte WHERE idcompte = :idcompte';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':idcompte', $idcompte, PDO::PARAM_STR);
         $sthCompte->execute();
         $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
         if($compte){
             if($compte["email"]==$_SESSION["identifiant"]){
+                $email=$compte["email"];
+                $num=$compte["numadressecompte"];
+                $rue=$compte["ruecompte"];
+                $denomination=$compte["denomination"];
                 $moisDavant=date('n')-1;
                 if ($moisDavant==0){
                     $moisDavant=12;
@@ -132,6 +138,16 @@ if (isset($_GET['idoffre'])) {
         echo "totalht : ".$totalht;
         ?><br><?php
         echo "totalttc : ".$totalttc;
+        ?><br><?php
+        echo "abonnement : ".$abonnement;
+        ?><br><?php
+        echo "email : ".$email;
+        ?><br><?php
+        echo "num : ".$num;
+        ?><br><?php
+        echo "rue : ".$rue;
+        ?><br><?php
+        echo "denomination : ".$denomination;
         ?><br><?php
     }
     ?>
