@@ -2,11 +2,13 @@
 session_start();
 require_once "db_connection.inc.php";
 
+const SOUSCRIPTION = "sae";
+
 $idoffre = $_POST['idoffre'];
 $option = $_POST['option'];
 
 try {
-    $queryUpdate = 'UPDATE ' . NOM_SCHEMA . '._souscriptionoption 
+    $queryUpdate = 'UPDATE ' . NOM_SCHEMA . SOUSCRIPTION . '
                     SET active = false 
                     WHERE idoffre = :idoffre AND "option" = :option';
     $sthUpdate = $dbh->prepare($queryUpdate);
