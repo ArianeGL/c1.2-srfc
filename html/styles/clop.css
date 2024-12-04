@@ -86,3 +86,32 @@ section {
         background-color: var(--light-blue);
     }
 }
+
+#filterOptions{
+    display: none; /* Initialement caché */
+    position: absolute;
+    flex-direction: column;
+    background-color: white;
+    min-width: 200px;
+    width: 20%;
+    z-index: 1;
+    border-radius: var(--round-corners);
+    overflow: hidden;
+
+    input {
+        width: 50px;
+        margin-left: 0px;
+        margin-right: 5px;
+        div {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            vertical-align: middle;
+            label {
+                align-self: center;
+                text-align: center;
+            }
+        }
+    }
+}
