@@ -80,8 +80,10 @@ try {
 
                                 if (str_contains($categorie,'a')) {
                                     ?>
-                                    <label for="activite">
+                                    <div>
+                                        <label for="activite">
                                         <input type="checkbox" id="activite" name="activite" value="activite" checked />Activit&eacute;</label>
+                                    </div>
                                     <?php
                                     if ($filtre_cat === ""){
                                         $filtre_cat = " WHERE categorie='Activite'";
@@ -90,15 +92,19 @@ try {
                                     }
                                 } else {
                                     ?>
-                                    <label for="activite">
+                                    <div>
+                                        <label for="activite">
                                         <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                                    </div>
                                     <?php
                                 }
 
                                 if (str_contains($categorie,'v')) {
                                     ?>
-                                    <label for="visite">
+                                    <div>
+                                        <label for="visite">
                                         <input type="checkbox" id="visite" name="visite" value="visite" checked />Visite</label>
+                                    </div>
                                     <?php
                                     if ($filtre_cat === ""){
                                         $filtre_cat = " WHERE categorie='Visite'";
@@ -107,15 +113,19 @@ try {
                                     }
                                 } else {
                                     ?>
-                                    <label for="visite">
+                                    <div>
+                                        <label for="visite">
                                         <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                                    </div>
                                     <?php
                                 }
 
                                 if (str_contains($categorie,'p')) {
                                     ?>
-                                    <label for="parcAttraction">
+                                    <div>
+                                        <label for="parcAttraction">
                                         <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" checked />Parc d'Attraction</label>
+                                    </div>
                                     <?php
                                     if ($filtre_cat === ""){
                                         $filtre_cat = " WHERE categorie='Parc attraction'";
@@ -124,15 +134,19 @@ try {
                                     }
                                 } else {
                                     ?>
-                                    <label for="parcAttraction">
+                                    <div>
+                                        <label for="parcAttraction">
                                         <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                                    </div>
                                     <?php
                                 }
 
                                 if (str_contains($categorie,'s')) {
                                     ?>
-                                    <label for="spectacle">
+                                    <div>
+                                        <label for="spectacle">
                                         <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" checked />Spectacle</label>
+                                    </div>
                                     <?php
                                     if ($filtre_cat === ""){
                                         $filtre_cat = " WHERE categorie='Spectacle'";
@@ -141,15 +155,19 @@ try {
                                     }
                                 } else {
                                     ?>
-                                    <label for="spectacle">
+                                    <div>
+                                        <label for="spectacle">
                                         <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                                    </div>
                                     <?php
                                 }
 
                                 if (str_contains($categorie,'r')) {
                                     ?>
-                                    <label for="restauration">
+                                    <div>
+                                        <label for="restauration">
                                         <input type="checkbox" id="restauration" name="restauration" value="restauration" checked />Restauration</label>
+                                    </div>
                                     <?php
                                     if ($filtre_cat === ""){
                                         $filtre_cat = " WHERE categorie='Restauration'";
@@ -158,8 +176,10 @@ try {
                                     }
                                 } else {
                                     ?>
-                                    <label for="restauration">
+                                    <div>
+                                        <label for="restauration">
                                         <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                                    </div>
                                     <?php
                                 }
                             
@@ -167,20 +187,30 @@ try {
                             }
                         } else {
                             ?>
-                            <label for="activite">
+                            <div>
+                                <label for="activite">
                                 <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                            <label for="visite">
+                            </div>
+                            <div>
+                                <label for="visite">
                                 <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                            <label for="parcAttraction">
+                            </div>
+                            <div>
+                                <label for="parcAttraction">
                                 <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                            <label for="spectacle">
+                            </div>
+                            <div>
+                                <label for="spectacle">
                                 <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                            <label for="restauration">
+                            </div>
+                            <div>
+                                <label for="restauration">
                                 <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                            </div>
                             <?php
                         }
                         ?>
-                    <button id="retirerFiltres">Enlever les fitres</button>
+                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
                 </fieldset>
                 <button class="smallButton">Trier</button>
             </div>
@@ -214,7 +244,7 @@ try {
                     </div>
                     <div>
                         <!-- <?php echo $offre['urlversimage']; ?> -->
-                        <img src="https://photographe-en-herbe.com/wp-content/uploads/2019/03/paysage-montagne-photographe-en-herbe-1024x576.jpg" alt="Nom_image" class="clopArtImg">
+                        <img src="<?php echo $offre['urlversimage']; ?>" alt="Nom_image" class="clopArtImg">
                         
                         <h4><?php echo $offre['villeoffre']; ?></h4>
                         
@@ -247,8 +277,8 @@ try {
     });
 
     function hideAndShow(){
-        const isVisible = window.getComputedStyle(champs_filtres).display === 'block';
-        champs_filtres.style.display = isVisible ? 'none' : 'block';
+        const isVisible = window.getComputedStyle(champs_filtres).display === 'flex';
+        champs_filtres.style.display = isVisible ? 'none' : 'flex';
     }
 
     let retirerFiltres = document.querySelector("#retirerFiltres");
