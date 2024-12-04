@@ -1,146 +1,4 @@
-:root {
-    --red: #CC0000;
-    --light-blue: #E7FDFD;
-    --grey-blue: #9ABBDB;
-    --navy-blue: #254766; /* Buttons */
-    --light-grey: #8599AD;
-    --dark-grey: #52667A;
-
-    --round-corners: 15px;
-}
-
-.container {
-    display: flex;
-    background-color: var(--light-grey);
-    width: 100%;
-}
-
-.hidden {
-    width: 33%;
-    background-color: var(--navy-blue);
-}
-
-body {
-    height: 1024px;
-}
-
-h1 {
-    color: black;
-    font-family: "Concert One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-h2 {
-    color: var(--red);
-    font-family: "Concert One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: xx-large;
-}
-
-h3 {
-    color: black;
-    font-family: "Concert One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-h4 {
-    color: white;
-    font-family: "Concert One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-header {
-    height: 5%;
-    display: flex;
-
-    text-align: center;
-    align-items: center;
-    justify-content: space-around;
-
-    div {
-        width: 75%;
-        height: 95%;
-        
-        align-items: center;
-        justify-content: space-around;
-    }
-
-
-    .buttons {
-        display: flex;
-        width: 30%;
-        height: 75%;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--navy-blue);
-        color: white;
-        border: none;
-        border-radius: var(--round-corners);
-
-        
-        h4 {
-            font-family: "Concert One", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: x-large;
-        }
-    }
-    
-    .indicator {
-        width: 100%;
-        height: 5%;
-        background-color: var(--navy-blue);
-        display: flex;
-        align-items: normal;
-        justify-content: normal;
-
-        .b1-indicator {
-            width: 33%;
-            background-color: var(--red);
-        }
-        
-        .b2-indicator{
-            width: 33%;
-            background-color: var(--red);
-        }
-        
-        .b3-indicator{
-            width: 34%;
-            background-color: var(--red);
-        }
-    }
-}
-
-.homeButton {
-    height: 100%;
-    background-color: var(--light-blue);
-    width: 25%;
-    display: flex;
-    justify-content: normal;
-}
-
-footer {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    background-color: var(--light-grey);
-    height: 10%;
-    align-items: center;
-
-    text-align: center;
-
-    .top-botton {
-        height: 100%;
-        align-items: center;
-        background-color: var(--light-grey);
-        color: none;
-        border: none;
-    }
-}
+@import "../style.css";
 
 main{
     padding: 0 10%;
@@ -156,39 +14,71 @@ form div{
 
 form textarea{
     width: 100%;
+    height: 10em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+form div label{
+    width: max-content;
+    white-space: nowrap;
+    margin-right: 1em;
 }
 
 form div input{
-    width: 45%;
+    width:100%;
     height: 3em;
-    border-radius: 25px;
+
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: -1em;
+    font-size: 1em;
+
+    border: 2px solid var(--dark-grey);
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 form div select{
-    width: 45%;
+    width: 100%;
     height: 3em;
-    border-radius: 25px;
+    background-color: white;
+
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    
+    border: 2px solid var(--dark-grey);
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 textarea{
-    width: 95%;
+    width: 50%;
     height: 5em;
-    border-radius: 25px;
+    border-radius: var(--round-corners);
     padding-top: 1em;
+    font-size: 1em;
+    
+    border: 2px solid var(--dark-grey);
 }
 
 form{
     display: flex;
     flex-direction: column;
 
-    div{
+    div {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         margin-top: 1.5%;
         margin-bottom: 1.5%;
-
+        margin-right: 3%;
     }
 }
 
@@ -223,5 +113,15 @@ div button{
 .bouton{
     display: flex;
     flex-direction: row;
-    justify-content: flex-end ;
+    justify-content: flex-end;
+}
+
+.smallButton{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+input[type="file"] {
+    display: none;
 }

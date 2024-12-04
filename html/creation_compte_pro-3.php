@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once  "db_connection.inc.php";
 
 class FunctionException extends Exception
@@ -56,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rue = substr(trim($_POST['rue']), 0, 50);
     $ville = substr(trim($_POST['compteville']), 0, 30);
     $code = substr(trim($_POST['code']), 0, 5);
-    //$iban = substr(trim($_POST['iban']), 0, 5);
+    $iban = substr(trim($_POST['iban']), 0, 5);
 
 
     if (strlen($tel) > 10) {
@@ -78,8 +79,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        $sql_compte = "INSERT INTO " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . "(idcompte, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage) 
-        VALUES (:idcompte, :tel, :mdp, :email, :num, :rue, :ville, :code_postal, :urlimage)";
+        if(isset($iban)){
+            $schemaCompte=VUE_PRO_PRIVE;
+        }else{
+            $schemaCompte=VUE_PRO_PUBLIQUE;
+        }
+        $sql_compte = "INSERT INTO " . NOM_SCHEMA . "." . $schemaCompte . "(idcompte, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage, denomination) 
+        VALUES (:idcompte, :tel, :mdp, :email, :num, :rue, :ville, :code_postal, :urlimage, :raison)";
         $stmt_compte = $dbh->prepare($sql_compte);
         $stmt_compte->execute([
             ':idcompte' => $idcompte,
@@ -90,23 +96,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':rue' => $rue,
             ':ville' => $ville,
             ':code_postal' => $code,
-            ':urlimage' => 'default.png'
+            ':urlimage' => '/docker/sae/data/html/IMAGES/photoProfileDefault.png',
+            ':raison' => $raison
+
         ]);
 
         /*
         $stmt = $dbh->prepare($sql);
         $stmt->execute([':denomination' => $raison,':tel' => $tel,':mdp' => $mdp,':email' => $email,
         ':adresse' => $adresse,':ville' => $ville,':code_postal' => $code_postal,':urlimage' => 'default.png']);
-        */
 
-        $sql_pro = "INSERT INTO " . NOM_SCHEMA . "._compteprofessionnel (idcompte, denomination) 
+        $sql_pro = "INSERT INTO " . NOM_SCHEMA . ".".$schemaCompte." (idcompte, denomination) 
         VALUES (:idcompte, :raison)";
         $sql_pro = $dbh->prepare($sql_pro);
         $sql_pro->execute([
             ':idcompte' => $idcompte,
             ':raison' => $raison
         ]);
-
+        */
 
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
@@ -128,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]);
             }
         }
-
+        $_SESSION['identifiant']=$email;
         header('Location: consultation_pro-3.php');
         die();
     } catch (PDOException $e) {
@@ -150,7 +157,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-    <?php require_once 'header_inc.html'; ?>
+<header>
+        <div id="homeButtonID" class="homeButton">
+            <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
+            <h2>PACT</h2>
+            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
+        </div>
+        <div>
+            <div class="container">
+                <button class="buttons header-button1">
+                    <h4>Offres</h4>
+                </button>
+
+                <!-- Button for back office -->
+                <button class="buttons header-button2">
+                    <h4>Factures</h4>
+                </button>
+
+                <!-- Button for front office -->
+                <button style="display: none;" class="buttons header-button2">
+                    <h4>R&eacute;cent</h4>
+                </button>
+
+                <button class="buttons header-button3">
+                    <h4>Compte</h4>
+                </button>
+            </div>
+            <div class="indicator">
+                <div id="div1" class="hidden"></div>
+                <div id="div2" class="hidden"></div>
+                <div id="div3" class="hidden"></div>
+            </div>
+        </div>
+    </header>
 
     <section>
         <h1>Création du compte professionnel</h1>
@@ -187,29 +226,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" class="input-creation" id="rib" name="rib" placeholder="RIB" />
                     </div>
                 </div>
-
-                <div id="photo-profil" class="form-right">
-                    <?php if (isset($_SESSION['photo'])) { ?>
-                        <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
-                    <?php } else { ?>
-                        <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
-                    <?php } ?>
+                <div id="form-photo">
+                    <div id="photo-profil" class="form-right">
+                        <?php if (isset($_SESSION['photo'])) { ?>
+                            <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
+                        <?php } else { ?>
+                            <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
+                        <?php } ?>
+                    </div>
+                        <label class="smallButton" for="photo">Importer une image</label>
+                        <input type="file" id="photo" name="photo" style="display:none;" />
+                    </div>
                 </div>
-                <label class="bouton" for="photo">Importer une image</label>
-                <input type="file" id="photo" name="photo" style="display:none;" />
-            </div>
-            </div>
 
 
             <div id="form-footer">
                 <p id="obligation">* Obligatoire</p>
-                <input class="bouton" id="bouton-modifier" type="submit" value="Valider" />
-                <div class="accepte">
-                    <input type="checkbox" value="communication" id="communication">
-                    <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
+                <input class="button" id="bouton-modifier" type="submit" value="Valider" />
+                <div id="accepte">
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="communication" id="communication">
+                        <label class="bouton-info" for="communication">J’accepte de recevoir des communications commerciales</label>
+                    </div>
                     <br />
-                    <input type="checkbox" value="condition" id="condition" required>
-                    <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                    <div class="position-checkbox">
+                        <input type="checkbox" value="condition" id="condition" required>
+                        <label class="bouton-info" for="condition">J’accepte les conditions générales d’utilisation</label>
+                    </div>
                 </div>
             </div>
         </form>
