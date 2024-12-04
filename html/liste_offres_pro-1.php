@@ -52,7 +52,22 @@
         //$_SESSION['id'] = "Co-0004"; //test, ligne a supprimer
         if (isset($_SESSION['identifiant']) && valid_account()) {
             $id_compte = get_account_id();
-            $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idcompte = '" . $id_compte . "';";
+
+            $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
+            $ordreTri = "";
+            $ListeTris = ['noteCroissante', 'noteDecroissante'];
+            switch ($triOption) {
+                case 'noteCroissante':
+                    $ordreTri = "ORDER BY note ASC";
+                    break;
+                case 'noteDecroissante':
+                    $ordreTri = "ORDER BY note DESC";
+                    break;
+                default:
+                    $ordreTri = "";
+            }
+
+            $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idcompte = '" . $id_compte . "' " . $ordreTri . ";";
 
             try {
                 $offres = $dbh->query($query)->fetchAll();
