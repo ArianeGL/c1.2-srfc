@@ -62,7 +62,7 @@ function can_post($idOffre)
     $est_authorise = false;
     if (isset($_SESSION['identifiant'])){
         $identifiant = $_SESSION["identifiant"];
-        $mdp = $_SESSION["motdepasse"];
+        $mdp = $_SESSION["mdp"];
         //$mdp_crypte = md5($mdp);
     
         $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_MEMBRE . ' WHERE email = :email AND motdepasse = :mdp';
@@ -167,7 +167,7 @@ function afficher_form_avis($idOffre)
             <script src="image_preview.js"></script>
             <img id="image_preview" src="" alt="">
             <label for="images_offre" class="smallButton">Importes vos images</label>
-            <input type="file" id="images_offre" name="images_avis[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+            <input type="file" id="images_offre" name="images_avis[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" >
         
             <input type="submit" name="valider" value="Valider" class="smallButton" id="valider">
         </form>
