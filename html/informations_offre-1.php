@@ -44,6 +44,8 @@ if (isset($_GET['idoffre'])) {
             <title><?php echo $name;?></title>
             <link rel="stylesheet" href="./styles/infos-offres.css">
             <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+            <script src="./main.js"></script>
         </head>
         <body>
             <?php require_once 'header_inc.html';

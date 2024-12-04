@@ -6,10 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		div3: "3"
 	};
 
-	console.log("Script Loaded");
-	console.log("Page Name:", pageName);
-	console.log("Matching Divs:", indicators);
-
 	Object.keys(indicators).forEach(divId => {
 		if (pageName.includes(indicators[divId])) {
 			document.getElementById(divId).style.backgroundColor = "red";

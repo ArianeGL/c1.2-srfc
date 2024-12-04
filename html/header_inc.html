@@ -14,11 +14,11 @@
         </div>
         <div>
             <div class="container">
-                <button class="buttons header-button1">
+                <button onclick="window.location.href='./consulter_liste_offres_cli-1.php'" class="buttons header-button1">
                     <h4>Offres</h4>
                 </button>
                 
-                <button class="buttons header-button2">
+                <button style="display: none;" class="buttons header-button2">
                     <h4>Factures</h4>
                 </button>
                 
@@ -26,14 +26,15 @@
                     <h4>R&eacute;cent</h4>
                 </button>
                 
-                <button class="buttons header-button3">
+                <!-- make it so it show only if the user is a pro otherwise show the same thing but wiht an other href -->
+                <button onclick="window.location.href='./consultation_pro-3.php'" class="buttons header-button3">
                     <h4>Compte</h4>
                 </button>
             </div>
             <div class="indicator">
-                <div id="div1" class="hidden"></div>
-                <div id="div2" class="hidden"></div>
-                <div id="div3" class="hidden"></div>
+                <div id="div1"></div>
+                <!-- <div id="div2"></div> -->
+                <div id="div3"></div>
             </div>
         </div>
     </header>
