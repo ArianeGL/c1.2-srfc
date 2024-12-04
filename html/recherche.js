@@ -34,6 +34,42 @@ function rechercheOffre() {
     }
 }
 
+
+function rechercheOffreConsultation() {
+    const input = document.getElementById('rechercheOffre').value.toUpperCase().trim();
+    const offres = document.querySelectorAll('#clopArt'); // Sélectionne les éléments des offres
+
+    if (input === '') {
+        offres.forEach(offre => { // Si la barre de recherche est vide, affiche toutes les offres
+            offre.style.display = 'flex';
+        });
+    } else {
+        const searchTokens = input.split(' '); // Divise l'entrée en mots-clés
+        offres.forEach(offre => {
+            const nomOffre = (offre.querySelector('.clopTitre')?.textContent || '').toUpperCase().trim(); // Récupère le titre de l'offre
+            const offerTokens = nomOffre.split(' '); // Divise le titre de l'offre en mots
+            let allMatch = true; 
+
+            searchTokens.forEach(searchToken => {
+                let tokenMatch = false; 
+                offerTokens.forEach(offerToken => {
+                    const distance = levenshtein(searchToken, offerToken); // Calcule la distance de Levenshtein
+                    const threshold = Math.ceil(searchToken.length * 0.2); // Définit un seuil de tolérance à 20%
+                    if (distance <= threshold) {
+                        tokenMatch = true; // Si un mot correspond, marque ce mot-clé comme trouvé
+                    }
+                });
+                if (!tokenMatch) {
+                    allMatch = false; // Si un mot-clé ne correspond pas, marque l'ensemble comme non valide
+                }
+            });
+
+            // Affiche ou cache l'offre en fonction de la correspondance
+            offre.style.display = allMatch ? 'flex' : 'none';
+        });
+    }
+}
+
 function levenshtein(a, b) {
     if (a.length == 0) return b.length;
     if (b.length == 0) return a.length
