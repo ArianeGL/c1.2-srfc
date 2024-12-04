@@ -90,7 +90,7 @@ function est_pro(): bool
                     <a href="inscription_pro-1.php">Mot de passe oubli&eacute; ?</a>
                     <br>
                     <div>
-                        <button class="smallButton" onclick="window.location.href=''">Créer un compte</button>
+                        <button class="smallButton" onclick="window.location.href='./creation_compte.html'">Créer un compte</button>
                         <input class="smallButton" type="submit" value="Se connecter" name="connexion">
                     </div>
                 </form>
@@ -124,7 +124,7 @@ function est_pro(): bool
 
                 <br>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <button class="smallButton" onclick="window.location.href=''">Créer un compte</button>
+                    <button class="smallButton" onclick="window.location.href='./creation_compte.html'">Créer un compte</button>
                     <input class="smallButton" type="submit" value="Se connecter" name="connexion">
                 </div>
             </form>

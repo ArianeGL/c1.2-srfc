@@ -157,39 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-<header>
-        <div id="homeButtonID" class="homeButton">
-            <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
-            <h2>PACT</h2>
-            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
-        </div>
-        <div>
-            <div class="container">
-                <button class="buttons header-button1">
-                    <h4>Offres</h4>
-                </button>
-
-                <!-- Button for back office -->
-                <button class="buttons header-button2">
-                    <h4>Factures</h4>
-                </button>
-
-                <!-- Button for front office -->
-                <button style="display: none;" class="buttons header-button2">
-                    <h4>R&eacute;cent</h4>
-                </button>
-
-                <button class="buttons header-button3">
-                    <h4>Compte</h4>
-                </button>
-            </div>
-            <div class="indicator">
-                <div id="div1" class="hidden"></div>
-                <div id="div2" class="hidden"></div>
-                <div id="div3" class="hidden"></div>
-            </div>
-        </div>
-    </header>
+    <?php include 'header_inc.php'; ?>
 
     <section>
         <h1>Création du compte professionnel</h1>
@@ -258,9 +226,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
     </section>
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
-<script src="main.js"></script>
+<script src="./main.js"></script>
 
 </html>
