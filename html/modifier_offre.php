@@ -90,6 +90,16 @@ if (isset($_POST["titre"])) {
     $codepostal = $stmt_codepostal->fetch(PDO::FETCH_ASSOC)["codepostaloffre"];
 
 
+    $query_option = "SELECT active
+                 FROM " . NOM_SCHEMA . " option
+                 LEFT JOIN ". NOM_SCHEMA . " ._offre op ON o.idoffre = op.idoffre
+                 WHERE o.idoffre = :idoffre";
+    $stmt_option = $dbh->prepare($query_option);
+    $stmt_option->bindParam(':idoffre', $idoffre);
+    $stmt_option->execute();
+    $option = $stmt_option->fetch(PDO::FETCH_ASSOC);
+    
+
     /*$query_telephone = "SELECT telephone FROM ".NOM_SCHEMA."_offre
                         INNER JOIN _compte ON _offre.idcompte = _compte.idcompte
                         WHERE idoffre = '$idoffre'";
@@ -196,7 +206,7 @@ if (isset($_POST["titre"])) {
                         <input name="numadresse" type="text" id="adresse" value="<?php echo $numadresse ?>">
                     </div>
                     <div class="row-form">
-                        <label for="rueoffre">Rue : </label>
+                        <label for="rueoffre>Rue : </label>
                         <input name="rueoffre" type="text" id="rueoffre" value="<?php echo $rueoffre ?>">
                     </div>
                 </div>

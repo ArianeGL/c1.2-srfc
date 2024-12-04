@@ -2,7 +2,7 @@
 session_start();
 require_once "db_connection.inc.php";
 
-const SOUSCRIPTION = "sae";
+const SOUSCRIPTION = "option";
 
 $idoffre = $_POST['idoffre'];
 $option = $_POST['option'];
