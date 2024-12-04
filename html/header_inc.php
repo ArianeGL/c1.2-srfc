@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +30,11 @@
                 </button>
                 
                 <!-- make it so it show only if the user is a pro otherwise show the same thing but wiht an other href -->
+                 <!--  if (est_pro()) {
+                            echo '<button class="smallButton" onclick="window.location.href="./creation_compte_pro-3.php"">Créer un compte</button>';
+                        } else {
+                            echo '<button class="smallButton" onclick="window.location.href="./creation_compte_membre-3.php"">Créer un compte</button>';
+                        } ?> -->
                 <button onclick="window.location.href='./consultation_pro-3.php'" class="buttons header-button3">
                     <h4>Compte</h4>
                 </button>

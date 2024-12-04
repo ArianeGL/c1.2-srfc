@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <?php require_once 'header_inc.html'; ?>
+    <?php require_once 'header_inc.php'; ?>
 
     <main id="top">
         <h1>Mes Offres</h1>

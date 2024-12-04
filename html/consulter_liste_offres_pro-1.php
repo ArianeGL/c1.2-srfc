@@ -55,7 +55,7 @@ try {
 </head>
 
 <body>
-    <?php require_once 'header_inc.html'; ?>
+    <?php require_once 'header_inc.php'; ?>
     
 
     <!-- Main content -->

@@ -48,7 +48,7 @@ if (isset($_GET['idoffre'])) {
             <script src="./main.js"></script>
         </head>
         <body>
-            <?php require_once 'header_inc.html';
+            <?php require_once 'header_inc.php';
             switch ($categorie) {
                 case "Activite":
                     $queryOffreCategorisee = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_ACTIVITE . " WHERE idoffre = :offerId";

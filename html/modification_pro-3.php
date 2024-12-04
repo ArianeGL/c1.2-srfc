@@ -243,7 +243,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-    <?php require_once 'header_inc.html'; ?>
+    <?php require_once 'header_inc.php'; ?>
 
     <section>
         <h1>Modification du compte professionnel</h1>
