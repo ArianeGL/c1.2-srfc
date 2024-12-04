@@ -45,7 +45,7 @@ if (isset($_GET['idoffre'])) {
         $idcompte = $offer['idcompte'];
         $abonnement = $offer['abonnement'];
 
-        $queryCompte = 'SELECT email, numadressecompte, ruecompte, denomination FROM ' . NOM_SCHEMA . '._compte WHERE idcompte = :idcompte';
+        $queryCompte = 'SELECT email, numadressecompte, ruecompte, villecompte, codepostalcompte, denomination FROM ' . NOM_SCHEMA . '.' . VUE_PRO_PRIVE . ' WHERE idcompte = :idcompte';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':idcompte', $idcompte, PDO::PARAM_STR);
         $sthCompte->execute();
@@ -55,6 +55,8 @@ if (isset($_GET['idoffre'])) {
                 $email=$compte["email"];
                 $num=$compte["numadressecompte"];
                 $rue=$compte["ruecompte"];
+                $ville=$compte["villecompte"];
+                $cp=$compte["codepostalcompte"];
                 $denomination=$compte["denomination"];
                 $moisDavant=date('n')-1;
                 if ($moisDavant==0){
@@ -151,7 +153,7 @@ if (isset($_GET['idoffre'])) {
         ?><br><?php
     }
     ?>
-    <form action="generate_pdf.php?idoffre='<?php echo $idoffre;?>'" method="POST">
+    <form action="generate_pdf.php?idoffre=<?php echo $idoffre;?>" method="POST">
         <button type="submit">Download PDF</button>
     </form>
 </body>
