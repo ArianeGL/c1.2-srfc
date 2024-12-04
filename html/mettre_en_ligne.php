@@ -15,13 +15,12 @@ $stmt_compte->execute();
 $compte = $stmt_compte->fetch(PDO::FETCH_ASSOC)["email"];
 
 
-$query_estenligne = "SELECT COUNT(*) FROM ". NOM_SCHEMA ."._offre
-                    WHERE _offre.idoffre = :idoffre
-                    AND enligne = false";
+$query_estenligne = "SELECT enligne FROM ". NOM_SCHEMA ."._offre
+                    WHERE _offre.idoffre = :idoffre";
 $stmt_estenligne = $dbh->prepare($query_estenligne);
 $stmt_estenligne->bindParam(':idoffre',$idOffre);
 $stmt_estenligne->execute();
-$estenligne = $stmt_estenligne->fetch(PDO::FETCH_ASSOC)["count"];
+$estenligne = $stmt_estenligne->fetch(PDO::FETCH_ASSOC)["enligne"];
 }catch(PDOException $e){
     print_r($e);
 }
@@ -43,23 +42,25 @@ $query_categorie = "SELECT categorie FROM " . NOM_SCHEMA . "._offre
 if (isset($_POST['idoffre'])) {
     $idOffre = $_POST['idoffre'];
 
-    if ($_POST["action"] == "mettreHorsLigne") {
+    if ($_POST["action"] == "mettreEnLigne") {
         try {
- 
-            $sql = "UPDATE " . NOM_SCHEMA . "." . $categorie . " SET enligne = false WHERE idoffre = '". $idOffre ."';";
-            $stmt = $dbh->prepare($sql);
+
+            //if ($count > 0) {
+                $sql = "UPDATE " . NOM_SCHEMA . "." . $categorie . " SET enligne = true WHERE idoffre = '". $idOffre ."';";
+                $stmt = $dbh->prepare($sql);
+            //}
 
             // Exécution de la requête avec le paramètre
             $success = $stmt->execute();
 
             // Cas de réussite
             if ($success) {
-                echo "<p>L'offre a été mise hors ligne avec succès.</p>";
+                echo "<p>L'offre a été mise en ligne avec succès.</p>";
             } else {
-                echo "<p>Erreur lors de la mise hors ligne de l'offre.</p>";
+                echo "<p>Erreur lors de la mise en ligne de l'offre.</p>";
             }
         } catch (PDOException $e) {
-            echo "<p>Erreur lors de la mise hors ligne de l'offre : " . $e->getMessage() . "</p>";
+            echo "<p>Erreur lors de la mise en ligne de l'offre : " . $e->getMessage() . "</p>";
         }
         header("Location: informations_offre-1.php?idoffre=". $idOffre);
     } elseif (isset($_GET['action']) && $_GET['action'] === 'annuler') {
@@ -86,25 +87,25 @@ if (isset($_POST['idoffre'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
-    <title>Confirmation de mise hors ligne</title>
+    <title>Confirmation de mise en ligne</title>
 </head>
 
 <body>
-    <p id="red-text">Attention ! L’offre sera visible sur le site</p>
-    <p>Voulez vous vraiment mettre l’offre hors ligne ?</p>
+    <p id="red-text">Attention ! L’offre ne sera plus visible sur le site</p>
+    <p>Voulez vous vraiment mettre l’offre en ligne ?</p>
 
-    <form class="pop-up" method="POST" action="mettre_hors_ligne.php?idoffre=<?php echo $idOffre ?>">
+    <form class="pop-up" method="POST" action="mettre_en_ligne.php?idoffre=<?php echo $idOffre ?>">
         <input type="hidden" name="idoffre" value="<?php echo htmlspecialchars($idOffre); ?>">
-        <button type="submit" class="big-button" id="bouton-supprimer" name="action" value="mettreHorsLigne">Mettre hors ligne</button>
+        <button type="submit" class="big-button" id="bouton-supprimer" name="action" value="mettreEnLigne">Mettre en ligne</button>
         <button type="submit" class="big-button" id="bouton-modifier" name="action" value="annuler">Annuler</button>
     </form>
 </body>
 
 </html>
 <?php }else{
-    header("Location: mettre_en_ligne.php?idoffre=". $idOffre);
+    header("Location: mettre_hors_ligne.php?idoffre=". $idOffre);
 }
 } 
 else{
-    print_r("impossible de mettre cette offre hors ligne avec ce compte : $compte");
+    print_r("impossible de mettre cette offre en ligne avec ce compte : $compte");
 }?>
