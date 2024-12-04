@@ -56,7 +56,7 @@ try {
 
 <body>
     <?php require_once 'header_inc.html'; ?>
-    
+
 
     <!-- Main content -->
     <main id="clop">
@@ -111,7 +111,7 @@ try {
 
     </main>
 
-    <?php require_once "footer_inc,html"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 
