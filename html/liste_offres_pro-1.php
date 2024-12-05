@@ -25,9 +25,11 @@
 
     <main id="top">
         <h1>Mes Offres</h1>
-        <button type="button" class="button-creer">
-            <h4>Cr&eacute;er une offre</h4>
-        </button>
+        <a href="form_offre-1.php">
+            <button type="button" class="button-creer">
+                <h4>Cr&eacute;er une offre</h4>
+            </button>
+        </a>
         <?php
         session_start();
 
@@ -86,7 +88,7 @@
     </main>
 
 
-    <?php require_once "footer_inc.php"; ?>
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 

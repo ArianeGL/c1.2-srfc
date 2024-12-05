@@ -55,9 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = substr(trim($_POST['email']), 0, 50);
     $num = substr(trim($_POST['num']), 0, 4);
     $rue = substr(trim($_POST['rue']), 0, 50);
-    $ville = substr(trim($_POST['compteville']), 0, 30);
+    $ville = substr(trim($_POST['ville']), 0, 30);
     $code = substr(trim($_POST['code']), 0, 5);
-    $iban = substr(trim($_POST['iban']), 0, 5);
+    $rib = substr(trim($_POST['rib']), 0, 5);
 
 
     if (strlen($tel) > 10) {
@@ -79,10 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        if(isset($iban)){
-            $schemaCompte=VUE_PRO_PRIVE;
-        }else{
-            $schemaCompte=VUE_PRO_PUBLIQUE;
+        if ($rib != null) {
+            $schemaCompte = VUE_PRO_PRIVE;
+        } else {
+            $schemaCompte = VUE_PRO_PUBLIQUE;
         }
         $sql_compte = "INSERT INTO " . NOM_SCHEMA . "." . $schemaCompte . "(idcompte, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage, denomination) 
         VALUES (:idcompte, :tel, :mdp, :email, :num, :rue, :ville, :code_postal, :urlimage, :raison)";
@@ -135,8 +135,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]);
             }
         }
-        $_SESSION['identifiant']=$email;
-        header('Location: consultation_pro-3.php');
+        $_SESSION['identifiant'] = $email;
+        header('Location: consulter_liste_offres_cli.php');
         die();
     } catch (PDOException $e) {
         die("SQL Query error : " . $e->getMessage());
@@ -202,10 +202,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <img src="images/photoProfileDefault.png" alt="Photo de profil" id="photo-profil" />
                         <?php } ?>
                     </div>
-                        <label class="smallButton" for="photo">Importer une image</label>
-                        <input type="file" id="photo" name="photo" style="display:none;" />
-                    </div>
+                    <label class="smallButton" for="photo">Importer une image</label>
+                    <input type="file" id="photo" name="photo" style="display:none;" />
                 </div>
+            </div>
 
 
             <div id="form-footer">

@@ -53,6 +53,6 @@
             else{
                 ?><button class="redButton" onclick="window.location='mettre_en_ligne.php?idoffre=<?php echo $id ?>'">Mettre en ligne</button><?php
             }
-            ?><button class="button" onclick="window.location='modifier_offre.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
+            ?><button class="button" onclick="window.location='modifier_offre-1.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
         }?>
     </section>

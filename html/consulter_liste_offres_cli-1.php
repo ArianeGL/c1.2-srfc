@@ -1,6 +1,30 @@
 <?php
 session_start();
 include('db_connection.inc.php');
+
+function est_membre($email)
+{
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['pseudo'])) $ret = true;
+
+    return $ret;
+}
+
+function get_account_id()
+{
+    global $dbh;
+
+    $query = "SELECT idcompte FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = '" . $_SESSION['identifiant'] . "';";
+    $id = $dbh->query($query)->fetch();
+
+    return $id['idcompte'];
+}
+
 try {
     global $dbh;
     /*
@@ -78,14 +102,14 @@ try {
                 <button id="filterButton" class="smallButton">Filtrer</button>
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
-                    
-                        <?php
-                        $query1 = 'SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
-                        if (isset($_GET['categorie'])){
-                            if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr'){
-                                $filtre_cat = "";
-                            
-                                $categorie = $_GET['categorie'];
+
+                    <?php
+                    $query1 = 'SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
+                    if (isset($_GET['categorie'])) {
+                        if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
+                            $filtre_cat = "";
+
+                            $categorie = $_GET['categorie'];
 
                             if (str_contains($categorie, 'a')) {
                     ?>
@@ -191,6 +215,10 @@ try {
                                 </div>
                         <?php
                             }
+                            if (!est_membre(get_account_id())) {
+                                $filtre_cat = $filtre_cat . ") AND idcompte = '" . get_account_id() . "'";
+                                $filtre_cat = str_replace("WHERE ", "WHERE (", $filtre_cat);
+                            }
 
                             $query1 = $query1 . $filtre_cat;
                         }
@@ -202,6 +230,7 @@ try {
                         </div>
                         <div>
                             <label for="visite">
+
                                 <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
                         </div>
                         <div>
@@ -225,8 +254,16 @@ try {
             </div>
         </nav>
 
-        <section >
+        <section>
             <?php
+            if (!est_membre(get_account_id())) {
+                if (!isset($_GET['categorie'])) {
+                    $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
+                    $query1 = $query1 . $filtre_cat;
+                }
+            }
+
+            echo $query1;
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -239,53 +276,54 @@ try {
                     die("SQL Query failed : " . $e->getMessage());
                 }
                 */
-                $query = "SELECT * FROM ".NOM_SCHEMA.".option WHERE idoffre = :idoffre";
+                $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
                 $sth = $dbh->prepare($query);
                 $sth->bindParam(':idoffre', $offre['idoffre']);
                 $sth->execute();
                 $result = $sth->fetchColumn();
 
-                if ($result != 0){
-                    ?>
+                if ($result != 0) {
+            ?>
                     <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
                     <?php
                 } else {
                     ?>
-                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                        <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                        <?php
+                    }
+                        ?>
+
+                        <div>
+                            <h3><?php echo $offre['nomoffre']; ?></h3>
+                            <section class="art-header">
+                                <h3><?php echo $offre['categorie']; ?></h3>
+                                <div>
+                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
+                                </div>
+                                <p><?php echo $offre['prixmin']; ?> &#8364;</p>
+                            </section>
+                        </div>
+                        <div>
+                            <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+
+                            <h4><?php echo $offre['villeoffre']; ?></h4>
+
+                            <div class="fade-out-container">
+                                <p><?php echo $offre['resume']; ?></p>
+                            </div>
+
+                            <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
+                        </div>
+                        </article>
                     <?php
                 }
-                ?>
-
-                    <div>
-                        <h3><?php echo $offre['nomoffre']; ?></h3>
-                        <section class="art-header">
-                            <h3><?php echo $offre['categorie']; ?></h3>
-                            <div>
-                                <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                            </div>
-                            <p><?php echo $offre['prixmin']; ?> &#8364;</p>
-                        </section>
-                    </div>
-                    <div>
-                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
-                        
-                        <h4><?php echo $offre['villeoffre']; ?></h4>
-
-                        <div class="fade-out-container">
-                            <p><?php echo $offre['resume']; ?></p>
-                        </div>
-
-                        <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
-                    </div>
-                </article>
-                <?php
-            }
-            ?>
+                    ?>
         </section>
 
     </main>
 
-    <!-- <?php // require_once "footer_inc.html"; ?> -->
+    <!-- <?php // require_once "footer_inc.html"; 
+            ?> -->
 
 </body>
 <script>
