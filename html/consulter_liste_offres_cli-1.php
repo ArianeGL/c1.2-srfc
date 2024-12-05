@@ -78,14 +78,14 @@ try {
                 <button id="filterButton" class="smallButton">Filtrer</button>
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
-
-                    <?php
-                    $query1 = 'SELECT * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel';
-                    if (isset($_GET['categorie'])) {
-                        if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
-                            $filtre_cat = "";
-
-                            $categorie = $_GET['categorie'];
+                    
+                        <?php
+                        $query1 = 'SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
+                        if (isset($_GET['categorie'])){
+                            if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr'){
+                                $filtre_cat = "";
+                            
+                                $categorie = $_GET['categorie'];
 
                             if (str_contains($categorie, 'a')) {
                     ?>
@@ -225,36 +225,50 @@ try {
             </div>
         </nav>
 
-        <section>
+        <section >
             <?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
-                    try {
-                        $query3 = "SELECT COUNT(*) AS nbavis FROM ".NOM_SCHEMA."._offre o INNER JOIN ".NOM_SCHEMA."._avis a ON o.idoffre = a.idoffre WHERE idoffre=".$offre['idoffre'];
-                        $sth3 = $dbh->prepare($query3);
-                        $sth3->execute();
-                        $requeteCompteAvis = $sth3->fetchAll();
-                    } catch (PDOException $e) {
-                        die("SQL Query failed : " . $e->getMessage());
-                    }
-                    */
-            ?>
-                <article onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                try {
+                    $query3 = "SELECT COUNT(*) AS nbavis FROM ".NOM_SCHEMA."._offre o INNER JOIN ".NOM_SCHEMA."._avis a ON o.idoffre = a.idoffre WHERE idoffre=".$offre['idoffre'];
+                    $sth3 = $dbh->prepare($query3);
+                    $sth3->execute();
+                    $requeteCompteAvis = $sth3->fetchAll();
+                } catch (PDOException $e) {
+                    die("SQL Query failed : " . $e->getMessage());
+                }
+                */
+                $query = "SELECT * FROM ".NOM_SCHEMA.".option WHERE idoffre = :idoffre";
+                $sth = $dbh->prepare($query);
+                $sth->bindParam(':idoffre', $offre['idoffre']);
+                $sth->execute();
+                $result = $sth->fetchColumn();
+
+                if ($result != 0){
+                    ?>
+                    <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <?php
+                } else {
+                    ?>
+                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <?php
+                }
+                ?>
+
                     <div>
                         <h3><?php echo $offre['nomoffre']; ?></h3>
                         <section class="art-header">
                             <h3><?php echo $offre['categorie']; ?></h3>
                             <div>
-                                <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p>
+                                <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
                             </div>
                             <p><?php echo $offre['prixmin']; ?> &#8364;</p>
                         </section>
                     </div>
                     <div>
-                        <!-- <?php echo $offre['urlversimage']; ?> -->
-                        <img src="<?php echo $offre['urlversimage']; ?>" alt="Nom_image" class="clopArtImg">
-
+                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+                        
                         <h4><?php echo $offre['villeoffre']; ?></h4>
 
                         <div class="fade-out-container">
@@ -264,14 +278,14 @@ try {
                         <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                     </div>
                 </article>
-            <?php
+                <?php
             }
             ?>
         </section>
 
     </main>
 
-    <?php require_once "footer_inc.html"; ?>
+    <!-- <?php // require_once "footer_inc.html"; ?> -->
 
 </body>
 <script>

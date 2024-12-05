@@ -45,7 +45,8 @@ section {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 7.5%;
+    gap: 3%;
+    
 
     article {
         display: flex;
@@ -84,6 +85,36 @@ section {
 
     article:hover {
         background-color: var(--light-blue);
+        .fade-out-container::after {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--light-blue)); /* Fade effect */
+        }
+    }
+    
+    .relief {
+        --grey-blue: white;
+        --navy-blue: white;
+        --light-grey: white;
+        --dark-grey: white;
+
+        background-color: #254766;
+
+        .fade-out-container::after {
+            content: ""; /* Create an overlay */
+            position: absolute;
+            bottom: 0; /* Position at the bottom */
+            left: 0;
+            right: 0;
+            height: 20px; /* Adjust height for the fade effect */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #254766); /* Fade effect */
+        }
+        
+    }
+
+    .relief:hover {
+        background-color: #9ABBDB;
+        .fade-out-container::after {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #9ABBDB); /* Fade effect */
+        }
     }
 }
 
@@ -115,3 +146,4 @@ section {
         }
     }
 }
+
