@@ -84,6 +84,22 @@ section {
 
     article:hover {
         background-color: var(--light-blue);
+        .fade-out-container::after {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--light-blue));
+        }
+    }
+    .relief {
+        --navy-blue: #fff;
+        background-color: #254766;
+        .fade-out-container::after {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #254766);
+        }
+    }
+    .relief:hover {
+        background-color: var(--grey-blue);
+        .fade-out-container::after {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--grey-blue));
+        }
     }
 }
 
@@ -115,3 +131,4 @@ section {
         }
     }
 }
+
