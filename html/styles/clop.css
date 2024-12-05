@@ -45,8 +45,7 @@ section {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 3%;
-    
+    gap: 7.5%;
 
     article {
         display: flex;
