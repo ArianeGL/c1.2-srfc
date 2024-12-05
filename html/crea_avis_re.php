@@ -93,7 +93,6 @@ function afficher_form_avis($idOffre)
     global $dbh;
     
     if (isset($_POST['valider'])) {
-        print_r($_POST);
     
         $idAvis = generate_id();
         $titre = $_POST['titre'];
