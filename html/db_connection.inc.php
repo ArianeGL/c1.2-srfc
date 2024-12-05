@@ -1,5 +1,7 @@
 <?php
 
+ini_set("display_errors", 0);
+
 const NOM_SCHEMA = "sae";
 const NOM_TABLE_OFFRE = "_offre";
 const NOM_TABLE_COMPTE = "_compte";
