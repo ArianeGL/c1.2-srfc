@@ -15,7 +15,7 @@ function generate_id()
 {
     global $dbh;
     $id_base = "Av-";
-    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . ";";
+    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . ";";
     try {
         $count = $dbh->query($count_query)->fetchColumn(); // recupere le nombre d'offre deja existante
     } catch (PDOException $e) {
@@ -58,13 +58,13 @@ function get_account_id()
 function can_post($idOffre)
 {
     global $dbh;
-    
+
     $est_authorise = false;
-    if (isset($_SESSION['identifiant'])){
+    if (isset($_SESSION['identifiant'])) {
         $identifiant = $_SESSION["identifiant"];
         $mdp = $_SESSION["mdp"];
         //$mdp_crypte = md5($mdp);
-    
+
         $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_MEMBRE . ' WHERE email = :email AND motdepasse = :mdp';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':email', $identifiant, PDO::PARAM_STR);
@@ -73,14 +73,14 @@ function can_post($idOffre)
         $countMembre = $sthCompte->fetchColumn();
 
         $idCompte = get_account_id();
-    
+
         $queryAvis = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_AVIS . ' WHERE idcompte = :idcompte AND idoffre = :idoffre';
         $sthAvis = $dbh->prepare($queryAvis);
         $sthAvis->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
         $sthAvis->bindParam(':idoffre', $idOffre, PDO::PARAM_STR);
         $sthAvis->execute();
         $countAvis = $sthAvis->fetchColumn();
-    
+
         if ($countMembre != 0 && $countAvis == 0) {
             $est_authorise = true;
         }
@@ -91,12 +91,12 @@ function can_post($idOffre)
 function afficher_form_avis($idOffre)
 {
     global $dbh;
-    
+
     if (isset($_POST['valider'])) {
-    
+
         $idAvis = generate_id();
         $titre = $_POST['titre'];
-        if ($_POST['date'] !== ""){
+        if ($_POST['date'] !== "") {
             $date = $_POST['date'];
         } else {
             $date = 'null';
@@ -108,14 +108,14 @@ function afficher_form_avis($idOffre)
         $noteAmbiance = $_POST['noteambiance'];
         $noteRapportQP = $_POST['noterapportqp'];
         $idCompte = get_account_id();
-    
+
         /*
         $nbLike = 0;
         $nbDislike = 0;
         $blacklist = false;
         $signale = false;
         */
-    
+
         $queryInsert = 'INSERT INTO ' . NOM_SCHEMA . '.' . VUE_AVIS . '(idavis,titre,datevisite,contexte,idoffre,idcompte,commentaire,notecuisine,noteservice,noteambiance,noterapportqp) VALUES (:idavis, :titre, :datevisite, :contexte, :idoffre, :idcompte, :commentaire, :notecuisine, :noteservice, :noteambiance, :noterapportqp);';
         $sth = $dbh->prepare($queryInsert);
         $sth->bindParam(':idavis', $idAvis);
@@ -129,21 +129,23 @@ function afficher_form_avis($idOffre)
         $sth->bindParam(':noteservice', $noteService);
         $sth->bindParam(':noteambiance', $noteAmbiance);
         $sth->bindParam(':noterapportqp', $noteRapportQP);
-    
+
         $sth->execute();
         $sth = null;
     } else {
-        ?>
+?>
         <button class="button" id="deroulerAvis">Ajouter un avis</button>
         <form method="post" enctype="multipart/form-data" id="formAvis">
-        
-            <label for="titre"><h1>Titre *</label>
-                <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
+
+            <label for="titre">
+                <h1>Titre *
+            </label>
+            <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
             <br>
             <label for="date">Date</label>
-                <input type="date" name="date" id="date" />
-                <br>
-            
+            <input type="date" name="date" id="date" />
+            <br>
+
             <select class="smallButton" name="contexte" id="contexte" required>
                 <option value="" disabled selected hidden>Contexte *</option>
                 <option value="En amoureux">En amoureux</option>
@@ -152,24 +154,24 @@ function afficher_form_avis($idOffre)
                 <option value="Seul">Seul</option>
             </select>
             <br>
-        
+
             <label for="commentaire">Commentaire *</label>
-                <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
-                <br>
-            
+            <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
+            <br>
+
             <label for="notecuisine">Note de la Cuisine *</label>
-                <input type="text" name="notecuisine" id="notecuisine" placeholder="Renseigner une note" required />
-                <br>
-                <label for="noteservice">Note du Service *</label>
-                <input type="text" name="noteservice" id="noteservice" placeholder="Renseigner une note" required />
-                <br>
-                <label for="noteambiance">Note de l'Ambiance *</label>
-                <input type="text" name="noteambiance" id="noteambiance" placeholder="Renseigner une note" required />
-                <br>
-                <label style="font-size:0.9em" for="noterapportqp">Note du Rapport Qualité/Prix *</label>
-                <input type="text" name="noterapportqp" id="noterapportqp" placeholder="Renseigner une note" required />
-                <br>
-        
+            <input type="text" name="notecuisine" id="notecuisine" placeholder="Renseigner une note" required />
+            <br>
+            <label for="noteservice">Note du Service *</label>
+            <input type="text" name="noteservice" id="noteservice" placeholder="Renseigner une note" required />
+            <br>
+            <label for="noteambiance">Note de l'Ambiance *</label>
+            <input type="text" name="noteambiance" id="noteambiance" placeholder="Renseigner une note" required />
+            <br>
+            <label style="font-size:0.9em" for="noterapportqp">Note du Rapport Qualité/Prix *</label>
+            <input type="text" name="noterapportqp" id="noterapportqp" placeholder="Renseigner une note" required />
+            <br>
+
             <script src="image_preview.js"></script>
             <div class="boutonimages">
                 <p>Importer vos images</p>
@@ -178,21 +180,21 @@ function afficher_form_avis($idOffre)
             </div>
             <img id="image_preview" src="" alt="">
             <br>
-        
+
             <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
         </form>
-        
+
         <script>
             let bouton_creer_avis = document.querySelector("#deroulerAvis");
             let form_creer_avis = document.querySelector("#formAvis");
             bouton_creer_avis.addEventListener("click", hideAndShow);
-        
-            function hideAndShow(){
+
+            function hideAndShow() {
                 const isVisible = window.getComputedStyle(form_creer_avis).display === 'block';
                 form_creer_avis.style.display = isVisible ? 'none' : 'block';
             }
         </script>
-        <?php
+<?php
     }
 }
 ?>

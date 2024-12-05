@@ -15,7 +15,7 @@ function generate_id()
 {
     global $dbh;
     $id_base = "Av-";
-    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . ";";
+    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . ";";
     try {
         $count = $dbh->query($count_query)->fetchColumn(); // recupere le nombre d'offre deja existante
     } catch (PDOException $e) {
