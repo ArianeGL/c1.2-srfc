@@ -31,48 +31,47 @@ function est_prive($email)
     return $ret;
 }
 
-print_r ($_SESSION['identifiant']);
+print_r($_SESSION['identifiant']);
 if (isset($_SESSION['identifiant']) && valid_account()) {
     $email = $_SESSION['identifiant'];
-    $requeteCompte = $dbh->prepare("SELECT idcompte, email FROM sae._compte WHERE email = '" . $email."';"); //, PDO::FETCH_ASSOC
+    $requeteCompte = $dbh->prepare("SELECT idcompte, email FROM sae._compte WHERE email = '" . $email . "';"); //, PDO::FETCH_ASSOC
     $requeteCompte->execute();
     //$idCompte = $requeteCompte['idcompte'];
     $idCompte = $requeteCompte->fetch(PDO::FETCH_ASSOC)["idcompte"];
-
-}else{
-    ?> <script>
+} else {
+?> <script>
         window.location = "connection_pro-3.php";
     </script> <?php
             }
 
-if (!est_membre($email)){
-    ?> <script>
+            if (!est_membre($email)) {
+                ?> <script>
         window.location = "consultation_pro-3.php";
     </script> <?php
-}
-$schemaCompte=VUE_MEMBRE;
+            }
+            $schemaCompte = VUE_MEMBRE;
 
-$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA .'.'. $schemaCompte .' WHERE idcompte = :idcompte';
-$sthCompte = $dbh->prepare($queryCompte);
-$sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
-$sthCompte->execute();
-//$count = $sthCompte->fetchColumn();
-$count = 5;
-$compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
+            $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '.' . $schemaCompte . ' WHERE idcompte = :idcompte';
+            $sthCompte = $dbh->prepare($queryCompte);
+            $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
+            $sthCompte->execute();
+            //$count = $sthCompte->fetchColumn();
+            $count = 5;
+            $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
 
-if ($compte) {
-    //$row = $rows[0];
-    $email = $compte["email"];
-    $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
-    $ville = $compte['villecompte'];
-    $codePostal = $compte['codepostalcompte'];
-    $telephone = $compte['telephone'];
-    $nom = $compte['nommembre'];
-    $prenom = $compte['prenommembre'];
-    $pseudo = $compte['pseudo'];
-    $image = $compte['urlimage'];
-} else {    
-?> <script>
+            if ($compte) {
+                //$row = $rows[0];
+                $email = $compte["email"];
+                $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
+                $ville = $compte['villecompte'];
+                $codePostal = $compte['codepostalcompte'];
+                $telephone = $compte['telephone'];
+                $nom = $compte['nommembre'];
+                $prenom = $compte['prenommembre'];
+                $pseudo = $compte['pseudo'];
+                $image = $compte['urlimage'];
+            } else {
+                ?> <script>
         window.location = "consultation_liste_offres_cli-1.php";
     </script> <?php
             }
@@ -100,39 +99,7 @@ if ($compte) {
 </head>
 
 <body>
-    <header>
-        <div id="homeButtonID" class="homeButton">
-            <img src="./IMAGES/LOGO-SRFC.webp" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
-            <h2>PACT</h2>
-            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
-        </div>
-        <div>
-            <div class="container">
-                <button class="buttons header-button1">
-                    <h4>Offres</h4>
-                </button>
-
-                <!-- Button for back office -->
-                <button class="buttons header-button2">
-                    <h4>Factures</h4>
-                </button>
-
-                <!-- Button for front office -->
-                <button style="display: none;" class="buttons header-button2">
-                    <h4>R&eacute;cent</h4>
-                </button>
-
-                <button class="buttons header-button3">
-                    <h4>Compte</h4>
-                </button>
-            </div>
-            <div class="indicator">
-                <div id="div1" class="hidden"></div>
-                <div id="div2" class="hidden"></div>
-                <div id="div3" class="seek"></div>
-            </div>
-        </div>
-    </header>
+    <?php require_once "./header_inc.php" ?>
     <main id="box">
         <section class="profile">
             <div class="profile-header">

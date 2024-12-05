@@ -4,7 +4,7 @@ require_once  "db_connection.inc.php";
 require_once "verif_connection.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./connection-3.php'</script>";
+    echo "<script>window.location.href='./consultation_pro-3.php'</script>";
 }
 
 class FunctionException extends Exception
