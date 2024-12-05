@@ -160,7 +160,7 @@ function afficher_form_avis($idOffre)
             </div>
             <img id="image_preview" src="" alt="">
             <br>
-            <input class="bigButton" type="submit" name="valider" value="Valider" class="smallButton" id="valider">
+            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
         </form>
     
         <script>

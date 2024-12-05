@@ -68,8 +68,7 @@ try {
 <body>
     <?php require_once 'header_inc.php'; ?>
     <!-- Main content -->
-    <main>
-
+    <main style="margin-bottom: 700px;">
         <nav>
             <div>
                 <svg height="30px" fill="#254766" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 385.00 385.00" xml:space="preserve" stroke="#000000" stroke-width="0.00385" transform="rotate(0)">
@@ -305,8 +304,7 @@ try {
 
     </main>
 
-    <!-- <?php // require_once "footer_inc.html"; 
-            ?> -->
+    <?php require_once "footer_inc.html"; ?>
 
 </body>
 <script>
