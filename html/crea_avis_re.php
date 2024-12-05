@@ -135,41 +135,52 @@ function afficher_form_avis($idOffre)
         $sth = null;
     } else {
         ?>
-        <button id="deroulerAvis">Ajouter un avis</button>
+        <button class="button" id="deroulerAvis">Ajouter un avis</button>
         <form method="post" enctype="multipart/form-data" id="formAvis">
         
-            <label for="titre">Titre *</label>
+            <label for="titre"><h1>Titre *</label>
                 <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
-            
+            <br>
             <label for="date">Date</label>
                 <input type="date" name="date" id="date" />
+                <br>
             
-            <select name="contexte" id="contexte" required>
+            <select class="smallButton" name="contexte" id="contexte" required>
                 <option value="" disabled selected hidden>Contexte *</option>
                 <option value="En amoureux">En amoureux</option>
                 <option value="En famille">En famille</option>
                 <option value="Entre amis">Entre amis</option>
                 <option value="Seul">Seul</option>
             </select>
+            <br>
         
             <label for="commentaire">Commentaire *</label>
                 <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
+                <br>
             
             <label for="notecuisine">Note de la Cuisine *</label>
                 <input type="text" name="notecuisine" id="notecuisine" placeholder="Renseigner une note" required />
-            <label for="noteservice">Note du Service *</label>
+                <br>
+                <label for="noteservice">Note du Service *</label>
                 <input type="text" name="noteservice" id="noteservice" placeholder="Renseigner une note" required />
-            <label for="noteambiance">Note de l'Ambiance *</label>
+                <br>
+                <label for="noteambiance">Note de l'Ambiance *</label>
                 <input type="text" name="noteambiance" id="noteambiance" placeholder="Renseigner une note" required />
-            <label for="noterapportqp">Note du Rapport Qualité/Prix *</label>
+                <br>
+                <label style="font-size:0.9em" for="noterapportqp">Note du Rapport Qualité/Prix *</label>
                 <input type="text" name="noterapportqp" id="noterapportqp" placeholder="Renseigner une note" required />
+                <br>
         
             <script src="image_preview.js"></script>
+            <div class="boutonimages">
+                <p>Importer vos images</p>
+                <label for="images_offre" class="smallButton">Importer</label>
+                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+            </div>
             <img id="image_preview" src="" alt="">
-            <label for="images_offre" class="smallButton">Importes vos images</label>
-            <input type="file" id="images_offre" name="images_avis[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" >
+            <br>
         
-            <input type="submit" name="valider" value="Valider" class="smallButton" id="valider">
+            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
         </form>
         
         <script>

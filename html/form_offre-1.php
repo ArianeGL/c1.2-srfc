@@ -65,66 +65,67 @@
                             <option value="standard">Standard</option>
                             <option value="premium">Premium</option>
                         </select>
+                    <?php } ?>
                 </div>
-            <?php } ?>
-            <select name="categorie" id="categorie" onchange='detect_category(<?php echo json_encode(get_tags_resto()); ?>)'>
-                <option value="" disabled selected hidden class>Cat&eacute;gorie *</option>
-                <option value="activite">Activit&eacute;</option>
-                <option value="restauration">Restauration</option>
-                <option value="visite">Visite</option>
-                <option value="parc_attractions">Parc d'attractions</option>
-                <option value="spectacle">Spectacle</option>
-            </select>
-            <div id="depends_select"></div>
-
-            <div id="addresse">
-                <input type="text" name="num_addresse" id="num_addresse" placeholder="Num&eacute;ro d'addresse *" required>
-                <input type="text" name="rue_addresse" id="rue_addresse" placeholder="Addresse *" required>
-            </div>
-            <div id="ville_code">
-                <input type="text" inputmode="numeric" name="code_postal" id="code_postal" placeholder="Code postal *" maxlength="5" required>
-                <input type="text" name="ville" id="ville" placeholder="Ville *" required>
-            </div>
-
-            <div id="tel_site">
-                <input type="text" name="telephone" id="telephone" placeholder="T&eacute;l&eacute;phone" maxlength="10">
-                <input type="text" name="site_web" id="site_web" placeholder="Site Web">
-            </div>
-
-            <input type="text" name="resume" id="resume" placeholder="R&eacute;sum&eacute; *" required>
-
-            <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
-
-            <?php if (est_prive($_SESSION['identifiant'])) { ?>
-                <select name="opt" id="opt">
-                    <option value="no_opt" disabled selected hidden class>Options
-                    </option>
-                    <option value="no_opt">Pas d'option
-                    </option>
-                    <option value="relief">En relief
-                    </option>
-                    <option value="une">&Agrave; la une
-                    </option>
-
+                <select name="categorie" id="categorie" onchange='detect_category(<?php echo json_encode(get_tags_resto()); ?>)'>
+                    <option value="" disabled selected hidden class>Cat&eacute;gorie *</option>
+                    <option value="activite">Activit&eacute;</option>
+                    <option value="restauration">Restauration</option>
+                    <option value="visite">Visite</option>
+                    <option value="parc_attractions">Parc d'attractions</option>
+                    <option value="spectacle">Spectacle</option>
                 </select>
-            <?php } ?>
+                <div id="depends_select"></div>
 
-            <input type="text" name="tags" id="tags" placeholder="Tags">
+                <div id="addresse">
+                    <input type="text" name="num_addresse" id="num_addresse" placeholder="Num&eacute;ro d'addresse *" required>
+                    <input type="text" name="rue_addresse" id="rue_addresse" placeholder="Addresse *" required>
+                </div>
+                <div id="ville_code">
+                    <input type="text" inputmode="numeric" name="code_postal" id="code_postal" placeholder="Code postal *" maxlength="5" required>
+                    <input type="text" name="ville" id="ville" placeholder="Ville *" required>
+                </div>
 
-            <script src="image_preview.js"></script>
-            <img id="image_preview" src="" alt="">
-            <div class="boutonimages">
-                <p>Importer vos images</p>
-                <label for="images_offre" class="smallButton">Importer</label>
-                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+                <div id="tel_site">
+                    <input type="text" name="telephone" id="telephone" placeholder="T&eacute;l&eacute;phone" maxlength="10">
+                    <input type="text" name="site_web" id="site_web" placeholder="Site Web">
+                </div>
 
-                <input type="submit" name="valider" value="Valider" class="bigButton" id="valider">
-            </div>
+                <input type="text" name="resume" id="resume" placeholder="R&eacute;sum&eacute; *" required>
+
+                <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
+
+                <?php if (est_prive($_SESSION['identifiant'])) { ?>
+                    <select name="opt" id="opt">
+                        <option value="no_opt" disabled selected hidden class>Options
+                        </option>
+                        <option value="no_opt">Pas d'option
+                        </option>
+                        <option value="relief">En relief
+                        </option>
+                        <option value="une">&Agrave; la une
+                        </option>
+
+                    </select>
+                <?php } ?>
+
+                <input type="text" name="tags" id="tags" placeholder="Tags">
+
+                <script src="image_preview.js"></script>
+                <img id="image_preview" src="" alt="">
+                <div class="boutonimages">
+                    <p>Importer vos images</p>
+                    <label for="images_offre" class="smallButton">Importer</label>
+                    <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+
+                    <input type="submit" name="valider" value="Valider" class="bigButton" id="valider">
+                </div>
             </form>
         </main>
     <?php
     } else echo "<script> location.href='./connection_pro-3.php'</script>";
     ?>
+    <?php require_once "./footer_inc.html"; ?>
 </body>
 
 </html>

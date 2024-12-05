@@ -56,9 +56,9 @@ function est_pro(): bool
                 <button class="buttons header-button3" onclick="window.location.href='<?php if (!isset($_SESSION['identifiant'])) {
                                                                                             echo "./connection-3.php";
                                                                                         } else if (est_pro()) {
-                                                                                            echo "./creation_compte_pro-3.php";
+                                                                                            echo "./consultation_pro-3.php";
                                                                                         } else {
-                                                                                            echo "./creation_compte_membre-3.php";
+                                                                                            echo "./consultation_membre-3.php";
                                                                                         } ?>'">
                     <h4>Compte</h4>
                 </button>
