@@ -23,19 +23,7 @@
             <h3><?php echo $description; ?></h3>
         </section>
     </section>
-
-    <div>
-        <div class="info">
-            <p>Age requis: <?php echo $ageRequierement; ?></p>
-            <p>Nombre d'Attractions<?php echo $nbAttractions; ?></p>
-            <h3><?php echo $description; ?></h3>
-
-            <botton onclick="window.open('<?php echo $menuURL; ?>', '_blank')" class="buttons">
-                <h3>Menu</h3>
-            </botton> 
-        </div>
-    </div>
-
+    
     <section class="buttons">
         <?php
         $query_compte = "SELECT email FROM sae._compte 
