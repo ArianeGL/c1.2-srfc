@@ -89,7 +89,19 @@ try {
                     <h3>Par Catégorie :</h3>
 
                     <?php
-                    $query1 = 'SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
+                    $query1 = '
+                    SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre 
+                    NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel 
+                    INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' 
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre' . '
+                    LEFT JOIN ' . NOM_SCHEMA . '.option 
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre
+                    ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, 
+                    CASE 
+                    WHEN sae.option.option = 'A la une' THEN 1
+                    ELSE 2 -- All others
+                    END, 
+                    sae._offre.idoffre ASC";
                     if (isset($_GET['categorie'])) {
                         if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
                             $filtre_cat = "";
