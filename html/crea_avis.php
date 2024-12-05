@@ -138,7 +138,7 @@ function afficher_form_avis($idOffre)
             <label for="date">Date</label>
                 <input type="date" name="date" id="date" />
             <br>
-            <select name="contexte" id="contexte" required>
+            <select class="smallButton" name="contexte" id="contexte" required>
                 <option value="" disabled selected hidden>Contexte *</option>
                 <option value="En amoureux">En amoureux</option>
                 <option value="En famille">En famille</option>
@@ -153,9 +153,12 @@ function afficher_form_avis($idOffre)
                 <input type="text" name="note" id="note" placeholder="Renseigner une note" required />
             <br>
             <script src="image_preview.js"></script>
+            <div class="boutonimages">
+                <p>Importer vos images</p>
+                <label for="images_offre" class="smallButton">Importer</label>
+                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+            </div>
             <img id="image_preview" src="" alt="">
-            <label for="images_offre" class="smallButton">Importes vos images</label>
-            <input type="file" id="images_offre" name="images_avis[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" >
             <br>
             <input class="bigButton" type="submit" name="valider" value="Valider" class="smallButton" id="valider">
         </form>

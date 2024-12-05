@@ -1,14 +1,4 @@
 @import "../style.css";
-:root {
-    --red: #CC0000; /* Accent */
-    --light-blue: #E7FDFD; /* Accent Background */
-    --grey-blue: #9ABBDB; /* Extra */
-    --navy-blue: #254766; /* Buttons */
-    --light-grey: #8599AD; /* Main background */
-    --dark-grey: #52667A; /* Border Color */
-
-    --round-corners: 15px; /* USE THIS FOR ROUNDED CORNERS, PING ME IF YOU WANT TO HAVE AN OTHER ROUNDED CORNER */
-}
 
 main {
     background: white;
