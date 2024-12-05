@@ -14,7 +14,16 @@
     
     <section>
         <div class="img-container">
-            <img src="https://photographe-en-herbe.com/wp-content/uploads/2019/03/paysage-montagne-photographe-en-herbe-1024x576.jpg" alt="Nom_image">
+
+            <?php 
+            $queryImage = 'SELECT DISTINCT ON (' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . '.idoffre) * FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre = :idoffre';
+            $sthImage = $dbh->prepare($queryImage);
+            $sthImage -> bindParam(':idoffre', $id);
+            $sthImage->execute();
+            $image = $sthImage->fetch(PDO::FETCH_ASSOC);
+            ?>
+            <img src="<?php echo $image['urlimage']; ?>" alt="Nom_image" />
+
         </div>
 
         <section class="info">
