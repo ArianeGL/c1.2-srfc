@@ -95,13 +95,8 @@ try {
                     INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' 
                     ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre' . '
                     LEFT JOIN ' . NOM_SCHEMA . '.option 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre
-                    ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, 
-                    CASE 
-                    WHEN sae.option.option = 'A la une' THEN 1
-                    ELSE 2 -- All others
-                    END, 
-                    sae._offre.idoffre ASC";
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre';
+
                     if (isset($_GET['categorie'])) {
                         if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
                             $filtre_cat = "";
@@ -218,6 +213,7 @@ try {
                             }
 
                             $query1 = $query1 . $filtre_cat;
+                            $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                         }
                     } else {
                         ?>
@@ -256,6 +252,7 @@ try {
                 if (!isset($_GET['categorie'])) {
                     $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                     $query1 = $query1 . $filtre_cat;
+                    $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                 }
             }
 
