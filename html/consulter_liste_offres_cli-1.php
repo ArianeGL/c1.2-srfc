@@ -2,19 +2,6 @@
 session_start();
 include('db_connection.inc.php');
 
-function est_membre($email)
-{
-    $ret = false;
-    global $dbh;
-
-    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE email = '" . $email . "';";
-    $row = $dbh->query($query)->fetch();
-
-    if (isset($row['pseudo'])) $ret = true;
-
-    return $ret;
-}
-
 function get_account_id()
 {
     global $dbh;
@@ -212,116 +199,11 @@ try {
                                     <label for="restauration">
                                         <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
                                 </div>
-                            <?php
+                        <?php
                             }
-                            if (!est_membre(get_account_id())) {
+                            if (est_pro(get_account_id())) {
                                 $filtre_cat = $filtre_cat . ") AND idcompte = '" . get_account_id() . "'";
                                 $filtre_cat = str_replace("WHERE ", "WHERE (", $filtre_cat);
-                            }
-
-                            if (str_contains($categorie, 'a')) {
-                            ?>
-                                <div>
-                                    <label for="activite">
-                                        <input type="checkbox" id="activite" name="activite" value="activite" checked />Activit&eacute;</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Activite'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Activite'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="activite">
-                                        <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'v')) {
-                            ?>
-                                <div>
-                                    <label for="visite">
-                                        <input type="checkbox" id="visite" name="visite" value="visite" checked />Visite</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Visite'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Visite'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="visite">
-                                        <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'p')) {
-                            ?>
-                                <div>
-                                    <label for="parcAttraction">
-                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" checked />Parc d'Attraction</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Parc attraction'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Parc attraction'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="parcAttraction">
-                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 's')) {
-                            ?>
-                                <div>
-                                    <label for="spectacle">
-                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" checked />Spectacle</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Spectacle'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Spectacle'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="spectacle">
-                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'r')) {
-                            ?>
-                                <div>
-                                    <label for="restauration">
-                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" checked />Restauration</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Restauration'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Restauration'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="restauration">
-                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                                </div>
-                        <?php
                             }
 
                             $query1 = $query1 . $filtre_cat;
@@ -331,34 +213,27 @@ try {
                         <div>
                             <label for="activite">
                                 <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                            <<<<<<< HEAD
-                                </div>
-                                <div>
-                                    <label for="visite">
-
-                                        =======
-                                </div>
-                                <div>
-                                    <label for="visite">
-                                        >>>>>>> cabd2c97dc69dd61be652a1f6613b681d2da96ce
-                                        <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                                </div>
-                                <div>
-                                    <label for="parcAttraction">
-                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                                </div>
-                                <div>
-                                    <label for="spectacle">
-                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                                </div>
-                                <div>
-                                    <label for="restauration">
-                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                                </div>
-                            <?php
-                        }
-                            ?>
-                            <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
+                        </div>
+                        <div>
+                            <label for="visite">
+                                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                        </div>
+                        <div>
+                            <label for="parcAttraction">
+                                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                        </div>
+                        <div>
+                            <label for="spectacle">
+                                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                        </div>
+                        <div>
+                            <label for="restauration">
+                                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
                 </fieldset>
                 <button class="smallButton">Trier</button>
             </div>
@@ -366,14 +241,13 @@ try {
 
         <section>
             <?php
-            if (!est_membre(get_account_id())) {
+            if (est_pro(get_account_id())) {
                 if (!isset($_GET['categorie'])) {
                     $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                     $query1 = $query1 . $filtre_cat;
                 }
             }
 
-            echo $query1;
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -400,49 +274,33 @@ try {
                     ?>
                         <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
                         <?php
-                    }
-                    $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
-                    $sth = $dbh->prepare($query);
-                    $sth->bindParam(':idoffre', $offre['idoffre']);
-                    $sth->execute();
-                    $result = $sth->fetchColumn();
-
-                    if ($result != 0) {
-                        ?>
-                            <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
-                            <?php
-                        } else {
-                            ?>
-                                <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
-                                <?php
-                            }
-                                ?>
+                    } ?>
+                        <div>
+                            <h3><?php echo $offre['nomoffre']; ?></h3>
+                            <section class="art-header">
+                                <h3><?php echo $offre['categorie']; ?></h3>
                                 <div>
-                                    <h3><?php echo $offre['nomoffre']; ?></h3>
-                                    <section class="art-header">
-                                        <h3><?php echo $offre['categorie']; ?></h3>
-                                        <div>
-                                            <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                                        </div>
-                                        <p><?php echo $offre['prixmin']; ?> &#8364;</p>
-                                    </section>
+                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
                                 </div>
-                                <div>
-                                    <!-- <?php echo $offre['urlimage']; ?> -->
-                                    <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+                                <p><?php echo $offre['prixmin']; ?> &#8364;</p>
+                            </section>
+                        </div>
+                        <div>
+                            <!-- <?php echo $offre['urlimage']; ?> -->
+                            <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
 
-                                    <h4><?php echo $offre['villeoffre']; ?></h4>
+                            <h4><?php echo $offre['villeoffre']; ?></h4>
 
-                                    <div class="fade-out-container">
-                                        <p><?php echo $offre['resume']; ?></p>
-                                    </div>
+                            <div class="fade-out-container">
+                                <p><?php echo $offre['resume']; ?></p>
+                            </div>
 
-                                    <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
-                                </div>
-                                </article>
-                            <?php
-                        }
-                            ?>
+                            <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
+                        </div>
+                        </article>
+                    <?php
+                }
+                    ?>
         </section>
 
     </main>
