@@ -258,7 +258,7 @@ try {
                     </div>
                     <div>
                         <!-- <?php echo $offre['urlimage']; ?> -->
-                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+                        <img src="<?php echo $offre['urlimage']; ?>" alt="image" class="clopArtImg">
                         
                         <h4><?php echo $offre['villeoffre']; ?></h4>
                         
