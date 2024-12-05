@@ -60,11 +60,11 @@ function can_post($idOffre)
     global $dbh;
 
     $est_authorise = false;
-    if (isset($_SESSION['identifiant'])){
+    if (isset($_SESSION['identifiant'])) {
         $identifiant = $_SESSION["identifiant"];
         $mdp = $_SESSION["mdp"];
         //$mdp_crypte = md5($mdp);
-    
+
         $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_MEMBRE . ' WHERE email = :email AND motdepasse = :mdp';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':email', $identifiant, PDO::PARAM_STR);
@@ -73,14 +73,14 @@ function can_post($idOffre)
         $countMembre = $sthCompte->fetchColumn();
 
         $idCompte = get_account_id();
-    
+
         $queryAvis = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_AVIS . ' WHERE idcompte = :idcompte AND idoffre = :idoffre';
         $sthAvis = $dbh->prepare($queryAvis);
         $sthAvis->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
         $sthAvis->bindParam(':idoffre', $idOffre, PDO::PARAM_STR);
         $sthAvis->execute();
         $countAvis = $sthAvis->fetchColumn();
-    
+
         if ($countMembre != 0 && $countAvis == 0) {
             $est_authorise = true;
         }
@@ -91,13 +91,13 @@ function can_post($idOffre)
 function afficher_form_avis($idOffre)
 {
     global $dbh;
-    
-    if (isset($_POST['valider'])){
+
+    if (isset($_POST['valider'])) {
         print_r($_POST);
-    
+
         $idAvis = generate_id();
         $titre = $_POST['titre'];
-        if ($_POST['date'] !== ""){
+        if ($_POST['date'] !== "") {
             $date = $_POST['date'];
         } else {
             $date = 'null';
@@ -106,14 +106,14 @@ function afficher_form_avis($idOffre)
         $commentaire = $_POST['commentaire'];
         $note = $_POST['note'];
         $idCompte = get_account_id();
-    
+
         /*
         $nbLike = 0;
         $nbDislike = 0;
         $blacklist = false;
         $signale = false;
         */
-    
+
         $queryInsert = 'INSERT INTO ' . NOM_SCHEMA . '.' . VUE_AVIS . '(idavis,titre,datevisite,contexte,idoffre,idcompte,commentaire,noteavis) VALUES (:idavis, :titre, :datevisite, :contexte, :idoffre, :idcompte, :commentaire, :noteavis);';
         $sth = $dbh->prepare($queryInsert);
         $sth->bindParam(':idavis', $idAvis);
@@ -124,19 +124,21 @@ function afficher_form_avis($idOffre)
         $sth->bindParam(':idcompte', $idCompte);
         $sth->bindParam(':commentaire', $commentaire);
         $sth->bindParam(':noteavis', $note);
-    
+
         $sth->execute();
         $sth = null;
     } else {
-        ?>
+?>
         <button class="button" id="deroulerAvis">Ajouter un avis</button>
         <form method="post" enctype="multipart/form-data" id="formAvis">
-        
-            <label for="titre"><h1>Titre*</label>
-                <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
+
+            <label for="titre">
+                <h1>Titre*
+            </label>
+            <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
             <br>
             <label for="date">Date</label>
-                <input type="date" name="date" id="date" />
+            <input type="date" name="date" id="date" />
             <br>
             <select class="smallButton" name="contexte" id="contexte" required>
                 <option value="" disabled selected hidden>Contexte *</option>
@@ -147,33 +149,33 @@ function afficher_form_avis($idOffre)
             </select>
             <br>
             <label for="commentaire">Commentaire *</label>
-                <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
+            <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
             <br>
             <label for="note">Note *</label>
-                <input type="text" name="note" id="note" placeholder="Renseigner une note" required />
+            <input type="text" name="note" id="note" placeholder="Renseigner une note" required />
             <br>
             <script src="image_preview.js"></script>
             <div class="boutonimages">
                 <p>Importer vos images</p>
                 <label for="images_offre" class="smallButton">Importer</label>
-                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
+                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)">
             </div>
             <img id="image_preview" src="" alt="">
             <br>
             <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
         </form>
-    
+
         <script>
             let bouton_creer_avis = document.querySelector("#deroulerAvis");
             let form_creer_avis = document.querySelector("#formAvis");
             bouton_creer_avis.addEventListener("click", hideAndShow);
-    
-            function hideAndShow(){
+
+            function hideAndShow() {
                 const isVisible = window.getComputedStyle(form_creer_avis).display === 'block';
                 form_creer_avis.style.display = isVisible ? 'none' : 'block';
             }
         </script>
-        <?php
+<?php
     }
 }
 ?>
