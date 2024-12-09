@@ -37,7 +37,7 @@ function rechercheOffre() {
 
 function rechercheOffreConsultation() {
     const input = document.getElementById('rechercheOffre').value.toUpperCase().trim();
-    const offres = document.querySelectorAll('#clopArt'); // Sélectionne les éléments des offres
+    const offres = document.querySelectorAll('#art-offre'); // Sélectionne les éléments des offres
 
     if (input === '') {
         offres.forEach(offre => { // Si la barre de recherche est vide, affiche toutes les offres

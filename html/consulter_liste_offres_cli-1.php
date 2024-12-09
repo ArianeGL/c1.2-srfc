@@ -44,6 +44,7 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <script src="main.js"></script>
+	<script src="./recherche.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
             window.location.href = `informations_offre-1.php?idoffre=${idoffre}`;
@@ -79,8 +80,8 @@ try {
                             <path d="M342.598,42.402C315.254,15.058,278.899-0.001,240.229,0c-0.002,0,0,0-0.002,0c-38.666,0-75.025,15.06-102.368,42.402 c-27.343,27.344-42.402,63.7-42.402,102.37c0,26.388,7.018,51.696,20.161,73.801L10.252,323.938C3.642,330.55,0,339.34,0,348.69 c0,9.35,3.641,18.14,10.252,24.75l1.307,1.307C18.17,381.359,26.96,385,36.311,385s18.14-3.641,24.751-10.252l105.365-105.366 c22.104,13.144,47.413,20.161,73.801,20.161c38.67,0,75.026-15.059,102.37-42.402C369.942,219.798,385,183.442,385,144.772 C385,106.102,369.943,69.747,342.598,42.402z M43.384,357.07c-1.89,1.89-4.402,2.93-7.074,2.93c-2.671,0-5.183-1.041-7.073-2.93 l-1.308-1.309c-1.889-1.889-2.93-4.4-2.93-7.071c0-2.673,1.041-5.185,2.93-7.074l102.489-102.488 c2.369,2.748,4.849,5.421,7.44,8.013c2.591,2.592,5.265,5.072,8.013,7.44L43.384,357.07z M324.92,229.463 c-22.622,22.622-52.7,35.08-84.691,35.08c-31.992,0-62.069-12.458-84.69-35.08c-22.622-22.622-35.081-52.699-35.08-84.69 c0-31.993,12.458-62.07,35.08-84.692s52.698-35.081,84.69-35.08c31.993,0,62.07,12.458,84.692,35.08s35.081,52.7,35.08,84.692 C360,176.764,347.542,206.841,324.92,229.463z"></path>
                         </g>
                     </g>
-                </svg>
-                <input placeholder="Rechercher une offre"></input>
+		</svg>
+                <input type="text" id="rechercheOffre" placeholder="Rechercher une offre" onkeyup="rechercheOffreConsultation()"></input>
             </div>
 
             <div>
@@ -88,7 +89,20 @@ try {
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
 
-                    <?php
+<?php
+$triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
+    $ordreTri = "";
+    $ListeTris = ['noteCroissante', 'noteDecroissante'];
+    switch ($triOption) {
+        case 'noteCroissante':
+            $ordreTri = "ORDER BY note ASC"; 
+            break;
+        case 'noteDecroissante':
+            $ordreTri = "ORDER BY note DESC"; 
+            break;
+        default:
+            $ordreTri = ""; 
+    }
                     $query1 = '
                     SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre 
                     NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel 
@@ -212,7 +226,7 @@ try {
                                 $filtre_cat = str_replace("WHERE ", "WHERE (", $filtre_cat);
                             }
 
-                            $query1 = $query1 . $filtre_cat;
+                            $query1 = $query1 . $filtre_cat . $ordreTri;
                             $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                         }
                     } else {
@@ -241,8 +255,23 @@ try {
                     }
                     ?>
                     <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
-                </fieldset>
-                <button class="smallButton">Trier</button>
+		</fieldset>
+<div class="tri">
+
+                <select id="SelectionTri" onchange="triOffre()" >
+                    <option value="" disabled selected>TRIS</option>
+                    <option value="noteCroissante">Note (↑)</option>
+                    <option value="noteDecroissante">Note (↓)</option>
+                </select>
+	    </div>
+<script>
+    function triOffre() {
+        const optionTri = document.getElementById('SelectionTri').value;
+        const urlActuelle = new URL(window.location.href);
+        urlActuelle.searchParams.set('tri', optionTri); // Met à jour le paramètre "tri"
+        window.location.href = urlActuelle; // Redirige avec la nouvelle URL
+    }
+</script>
             </div>
         </nav>
 
@@ -267,24 +296,25 @@ try {
                 } catch (PDOException $e) {
                     die("SQL Query failed : " . $e->getMessage());
                 }
-                */
+		 */
+		$idoffre = $offre['idoffre'];
                 $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
                 $sth = $dbh->prepare($query);
                 $sth->bindParam(':idoffre', $offre['idoffre']);
                 $sth->execute();
-                $result = $sth->fetchColumn();
+		$result = $sth->fetchColumn();
 
                 if ($result != 0) {
             ?>
                     <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
                     <?php
-                } else {
-                    ?>
-                        <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+		} else {
+?>
+                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $idoffre; ?>')">
                         <?php
                     } ?>
                         <div>
-                            <h3><?php echo $offre['nomoffre']; ?></h3>
+                            <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <section class="art-header">
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <div>

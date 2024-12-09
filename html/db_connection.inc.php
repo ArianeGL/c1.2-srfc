@@ -1,6 +1,6 @@
 <?php
 
-ini_set("display_errors", 0);
+ini_set('display_errors', 0);
 
 const NOM_SCHEMA = "sae";
 const NOM_TABLE_OFFRE = "_offre";
