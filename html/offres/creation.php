@@ -15,16 +15,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
 
-    <script src="main.js"></script>
+    <script src="../includes/main.js"></script>
 
-    <script src="./image_preview.js"></script>
+    <script src="../scripts/image_preview.js"></script>
     <title>PACT - Cr&eacute;er une offre</title>
 </head>
 
 <body>
     <?php
-    require_once "header_inc.php";
     require_once "verif_connection.inc.php";
+    require_once "../includes/consts.inc.php";
+
+    require_once HEADER;
 
     session_start();
 
@@ -56,7 +58,7 @@
     ?>
         <main>
             <h1>Cr&eacute;ation d'une offre</h1>
-            <form method="post" action="form_offre_handler.inc.php" enctype="multipart/form-data" id="creation_offre">
+            <form method="post" action="../includes/form_offre_handler.inc.php" enctype="multipart/form-data" id="creation_offre">
                 <div id="titre_cate">
                     <input type="text" id="titre" name="titre" placeholder="Titre *" required>
                     <?php if (est_prive($_SESSION['identifiant'])) { ?>
@@ -123,9 +125,9 @@
             </form>
         </main>
     <?php
-    } else echo "<script> location.href='./connection_pro-3.php'</script>";
+    } else echo "<script> window.location.href='./connection_pro.php'</script>";
     ?>
-    <?php require_once "./footer_inc.html"; ?>
+    <?php require_once FOOTER; ?>
 </body>
 
 </html>

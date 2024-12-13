@@ -1,6 +1,6 @@
 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
 
-<?php require_once "../includes/consts.inc.php"?>
+require_once "../includes/consts.inc.php";
 
 - Utiliser des const pour les files redirections (elle sont dans le consts.php (vous pouvez en rajouter si vous voulez))
 - 1 fichier pour creer / consulter / modifier compte (pas 2 comme on a (pour creation, juste avoir un boutton en haut pour choisir le type de compte (qui change le form en js)))

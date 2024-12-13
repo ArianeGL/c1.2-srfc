@@ -1,6 +1,7 @@
 <?php
+require_once "../includes/consts.inc.php";
 session_start();
-require_once 'db_connection.inc.php';
+require_once '../db_connection.inc.php';
 global $dbh;
 
 
@@ -61,9 +62,9 @@ if (isset($_POST['idoffre'])) {
         } catch (PDOException $e) {
             echo "<p>Erreur lors de la mise hors ligne de l'offre : " . $e->getMessage() . "</p>";
         }
-        header("Location: informations_offre-1.php?idoffre=". $idOffre);
+        header("Location: informations.php?idoffre=". $idOffre);
     } elseif (isset($_GET['action']) && $_GET['action'] === 'annuler') {
-        header("Location: informations_offre-1.php?idoffre=". $idOffre);
+        header("Location: informations.php?idoffre=". $idOffre);
         exit;
     }else{
         print_r("Erreur d'action");
@@ -76,22 +77,14 @@ if (isset($_POST['idoffre'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="styles/consultation.css">
+    <link rel="stylesheet" href="../styles/consultation.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <title>Confirmation de mise hors ligne</title>
 </head>
 
 <body>
-    <p id="red-text">Attention ! L’offre sera visible sur le site</p>
-    <p>Voulez vous vraiment mettre l’offre hors ligne ?</p>
+    <p id="red-text">Attention ! L'offre ne sera plus visible sur le site</p>
+    <p>Voulez vous vraiment mettre l'offre hors ligne ?</p>
 
     <form class="pop-up" method="POST" action="mettre_hors_ligne.php?idoffre=<?php echo $idOffre ?>">
         <input type="hidden" name="idoffre" value="<?php echo htmlspecialchars($idOffre); ?>">

@@ -1,21 +1,4 @@
-/* IF YOU NEED TO CHANGE SOMETHING FROM THE GIVEN CODE PLS ASK ME BEFORE */
-
-:root {
-    --red: #CC0000; /* Accent */
-    --light-blue: #E7FDFD; /* Accent Background */
-    --grey-blue: #9ABBDB; /* Extra */
-    --navy-blue: #254766; /* Buttons */
-    --light-grey: #8599AD; /* Main background */
-    --dark-grey: #52667A; /* Border Color */
-
-    --round-corners: 15px; /* USE THIS FOR ROUNDED CORNERS, PING ME IF YOU WANT TO HAVE AN OTHER ROUNDED CORNER */
-}
-
-body {
-    margin-top: 7%; /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */
-
-    display: flex;
-}
+@import "../includes/style.css";
 
 .smallButton{
     background-color: var(--navy-blue);

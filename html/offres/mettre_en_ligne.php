@@ -1,6 +1,9 @@
 <?php
+
+require_once "../includes/consts.inc.php";
+
 session_start();
-require_once 'db_connection.inc.php';
+require_once '../db_connection.inc.php';
 global $dbh;
 
 
@@ -44,11 +47,8 @@ if (isset($_POST['idoffre'])) {
 
     if ($_POST["action"] == "mettreEnLigne") {
         try {
-
-            //if ($count > 0) {
-                $sql = "UPDATE " . NOM_SCHEMA . "." . $categorie . " SET enligne = true WHERE idoffre = '". $idOffre ."';";
-                $stmt = $dbh->prepare($sql);
-            //}
+            $sql = "UPDATE " . NOM_SCHEMA . "." . $categorie . " SET enligne = true WHERE idoffre = '". $idOffre ."';";
+            $stmt = $dbh->prepare($sql);
 
             // Exécution de la requête avec le paramètre
             $success = $stmt->execute();
@@ -62,11 +62,13 @@ if (isset($_POST['idoffre'])) {
         } catch (PDOException $e) {
             echo "<p>Erreur lors de la mise en ligne de l'offre : " . $e->getMessage() . "</p>";
         }
-        header("Location: informations_offre-1.php?idoffre=". $idOffre);
-    } elseif (isset($_GET['action']) && $_GET['action'] === 'annuler') {
-        header("Location: informations_offre-1.php?idoffre=". $idOffre);
+        header("Location: informations.php?idoffre=". $idOffre);
+    } else 
+    if (isset($_GET['action']) && $_GET['action'] === 'annuler') {
+        header("Location: informations.php?idoffre=". $idOffre);
         exit;
-    }else{
+    } 
+    else {
         print_r("Erreur d'action");
     }
 }
@@ -77,22 +79,16 @@ if (isset($_POST['idoffre'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="styles/consultation.css">
+    <link rel="stylesheet" href="../styles/consultation.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     <title>Confirmation de mise en ligne</title>
 </head>
 
 <body>
-    <p id="red-text">Attention ! L’offre ne sera plus visible sur le site</p>
-    <p>Voulez vous vraiment mettre l’offre en ligne ?</p>
+    <?php require_once HEADER;?>
+
+    <p id="red-text">Attention ! L'offre sera visible sur le site</p>
+    <p>Voulez vous vraiment mettre l'offre en ligne ?</p>
 
     <form class="pop-up" method="POST" action="mettre_en_ligne.php?idoffre=<?php echo $idOffre ?>">
         <input type="hidden" name="idoffre" value="<?php echo htmlspecialchars($idOffre); ?>">

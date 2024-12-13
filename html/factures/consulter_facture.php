@@ -1,6 +1,8 @@
 <?php
 require_once("db_connection.inc.php");
 
+require_once "../includes/consts.inc.php";
+
 session_start();
 
 function generate_id()
@@ -93,7 +95,7 @@ if (isset($_GET['idoffre'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Facture - PACT</title>
 </head>
 <body>
     <?php
@@ -117,29 +119,29 @@ if (isset($_GET['idoffre'])) {
         $totalht=$facture["totalht"];
         $totalttc=$facture["totalttc"];
 
-        echo "idfacture : ".$idfacture;
+        echo "id facture : ".$idfacture;
         ?><br><?php
-        echo "datefacture : ".$datefacture;
+        echo "date facture : ".$datefacture;
         ?><br><?php
-        echo "idoffre : ".$idoffre;
+        echo "id offre : ".$idoffre;
         ?><br><?php
-        echo "moisprestation : ".$moisprestation;
+        echo "mois prestation : ".$moisprestation;
         ?><br><?php
-        echo "echeancereglement : ".$echeancereglement;
+        echo "echeance reglement : ".$echeancereglement;
         ?><br><?php
-        echo "nbjoursenligne : ".$nbjoursenligne;
+        echo "nb jours en ligne : ".$nbjoursenligne;
         ?><br><?php
-        echo "abonnementht : ".$abonnementht;
+        echo "abonnement ht : ".$abonnementht;
         ?><br><?php
-        echo "abonnementttc : ".$abonnementttc;
+        echo "abonnement ttc : ".$abonnementttc;
         ?><br><?php
-        echo "optionht : ".$optionht;
+        echo "option ht : ".$optionht;
         ?><br><?php
-        echo "optionttc : ".$optionttc;
+        echo "option ttc : ".$optionttc;
         ?><br><?php
-        echo "totalht : ".$totalht;
+        echo "total ht : ".$totalht;
         ?><br><?php
-        echo "totalttc : ".$totalttc;
+        echo "total ttc : ".$totalttc;
         ?><br><?php
         echo "abonnement : ".$abonnement;
         ?><br><?php

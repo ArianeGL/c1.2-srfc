@@ -121,5 +121,5 @@ function est_pro(): bool
         <?php } ?>
     </main>
 </body>
-<script src="..includes/main.js"></script>
+<script src="../includes/main.js"></script>
 </html>

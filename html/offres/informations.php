@@ -1,5 +1,6 @@
 <?php
-require_once("db_connection.inc.php");
+require_once("../db_connection.inc.php");
+require_once "../includes/consts.inc.php";
 
 session_start();
 
@@ -46,11 +47,11 @@ if (isset($_GET['idoffre'])) {
             <link rel="stylesheet" href="./styles/infos-offres.css">
             <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-            <script src="./main.js"></script>
+            <script src="../includes/main.js"></script>
         </head>
 
         <body>
-            <?php require_once 'header_inc.php';
+            <?php require_once HEADER;
             switch ($categorie) {
                 case "Activite":
                     $queryOffreCategorisee = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_ACTIVITE . " WHERE idoffre = :offerId";
@@ -133,7 +134,7 @@ if (isset($_GET['idoffre'])) {
     
                     break;
             }
-            require_once "./afficher_avis.inc.php";
+            require_once "../includes/afficher_avis.inc.php";
             ?>
             <?php
             if (can_post($offerId)) {
@@ -145,7 +146,7 @@ if (isset($_GET['idoffre'])) {
                 <?php afficher_liste_avis($offerId); ?>
             </div>
             </main>
-            <?php require_once 'footer_inc.html'; ?>
+            <?php require_once FOOTER; ?>
         </body>
 
         </html>

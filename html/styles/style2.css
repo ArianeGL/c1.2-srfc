@@ -1,3 +1,5 @@
+@import "../includes/style.css";
+
 /* Style de la popup (par défaut, elle est masquée) */
 .popup {
     display: none;

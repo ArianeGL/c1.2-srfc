@@ -1,9 +1,10 @@
 <?php
+require_once "../includes/consts.inc.php";
 session_start();
-require_once("db_connection.inc.php");
+require_once("../db_connection.inc.php");
 $idoffre = $_GET["idoffre"];
 global $dbh;
-const IMAGE_DIR = "images_importee/";
+const IMAGE_DIR = "../images_importee/";
 
 function get_categorie($id)
 {
@@ -465,20 +466,12 @@ if (offre_appartient($_SESSION['identifiant'])) {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="./styles/style_modifier_offre.css">
 
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
-
-            <title>PACT</title>
-            <script src="./image_preview.js"></script>
+            <title>Modifer votre offre - PACT</title>
+            <script src="../scripts/image_preview.js"></script>
         </head>
 
         <body>
-            <?php require_once 'header_inc.php'; ?>
+            <?php require_once HEADER; ?>
             <!-- Main content -->
             <main id="top">
                 <h1>Modifier une offre</h1>
@@ -585,10 +578,10 @@ if (offre_appartient($_SESSION['identifiant'])) {
                     </div>
                 </form>
             </main>
-            <?php require_once "footer_inc.html"; ?>
+            <?php require_once FOOTER; ?>
 
         </body>
-        <script src="main.js"></script>
+        <script src="../includes/main.js"></script>
 
         </html>
 <?php

@@ -203,5 +203,5 @@ try {
     <?php require_once FOOTER; ?>
 
 </body>
-<script src="main.js"></script>
+<script src="../includes/main.js"></script>
 </html>

@@ -1,3 +1,5 @@
+@import "../includes/style.css";
+
 #barre_recherche {
     display: flex;
     align-items: center;

@@ -1,21 +1,10 @@
-:root {
-    --red: #CC0000;
-    --red-hover: #890c0c;
-    --light-blue: #E7FDFD;
-    --grey-blue: #9ABBDB;
-    --navy-blue: #254766; 
-    --navy-blue-hover: #133147;
-    --light-grey: #8599AD;
-    --dark-grey: #52667A;
-    --white : #ffffff;
-    --black: black;
-    --round-corners: 15px;
-}
+@import "../includes/style.css";
 
 p {
     font-size: 40px;
     text-align: center;
 }
+
 #red-text{
     color:var(--red);
 }
