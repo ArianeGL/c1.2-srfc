@@ -1,4 +1,6 @@
 <?php
+require_once "../includes/consts.inc.php";
+
 session_start();
 include('../db_connection.inc.php');
 
