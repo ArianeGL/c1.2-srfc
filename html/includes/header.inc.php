@@ -56,7 +56,7 @@ function whereToGo(): string // retourne le nom du fichier à appeler pour les c
 <body>
     <header>
         <div id="homeButtonID" class="homeButton">
-            <img src="./IMAGES/LOGO-SRFC.png" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
+            <img src="../IMAGES/LOGO-SRFC.png" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
             <h2>PACT</h2>
             <p id="slogan" class="">Des avis qui comptent, des voyages qui marquent.</p>
         </div>
