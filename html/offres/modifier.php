@@ -6,7 +6,7 @@ $idoffre = $_GET["idoffre"];
 global $dbh;
 const IMAGE_DIR = "../images_importee/";
 
-function get_categorie($id)
+function get_categorie($id) // retourne la catégorie de l'offre
 {
     global $dbh;
 
@@ -32,7 +32,7 @@ function get_categorie($id)
     }
 }
 
-function get_tags_resto(): array
+function get_tags_resto(): array // requete des tags pour les factures
 {
     global $dbh;
     $tags = array();
@@ -43,7 +43,7 @@ function get_tags_resto(): array
     return $tags;
 }
 
-function depends_category($categorie, $id)
+function depends_category($categorie, $id) // affichage en fonction des catégories
 {
     global $dbh;
 
@@ -128,7 +128,7 @@ function update_depend_cate($categorie, $id)
 {
     global $dbh;
 
-    if ($categorie == VUE_ACTIVITE) {
+    if ($categorie == VUE_ACTIVITE) { // update en fonction de la catégorie
         $query = "UPDATE " . NOM_SCHEMA . "." . VUE_ACTIVITE . " SET agerequis = :age, dureeactivite = :duree WHERE idoffre = :id;";
         $stmt = $dbh->prepare($query);
         $age = $_POST['age'];
@@ -188,7 +188,7 @@ function update_depend_cate($categorie, $id)
     }
 }
 
-function upload_images_offre($url, $id)
+function upload_images_offre($url, $id) // insert les noms des images dans la bdd
 {
     global $dbh;
     $query = "INSERT INTO " . NOM_SCHEMA . "." . "_imageoffre(urlimage, idoffre) VALUES (:url, :id)";
@@ -222,9 +222,9 @@ function offre_appartient($compte): bool
     return $appartient;
 }
 
-if (offre_appartient($_SESSION['identifiant'])) {
-    if (isset($_POST["titre"])) {
-        try {
+if (offre_appartient($_SESSION['identifiant'])) { // l'offre appartient à la session
+    if (isset($_POST["titre"])) { // si on vient de remplir le formulaire
+        try { // prend toutes les images de l'offre
             $query_image = "SELECT urlimage FROM " . NOM_SCHEMA . "._offre
                     INNER JOIN _imageoffre ON _offre.idoffre = _imageoffre.idoffre
                     WHERE _offre.idoffre = '$idoffre'";
@@ -232,7 +232,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
             $stmt_image->execute();
             $url_image = $stmt_image->fetchall();
 
-            foreach ($url_image as $value) {
+            foreach ($url_image as $value) { // supprime les images où l'utilisateur à coché "oui"
                 if ($_POST["supprimer" . str_replace(".", "_", $value[0])] == "oui") {
                     $query_delete_image = "DELETE FROM " . NOM_SCHEMA . "._imageoffre
                 WHERE urlimage = :url ;";
@@ -241,22 +241,22 @@ if (offre_appartient($_SESSION['identifiant'])) {
                     $stmt_delete_image->execute();
                 }
             }
-
+            // genjutsu très puissant permettant de ranger les images dans un dossier au nom de l'offre
             $destUrl = IMAGE_DIR . $idoffre;
-            mkdir($destUrl, 0777, true);
+            mkdir($destUrl, 0777, true); // crée le dossier pour l'offre
             $files = $_FILES['images_offre'];
             $file_count = count($files['name']);
             for ($i = 0; $i < $file_count; $i++) {
                 $ext = explode('/', $files['type'][$i])[1];
-                $upload_name = explode('/', $files['tmp_name'][$i])[sizeof(explode('/', $files['tmp_name'][$i])) - 1];
+                $upload_name = explode('/', $files['tmp_name'][$i])[sizeof(explode('/', $files['tmp_name'][$i])) - 1]; //crée le nom de limage
                 $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
-                if (explode("/", $upload_url)[2] != ".") {
+                if (explode("/", $upload_url)[2] != ".") { // n'insert pas l'image nommée "." qui se crée à chaque fois
                     upload_images_offre($upload_url, $idoffre);
                     move_uploaded_file($files['tmp_name'][$i], $upload_url);
                 }
             }
 
-
+            // récupère les différents attibuts de l'offre dans des variables
             $string_tags = $_POST["tags"];
             $post_tags = explode(",", $string_tags);
 
@@ -272,30 +272,30 @@ if (offre_appartient($_SESSION['identifiant'])) {
             $post_datedebut = $_POST['datedebut'];
             $post_datefin = $_POST['datefin'];
 
-            if ($post_datedebut == "") {
+            if ($post_datedebut == "") { // si vide
                 $post_datedebut = NULL;
             }
 
-            if ($post_datefin == "") {
+            if ($post_datefin == "") { // si vide
                 $post_datefin = NULL;
             }
 
-            if (get_categorie($idoffre) == VUE_RESTO) {
-                $query_delete_tags = "DELETE FROM " . NOM_SCHEMA . "._tagpourrestauration
+            if (get_categorie($idoffre) == VUE_RESTO) { // différencie les tags de restauration des autres pour la suppression
+                $query_delete_tags = "DELETE FROM " . NOM_SCHEMA . ".NOM_TABLE_TAGSRE
                             WHERE idoffre = '" . $post_idoffre . "';";
                 $stmt_delete_tags = $dbh->prepare($query_delete_tags);
                 $stmt_delete_tags->execute();
             } else {
-                $query_delete_tags = "DELETE FROM " . NOM_SCHEMA . "._tagpouroffre
+                $query_delete_tags = "DELETE FROM " . NOM_SCHEMA . ".NOM_TABLE_TAG_POUR_OFFRE
                             WHERE idoffre = '" . $post_idoffre . "';";
                 $stmt_delete_tags = $dbh->prepare($query_delete_tags);
                 $stmt_delete_tags->execute();
             }
 
-            if (get_categorie($idoffre) == VUE_RESTO) {
+            if (get_categorie($idoffre) == VUE_RESTO) { // différencie les tags de restauration des autres pour l'insertion
                 foreach ($post_tags as $value) {
                     if (trim($value) != "") {
-                        $query_envoie_tags = "INSERT INTO " . NOM_SCHEMA . ".tagre (nomtag,idoffre)
+                        $query_envoie_tags = "INSERT INTO " . NOM_SCHEMA . ".VUE_TAG_RE (nomtag,idoffre)
                                 VALUES(:nomtag, :idoffre);";
                         $stmt_envoie_tags = $dbh->prepare($query_envoie_tags);
                         $stmt_envoie_tags->bindParam(':nomtag', $value);
@@ -322,7 +322,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
         //print_r($_POST["categorie"]."|");
 
         try {
-
+            // update de l'offre' 
             $query_envoie = "UPDATE " . NOM_SCHEMA . "." . get_categorie($idoffre) . "
                     SET nomoffre = :post_titre,
                         numadresse = :post_numadresse,
@@ -353,13 +353,13 @@ if (offre_appartient($_SESSION['identifiant'])) {
 
 
 
-        header('Status: 301 Moved Permanently', false, 301);
+        header('Status: 301 Moved Permanently', false, 301); // redirection automatique après avoir remplis le formulaire
         header('Location: informations_offre-1.php?idoffre=' . $post_idoffre);
         exit();
-    } else {
+    } else { // si on ne vient pas de remplir le formulaire
 
         try {
-
+            // requetes sql pour remplir les champs du formulaire
 
             $query_titre = "SELECT nomoffre FROM " . NOM_SCHEMA . "._offre
         WHERE idoffre = '$idoffre'";
@@ -374,7 +374,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
             $tags = $stmt_tags->fetchall();
 
             if ($tags == "") {
-                print_r("idoffre = $idoffre ;   pas de tags");
+                //print_r("idoffre = $idoffre ;   pas de tags");
             }
 
             $query_categorie = "SELECT categorie FROM " . NOM_SCHEMA . "._offre
