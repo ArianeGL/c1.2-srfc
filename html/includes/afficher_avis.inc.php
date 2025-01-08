@@ -1,7 +1,10 @@
 <?php
 require_once "db_connection.inc.php";
 
-
+/*
+ * prend en argument l'id d'une offre pour en afficher touts les avis
+ * recupere touts les avis de l'offre et les passe un par un en argument de afficher_avis(&avis)
+ */
 function afficher_liste_avis($id_offre)
 {
     global $dbh;
@@ -15,6 +18,10 @@ function afficher_liste_avis($id_offre)
     }
 }
 
+/*
+ * prend en argument un array contenant toutes les informations d'un avis
+ * affiche un div representant l'avis
+ */
 function afficher_avis($avis)
 {
     $date_visite = getdate(strtotime($avis['datevisite']));
@@ -37,8 +44,15 @@ function afficher_avis($avis)
 <?php
 }
 
-function get_jour($date): string
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant le nom du jour associé a la date en francais
+ * retourne false en cas d'erreur
+ */
+function get_jour($date): string | bool
 {
+    $ret = false;
+
     switch ($date['wday']) {
         case 0:
             $ret = "Dimanche";
@@ -66,6 +80,12 @@ function get_jour($date): string
     return $ret;
 }
 
+
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant le nom du jour associé a la date en francais
+ * retourne false en cas d'erreur
+ */
 function get_mois($date): string | bool
 {
     $ret = false;
@@ -112,6 +132,11 @@ function get_mois($date): string | bool
     return $ret;
 }
 
+
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant la date dans une phrase en francais
+ */
 function format_date($date): string
 {
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
