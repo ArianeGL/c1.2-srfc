@@ -34,7 +34,7 @@ function est_pro(): bool
 
 ?>
 
-<?php require_once "../includes/consts.php"?>
+<?php require_once "../includes/consts.inc.php"?>
 
 <!DOCTYPE html>
 <html lang="fr">

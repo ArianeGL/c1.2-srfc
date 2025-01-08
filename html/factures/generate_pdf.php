@@ -139,86 +139,96 @@ if (isset($_GET['idoffre'])) {
         $client = "" . $denomination . "\n" . $email . "\n" . $address_line1 . "\n" . $address_line2;
         $tva = "20%";
 
-        // Create PDF
-        $pdf = new FPDF();
+        // Données de facturation
+        $facture_numero = "20250108-001";
+        $date_emission = "2025-01-08";
+        $date_echeance = "2025-01-15";
+        $nom_plateforme = "Plateforme XYZ";
+        $adresse_plateforme = "123 Rue des Services, 75000 Paris";
+        $nom_professionnel = "Entreprise ABC";
+        $adresse_professionnel = "45 Avenue des Professionnels, 75001 Paris";
+        $designation_offre = "Abonnement Premium avec options";
+        $mois_concerne = "Janvier 2025";
+
+        // Détails des services souscrits
+        $abonnement_jours = 30;
+        $abonnement_tarif_ht = 3.34;
+        $option_a_la_une_semaines = 2;
+        $option_a_la_une_tarif_ht = 16.68;
+        $option_en_relief_semaines = 4;
+        $option_en_relief_tarif_ht = 8.34;
+
+        // Calculs
+        $abonnement_total_ht = $abonnement_jours * $abonnement_tarif_ht;
+        $abonnement_total_ttc = $abonnement_total_ht * 1.2;
+        $option_a_la_une_total_ht = $option_a_la_une_semaines * $option_a_la_une_tarif_ht;
+        $option_a_la_une_total_ttc = $option_a_la_une_total_ht * 1.2;
+        $option_en_relief_total_ht = $option_en_relief_semaines * $option_en_relief_tarif_ht;
+        $option_en_relief_total_ttc = $option_en_relief_total_ht * 1.2;
+
+        $total_ht = $abonnement_total_ht + $option_a_la_une_total_ht + $option_en_relief_total_ht;
+        $total_ttc = $total_ht * 1.2;
+
+        // Création du PDF
+        $pdf = new PDF();
         $pdf->AddPage();
-
-        // LOGO
-        // $pdf->Image($logo, 10, 10, 30); // (file, x, y, width)
-        $pdf->SetFont('Arial', 'B', 16);
-
-        // TITLE
-        $pdf->SetXY(50, 10);
-        $pdf->MultiCell(110, 10, $titre, 'C'); // Title in the center
-        $pdf->SetXY(160, 10);
         $pdf->SetFont('Arial', '', 12);
-        $pdf->Cell(30, 10, $datefacture, 0, 0, 'R'); // Date on the right
 
-        // PACT Details
-        $pdf->SetXY(10, 40);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->MultiCell(80, 5, $pact); // Multiline text
+        // Informations générales
+        $pdf->Cell(0, 10, "Numero de facture : $facture_numero", 0, 1);
+        $pdf->Cell(0, 10, "Date d'emission : $date_emission", 0, 1);
+        $pdf->Cell(0, 10, "Date d'echeance : $date_echeance", 0, 1);
+        $pdf->Ln(5);
 
-        // Customer Details
-        $pdf->SetXY(120, 40);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Multicell(80, 5, $client, 'L');
+        // Informations parties
+        $pdf->Cell(0, 10, "Emetteur : $nom_plateforme", 0, 1);
+        $pdf->MultiCell(0, 10, "Adresse : $adresse_plateforme", 0, 1);
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, "Client : $nom_professionnel", 0, 1);
+        $pdf->MultiCell(0, 10, "Adresse : $adresse_professionnel", 0, 1);
+        $pdf->Ln(10);
 
-        // FACTURE HEADER TABLE
-        $pdf->SetXY(10, 70);
+        // Designation de l'offre
+        $pdf->Cell(0, 10, "Designation de l'offre : $designation_offre", 0, 1);
+        $pdf->Cell(0, 10, "Mois concerne : $mois_concerne", 0, 1);
+        $pdf->Ln(10);
+
+        // Détails des services
         $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(50, 10, 'FACTURE', 1, 0, 'C');
-        $pdf->Cell(90, 10, 'NOMBRE DE JOURS EN LIGNE', 1, 0, 'C');
-        $pdf->Cell(50, 10, 'TOTAL TTC', 1, 1, 'C'); // Last cell moves to a new line
+        $pdf->Cell(100, 10, 'Service', 1);
+        $pdf->Cell(30, 10, 'Quantite', 1);
+        $pdf->Cell(30, 10, 'HT (\u20ac)', 1);
+        $pdf->Cell(30, 10, 'TTC (\u20ac)', 1);
+        $pdf->Ln();
 
-        // FACTURE DATA ROW
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(50, 10, $idfacture, 1, 0, 'C');
-        $pdf->Cell(90, 10, $nbjoursenligne, 1, 0, 'C');
-        $pdf->Cell(50, 10, $totalttc, 1, 1, 'C'); // Last cell moves to a new line
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(100, 10, 'Abonnement Premium', 1);
+        $pdf->Cell(30, 10, $abonnement_jours . ' jours', 1);
+        $pdf->Cell(30, 10, number_format($abonnement_total_ht, 2), 1);
+        $pdf->Cell(30, 10, number_format($abonnement_total_ttc, 2), 1);
+        $pdf->Ln();
 
-        // DETAILS HEADER
-        $pdf->Ln(10); // Line break
+        $pdf->Cell(100, 10, 'Option A la une', 1);
+        $pdf->Cell(30, 10, $option_a_la_une_semaines . ' semaines', 1);
+        $pdf->Cell(30, 10, number_format($option_a_la_une_total_ht, 2), 1);
+        $pdf->Cell(30, 10, number_format($option_a_la_une_total_ttc, 2), 1);
+        $pdf->Ln();
+
+        $pdf->Cell(100, 10, 'Option En relief', 1);
+        $pdf->Cell(30, 10, $option_en_relief_semaines . ' semaines', 1);
+        $pdf->Cell(30, 10, number_format($option_en_relief_total_ht, 2), 1);
+        $pdf->Cell(30, 10, number_format($option_en_relief_total_ttc, 2), 1);
+        $pdf->Ln();
+
+        // Totaux
         $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(0, 10, 'DETAILS', 0, 1, 'C');
+        $pdf->Cell(130, 10, 'Total', 1);
+        $pdf->Cell(30, 10, number_format($total_ht, 2), 1);
+        $pdf->Cell(30, 10, number_format($total_ttc, 2), 1);
+        $pdf->Ln(10);
 
-        // DETAILS TABLE
-        $pdf->SetFont('Arial', '', 10);
-
-        // First row
-        $pdf->Cell(90, 8, "Nombre de jours en ligne", 1);
-        $pdf->Cell(90, 8, $nbjoursenligne, 1, 1, 'C');
-
-        // Second row
-        $pdf->Cell(90, 8, "Abonnement HT", 1);
-        $pdf->Cell(90, 8, $abonnementht, 1, 1, 'C');
-
-        // Third row
-        $pdf->Cell(90, 8, "Abonnement TTC", 1);
-        $pdf->Cell(90, 8, $abonnementttc, 1, 1, 'C');
-
-        // Fourth row
-        $pdf->Cell(90, 8, "Option HT", 1);
-        $pdf->Cell(90, 8, $optionht, 1, 1, 'C');
-
-        // Fifth row
-        $pdf->Cell(90, 8, "Option TTC", 1);
-        $pdf->Cell(90, 8, $optionttc, 1, 1, 'C');
-
-        // Sixth row
-        $pdf->Cell(90, 8, "Total HT", 1);
-        $pdf->Cell(90, 8, $totalht, 1, 1, 'C');
-
-        // Seventh row
-        $pdf->Cell(90, 8, "TVA", 1);
-        $pdf->Cell(90, 8, $tva, 1, 1, 'C');
-
-        // Eighth row
-        $pdf->Cell(90, 8, "Total TTC", 1);
-        $pdf->Cell(90, 8, $totalttc, 1, 1, 'C');
-
-        // Output the PDF
-        $pdf->Output('D', 'facture.pdf');
+        // Sortie du PDF
+        $pdf->Output('I', 'facture.pdf');
     }
     echo "<script>window.location.href = 'consulter_facture.php?idoffre=$idoffre';</script>";
 ?>
