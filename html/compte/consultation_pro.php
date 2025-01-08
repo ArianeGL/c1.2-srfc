@@ -73,7 +73,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
                 $image = $compte['urlimage'];
             } else { ?> 
                 <script>
-                    window.location = <?php echo LSITE_OFFRES ?>;
+                    window.location = <?php echo LISTE_OFFRES ?>;
                 </script>
             <?php } ?>
 
