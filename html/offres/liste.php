@@ -41,7 +41,7 @@ try {
 	<script src="../scripts/recherche.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
-            window.location.href = 'informations.php?idoffre=${idoffre}';
+            window.location.href = `informations.php?idoffre=${idoffre}`;
         }
 
         alert(articles[0].firstElementChild.children[1].innerHTML);
@@ -95,9 +95,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                     SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre 
                     NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel 
                     INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre' . '
-                    LEFT JOIN ' . NOM_SCHEMA . '.option 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre';
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
 
                     if (isset($_GET['categorie'])) {
                         if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
@@ -247,7 +245,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
 <div class="tri">
 
                 <select id="SelectionTri" onchange="triOffre()" >
-                    <option value="" disabled selected>TRIS</option>
+                    <option value="" disabled selected>Tris</option>
                     <option value="noteCroissante">Note (↑)</option>
                     <option value="noteDecroissante">Note (↓)</option>
                 </select>
@@ -284,49 +282,49 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                 } catch (PDOException $e) {
                     die("SQL Query failed : " . $e->getMessage());
                 }
-		 */
-		$idoffre = $offre['idoffre'];
+                */
                 $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
                 $sth = $dbh->prepare($query);
                 $sth->bindParam(':idoffre', $offre['idoffre']);
                 $sth->execute();
-		$result = $sth->fetchColumn();
+		        $result = $sth->fetchColumn();
 
                 if ($result != 0) {
-            ?>
+                    ?>
                     <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
                     <?php
-		} else {
-?>
-                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $idoffre; ?>')">
-                        <?php
-                    } ?>
-                        <div>
-                            <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
-                            <section class="art-header">
-                                <h3><?php echo $offre['categorie']; ?></h3>
-                                <div>
-                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                                </div>
-                                <p><?php echo $offre['prixmin']; ?> &#8364;</p>
-                            </section>
-                        </div>
-                        <div>
-                            <!-- <?php echo $offre['urlimage']; ?> -->
-                            <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
-
-                            <h4><?php echo $offre['villeoffre']; ?></h4>
-
-                            <div class="fade-out-container">
-                                <p><?php echo $offre['resume']; ?></p>
-                            </div>
-
-                            <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
-                        </div>
-                        </article>
-                    <?php
-                }
+		        } else {
                     ?>
+                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <?php
+                } 
+                ?>
+                    <div>
+                        <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
+                        <section class="art-header">
+                            <h3><?php echo $offre['categorie']; ?></h3>
+                            <div>
+                                <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
+                            </div>
+                            <p><?php echo $offre['prixmin']; ?> &#8364;</p>
+                        </section>
+                    </div>
+                    <div>
+                            <!-- <?php echo $offre['urlimage']; ?> -->
+                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+
+                        <h4><?php echo $offre['villeoffre']; ?></h4>
+
+                        <div class="fade-out-container">
+                            <p><?php echo $offre['resume']; ?></p>
+                        </div>
+                        
+                        <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
+                    </div>
+                </article>
+            <?php
+            }
+            ?>
         </section>
 
     </main>
