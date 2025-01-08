@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 function debug_to_console($data)
 {
