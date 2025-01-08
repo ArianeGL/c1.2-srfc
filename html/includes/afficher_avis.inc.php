@@ -1,5 +1,6 @@
 <?php
 require_once "db_connection.inc.php";
+require_once "offre_apartient.php";
 
 /*
  * prend en argument l'id d'une offre pour en afficher touts les avis
@@ -24,7 +25,9 @@ function afficher_liste_avis($id_offre)
  */
 function afficher_avis($avis)
 {
+    global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
+    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
 ?>
     <div class="avis">
         <div class="avis-header">
@@ -37,11 +40,44 @@ function afficher_avis($avis)
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
         </div>
+        
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
         <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+        
+        <?php if (!empty($reponses)): ?>
+            <div class="reponsess">Réponses :<?php foreach ($reponses as $reponse): ?>
+                    <div class="reponse">
+                        <p><?php echo $reponse['reponse']; ?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($appartient && !reponse_existe($avis['idavis'])): ?>
+            <?php afficher_form_reponse($avis['idavis']); ?>
+        <?php endif; ?>
     </div>
 <?php
+}
+
+// Permet de savoir si une réponse existe pour un avis donné
+function reponse_existe($idAvis)
+{
+    global $dbh;
+
+    try {
+        $query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "._reponse WHERE idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(':idavis', $idAvis);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+        // Retourne true si une réponse existe, sinon false
+        return $count > 0; 
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la vérification de l'existence d'une réponse : " . $e->getMessage());
+        return false; 
+    }
 }
 
 /*
