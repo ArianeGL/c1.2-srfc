@@ -97,12 +97,12 @@ function est_pro(): bool
                 $_SESSION["identifiant"] = $identifiant;
                 $_SESSION["mdp"] = $mdp;
 
-                echo '<script>window.location.href =' . LISTE_OFFRES . ' ;</script>';
+                echo '<script>window.location.href ="' . LISTE_OFFRES . '" ;</script>';
             }
         }
 
         if (isset($_SESSION["identifiant"])) {
-            echo '<script>window.location.href =' . LISTE_OFFRES . ' ;</script>';
+            echo '<script>window.location.href ="' . LISTE_OFFRES . '" ;</script>';
         } else if ($attempt == 0) { ?>
             <form action=<?php echo CONNECTION_COMPTE; ?> method="post" enctype="multipart/form-data">
                     <label>Identifiant</label>
