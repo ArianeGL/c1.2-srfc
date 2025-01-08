@@ -30,6 +30,11 @@
 
     session_start();
 
+    /*
+     * prend en parametre 'email d'un compte
+     * retourne true si le compte est privé
+     * retourne false sinon
+     */
     function est_prive($email)
     {
         $ret = false;
@@ -43,6 +48,7 @@
         return $ret;
     }
 
+    // retourne dans un array touts les tags de restauration possbiles
     function get_tags_resto(): array
     {
         global $dbh;
@@ -77,6 +83,8 @@
                     <option value="parc_attractions">Parc d'attractions</option>
                     <option value="spectacle">Spectacle</option>
                 </select>
+
+                <!-- div contiendra les champs de formulaire qui dependent de la categorie selectionné au dessus-->
                 <div id="depends_select"></div>
 
                 <div id="addresse">
