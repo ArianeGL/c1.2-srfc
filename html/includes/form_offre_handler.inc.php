@@ -9,6 +9,7 @@ const IMAGE_DIR = "./images_importees/";
 const DAY_TO_SEC = 86400;
 const NB_SEM_OPTION = 4;
 
+// exception personnalisé utilisé si une autre fonction ne peut fonctionner correctement
 class FunctionException extends Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
@@ -17,6 +18,10 @@ class FunctionException extends Exception
     }
 }
 
+/*
+ * retourne l'id du compte connecté
+ * envoie une PDOException en cas d'erreur
+ */
 function get_account_id()
 {
     global $dbh;
@@ -32,7 +37,8 @@ function get_account_id()
 }
 
 /**
- * @throws FunctionException
+ * genere l'id d'une nouvelle offre pour la base de donnée
+ * envoie une FunctionException en cas d'erreur
  */
 function generate_id()
 {
@@ -46,6 +52,7 @@ function generate_id()
     }
     $count++;
 
+    // compte le nombre de chiffre dans le numero de l'id pour y ajouter le nombre de 0 necessaire au debut de l'id
     switch (strlen((string)$count)) {
         case 1:
             return $id_base . "000" . strval($count);
@@ -64,6 +71,10 @@ function generate_id()
     }
 }
 
+/*
+ * prend en parametre l'id de l'offre a upload
+ * recupere le fichier de la carte du restaurant et l'ajoute dans le dossier créé pour l'offre
+ */
 function upload_carte($id)
 {
     //preparer le dossier d'upload de l'image
@@ -76,10 +87,15 @@ function upload_carte($id)
     $upload_name = explode('/', $file['tmp_name'])[2];
     $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
 
+    //upload le fichier
     move_uploaded_file($file['tmp_name'], $upload_url);
     return $upload_url;
 }
 
+/*
+ * prend en parametre l'id de l'offre a upload
+ * recupere le fichier du plan du parc d'attraction et l'ajoute dans le dossier créé pour l'offre
+ */
 function upload_plan($id)
 {
     //preparer le dossier d'upload de l'image
@@ -92,10 +108,15 @@ function upload_plan($id)
     $upload_name = explode('/', $file['tmp_name'])[2];
     $upload_url = $destUrl . "/" . $upload_name . '.' . $ext;
 
+    //upload le fichier
     move_uploaded_file($file['tmp_name'], $upload_url);
     return $upload_url;
 }
 
+/*
+ * prend en parametre l'url de l'image et l'id de l'offre associé
+ * ajoute cet url dans la table imageoffre de la bdd
+ */ 
 function upload_images_offre($url, $id)
 {
     global $dbh;
@@ -108,6 +129,10 @@ function upload_images_offre($url, $id)
     $stmt->execute();
 }
 
+/*
+ * prend en parametre un PDOStatement preparé
+ * bind en parametre le type de l'offre (premium, standard ou gratuit)
+ */
 function bind_type_offre($stmt)
 {
     try {
@@ -128,6 +153,10 @@ function bind_type_offre($stmt)
     }
 }
 
+/* 
+ * prend en parametre l'id de l'offre uploadé
+ * ajoute l'option selectionné pour l'offre dans la vue correspondante dans la bdd
+ */
 function bind_option($id)
 {
     if (isset($_POST['opt'])) {
@@ -145,9 +174,10 @@ function bind_option($id)
                     $option = "A la une";
                     break;
                 default:
-                    $stmt = null;
+                    $stmt = null; //annule le statement si il n'y a pas d'options ou si elle est invalide
             }
 
+            //ne continue que si l'option est valide
             if ($stmt != null) {
                 $stmt->bindParam(":option", $option);
                 $today = getdate();
@@ -166,6 +196,10 @@ function bind_option($id)
     }
 }
 
+/*
+ * prend en parametre une string representant un tag
+ * return true si le tag existe deja dans la base, false sinon
+ */
 function tag_exists($tag): bool
 {
     global $dbh;
@@ -178,6 +212,10 @@ function tag_exists($tag): bool
     return $exists;
 }
 
+/*
+ * prend en parametre un array de string contenant des tags et l'id de l'offre
+ * ajouter dans la table des tags de chaque tags et l'offre qui lui est associé
+ */
 function add_tags($tags, $id)
 {
     if ($tags != null) {
@@ -196,6 +234,9 @@ function add_tags($tags, $id)
     }
 }
 
+/*
+ * prend en parametre l'id du restaurant et le tag de restauration
+ */
 function tag_resto($id, $tag)
 {
     global $dbh;
