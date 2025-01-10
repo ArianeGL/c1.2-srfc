@@ -100,8 +100,8 @@ function afficher_form_reponse($idAvis)
         $reponse = trim($_POST['reponse']);
         $idCompte = get_account_id();
 
-        // Insère la réponse dans la table _reponse
-        $queryInsert = 'INSERT INTO ' . NOM_SCHEMA . '._reponse (idrep, idcompte, idavis, reponse) VALUES (:idrep, :idcompte, :idavis, :reponse);';
+        // Insère la réponse dans la table
+        $queryInsert = 'INSERT INTO ' . NOM_SCHEMA . '.reponse (idrep, idcompte, idavis, reponse) VALUES (:idrep, :idcompte, :idavis, :reponse);';
         $sth = $dbh->prepare($queryInsert);
         $sth->bindParam(':idrep', $idRep);
         $sth->bindParam(':idcompte', $idCompte);
