@@ -1,6 +1,6 @@
 <?php
-require_once("../includes/fpdf.php");
-require_once("db_connection.inc.php");
+require_once("../includes/fpdf/fpdf.php");
+require_once("../db_connection.inc.php");
 
 session_start();
 
@@ -139,6 +139,44 @@ if (isset($_GET['idoffre'])) {
         $client = "" . $denomination . "\n" . $email . "\n" . $address_line1 . "\n" . $address_line2;
         $tva = "20%";
 
+        class PDF extends FPDF {
+            function Header() {
+                $this->SetFont('Arial', 'B', 12);
+                $this->Cell(0, 10, 'Facture', 0, 1, 'C');
+                $this->Ln(10);
+            }
+
+            function Footer() {
+                $this->SetY(-15);
+                $this->SetFont('Arial', 'I', 8);
+                $this->Cell(0, 10, 'Page ' . $this->PageNo(), 0, 0, 'C');
+            }
+
+            function AddMonthTable($month, $year, $start_date, $end_date) {
+                $this->SetFont('Arial', '', 10);
+                $this->Ln(10);
+                $this->Cell(0, 10, "Calendrier des jours en ligne pour $month/$year", 0, 1, 'C');
+                
+                $this->SetFont('Arial', '', 8);
+                $this->Cell(10, 7, 'Jour', 1, 0, 'C');
+                $this->Cell(50, 7, 'Statut', 1, 1, 'C');
+
+                $days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+                $start_timestamp = strtotime($start_date);
+                $end_timestamp = strtotime($end_date);
+
+                for ($day = 1; $day <= $days_in_month; $day++) {
+                    $current_date = strtotime("$year-$month-$day");
+                    $status = ($current_date >= $start_timestamp && $current_date <= $end_timestamp) ? 'En ligne' : 'Hors ligne';
+                    $color = ($status == 'En ligne') ? [0, 255, 0] : [255, 0, 0];
+
+                    $this->SetFillColor($color[0], $color[1], $color[2]);
+                    $this->Cell(10, 7, $day, 1, 0, 'C', true);
+                    $this->Cell(50, 7, $status, 1, 1, 'C', true);
+                }
+            }
+        }
+
         // Données de facturation
         $facture_numero = "20250108-001";
         $date_emission = "2025-01-08";
@@ -168,6 +206,12 @@ if (isset($_GET['idoffre'])) {
 
         $total_ht = $abonnement_total_ht + $option_a_la_une_total_ht + $option_en_relief_total_ht;
         $total_ttc = $total_ht * 1.2;
+
+        // Définir la période d'activité
+        $start_date = "2025-01-05";
+        $end_date = "2025-01-20";
+        $month = 1; // Janvier
+        $year = 2025;
 
         // Création du PDF
         $pdf = new PDF();
@@ -226,6 +270,9 @@ if (isset($_GET['idoffre'])) {
         $pdf->Cell(30, 10, number_format($total_ht, 2), 1);
         $pdf->Cell(30, 10, number_format($total_ttc, 2), 1);
         $pdf->Ln(10);
+
+        // Ajout du tableau des jours du mois
+        $pdf->AddMonthTable($month, $year, $start_date, $end_date);
 
         // Sortie du PDF
         $pdf->Output('I', 'facture.pdf');
