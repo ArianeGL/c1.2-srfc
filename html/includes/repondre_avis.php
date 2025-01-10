@@ -17,7 +17,7 @@ function generate_reponse_id()
 {
     global $dbh;
     $id_base = "Re-"; 
-    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "._reponse;"; 
+    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . ".reponse;"; 
     try {
         $count = $dbh->query($count_query)->fetchColumn(); 
     } catch (PDOException $e) {
