@@ -1,0 +1,10 @@
+@import "../includes/style.css";
+
+section {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--grey-blue);
+    padding: 20px;
+    margin: 20px;
+    border-radius: var(--round-corners);
+}
