@@ -1,10 +1,18 @@
 @import "../includes/style.css";
 
-section {
+h1{
+    text-align: center;
+}
+
+.liste{
     display: flex;
-    flex-direction: column;
-    background-color: var(--grey-blue);
-    padding: 20px;
-    margin: 20px;
-    border-radius: var(--round-corners);
+    justify-content: space-between;
+    width: 100%;
+    
+}
+
+.facture{
+    width: 45%;
+    background-color: #EEE;
+    padding-left: 1em;
 }

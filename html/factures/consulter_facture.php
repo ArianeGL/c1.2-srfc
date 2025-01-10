@@ -1,5 +1,5 @@
 <?php
-require_once("db_connection.inc.php");
+require_once("../db_connection.inc.php");
 
 require_once "../includes/consts.inc.php";
 
@@ -71,9 +71,9 @@ if (isset($_GET['idoffre'])) {
                 $sthFacture->execute();
                 $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
                 if($facture){  
-                    $idfacture=$facture["idfacture"];
+                    $idfacture=$GET["idfacture"];
                 }else{
-                    $idfacture=generate_id();
+                    $idfacture=$_GET["idfacture"];
                     $queryFacture = 'INSERT INTO ' . NOM_SCHEMA . '.'.VUE_FACTURE.' (idoffre,idfacture) 
                     VALUES(:idoffre,:idfacture)';
                     $sthFacture = $dbh->prepare($queryFacture);
@@ -106,7 +106,7 @@ if (isset($_GET['idoffre'])) {
     $sthFacture->execute();
     $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
     if($facture){  
-        $idfacture=$facture["idfacture"];
+        $idfacture=$_GET["idfacture"];
         $datefacture=$facture["datefacture"];
         $idoffre=$facture["idoffre"];
         $moisprestation=$facture["moisprestation"];
