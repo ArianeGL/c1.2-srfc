@@ -365,11 +365,15 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
     spectacle.addEventListener("click", categorie_filter);
     restauration.addEventListener("click", categorie_filter);
 
+    // fonction appliquer filtres en listener à tout evenement
+    // fonction par type de filtre pour verifier qu'ils sont actifs
+    // fonction qui applique la classe hidden aux articles filtre par filtre
+
     function categorie_filter() {
         // get changed element
         // refresh and apply change: load(url)
         // get current url: window.location.href
-
+        /*
         let cible = 'categorie';
 
         let url = new URL(window.location.href);
@@ -399,6 +403,33 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
         }
 
         window.location.href = url.toString();
+        */
+        
+        let all_checked = (spectacle.checked) && (parc_attraction.checked) && (visite.checked) && (activite.checked) && (restauration.checked);
+        let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
+
+        if (all_checked || none_checked) {
+            filtre_categorie = false;
+        } else {
+            filtre_categorie = true;
+            let categorie_query = "";
+
+            if ((activite.checked)) {
+                categorie_query += "a";
+            }
+            if ((visite.checked)) {
+                categorie_query += "v";
+            }
+            if ((parc_attraction.checked)) {
+                categorie_query += "p";
+            }
+            if ((spectacle.checked)) {
+                categorie_query += "s";
+            }
+            if ((restauration.checked)) {
+                categorie_query += "r";
+            }
+        }
     }
 </script>
 
