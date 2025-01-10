@@ -64,7 +64,7 @@ if (isset($_GET['idoffre'])) {
                     $duration = $offreCategorisee['dureeactivite'];
 
                     require_once './pages-info-offres/activite.php';
-                    require_once '../includes/crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
