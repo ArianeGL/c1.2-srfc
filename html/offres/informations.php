@@ -99,7 +99,7 @@ if (isset($_GET['idoffre'])) {
                     $isGuided = $offreCategorisee['estguidee'];
 
                     require_once './pages-info-offres/visite.php';
-                    require_once '../includes/crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
@@ -115,7 +115,7 @@ if (isset($_GET['idoffre'])) {
                     $ageRequierement = $offreCategorisee['ageminparc'];
 
                     require_once './pages-info-offres/parc-attraction.php';
-                    require_once '../includes/crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
@@ -130,7 +130,7 @@ if (isset($_GET['idoffre'])) {
                     $nbSeats = $offreCategorisee['placesspectacle'];
     
                     require_once './pages-info-offres/spectacle.php';
-                    require_once '../includes/crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
     
                     break;
             }
