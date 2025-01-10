@@ -25,6 +25,7 @@ const VUE_OPTION = "option";
 const VUE_FACTURE = "facture";
 const VUE_AVIS = "avis";
 const VUE_AVIS_RESTAURATION = "avisre";
+const VUE_REPONSE = "reponse";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";

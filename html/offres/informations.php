@@ -134,6 +134,7 @@ if (isset($_GET['idoffre'])) {
     
                     break;
             }
+            require_once "../includes/offre_appartient.php";
             require_once "../includes/afficher_avis.inc.php";
             ?>
             <?php

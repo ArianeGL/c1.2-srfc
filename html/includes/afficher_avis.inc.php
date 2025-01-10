@@ -1,6 +1,6 @@
 <?php
 require_once "../db_connection.inc.php";
-require_once "offre_apartient.php";
+require_once "../includes/repondre_avis.php";
 
 /*
  * prend en argument l'id d'une offre pour en afficher touts les avis

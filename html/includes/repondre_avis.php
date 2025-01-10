@@ -1,9 +1,10 @@
 <link rel="stylesheet" href="./styles/crea_rep.css">
 <?php
 
-require_once "db_connection.inc.php";
-require_once "offre_apartient.php";
+require_once "../db_connection.inc.php";
+require_once "offre_appartient.php";
 
+/*
 class FunctionException extends Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
@@ -11,6 +12,7 @@ class FunctionException extends Exception
         parent::__construct($message, $code, $previous);
     }
 }
+    */
 
 // Fonction pour générer un ID unique pour la réponse
 function generate_reponse_id()
@@ -44,7 +46,7 @@ function generate_reponse_id()
     }
 }
 
-
+/*
 function get_account_id()
 {
     global $dbh;
@@ -58,6 +60,7 @@ function get_account_id()
 
     return $id['idcompte'];
 }
+    */
 
 
 function can_repondre($idAvis)
