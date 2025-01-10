@@ -45,12 +45,10 @@ function afficher_avis($avis)
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
         <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
         
-        <?php if (!empty($reponses)): ?>
-            <div class="reponsess">Réponses :<?php foreach ($reponses as $reponse): ?>
-                    <div class="reponse">
-                        <p><?php echo $reponse['reponse']; ?></p>
-                    </div>
-                <?php endforeach; ?>
+        <?php if ($avis['reponse']): ?>
+            <div class="reponse">
+                <h3>Réponse :</h3>
+                <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
             </div>
         <?php endif; ?>
 
@@ -177,3 +175,5 @@ function format_date($date): string
 {
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
 }
+
+
