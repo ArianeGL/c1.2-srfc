@@ -1,5 +1,5 @@
 <?php
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 /*
  * prend en argument l'id d'une offre pour en afficher touts les avis

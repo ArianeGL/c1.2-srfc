@@ -1,4 +1,7 @@
 @import "../includes/style.css";
+:root {
+    --red-hover: #890C0C;
+}
 
 p {
     font-size: 40px;
@@ -112,7 +115,7 @@ a {
     border-radius: var(--round-corners);
     cursor: pointer;
     margin-bottom: 10px;
-    color: var(--white);
+    color: white;
 }
 
 .pop-up{
@@ -134,7 +137,7 @@ a {
 }
 
 #bouton-modifier:hover {
-    background-color: var(--navy-blue-hover);
+    background-color: var(--grey-blue);
 }
 
 #bouton-supprimer {
