@@ -1,5 +1,5 @@
 <?php
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 
 function valid_account()

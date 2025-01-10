@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../db_connection.inc.php";
+require_once "../includes/consts.inc.php";
 global $dbh;
 
 require_once "../includes/verif_connection.inc.php";
@@ -80,7 +81,7 @@ if (!est_membre($email)) {?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="./styles/consultation.css">
+    <link rel="stylesheet" href="../styles/consultation.css">
 
     <title>Mon Compte - PACT</title>
 </head>
