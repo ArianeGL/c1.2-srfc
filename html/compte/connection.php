@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../db_connection.inc.php";
+require_once "../includes/consts.inc.php";
 
 function debug_to_console($data)
 {
@@ -110,7 +111,7 @@ function est_pro(): bool
                     <br>
                     <label>Mot de passe</label>
                     <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required>
-                    <a href="inscription_pro-1.php">Mot de passe oubli&eacute; ?</a>
+                    <a href="inscription_pro.php">Mot de passe oubli&eacute; ?</a>
                     <br>
                     <input class="smallButton" type="submit" value="Se connecter" name="connexion">
                     <div>

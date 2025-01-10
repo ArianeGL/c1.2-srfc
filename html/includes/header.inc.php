@@ -63,7 +63,7 @@ function whereToGo(): string // retourne le nom du fichier à appeler pour les c
         <div>
             <div class="container">
                 <button onclick="window.location.href='../offres/liste.php'" class="buttons header-button1">
-                    <h4><?php if (est_pro()){echo "Mes";}?>Offres</h4>
+                    <h4><?php if (est_pro()){echo "Mes ";}?>Offres</h4>
                 </button>
 
                 <?php if (est_pro()) { ?>
