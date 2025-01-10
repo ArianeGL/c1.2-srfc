@@ -95,7 +95,9 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                     SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre 
                     NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel 
                     INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre';
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre
+                    INNER JOIN ' . NOM_SCHEMA . '.option 
+                    ON ' . NOM_SCHEMA . '._offre.idoffre = sae.option.idoffre';
 
                     if (isset($_GET['categorie'])) {
                         if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
@@ -267,7 +269,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                 if (!isset($_GET['categorie'])) {
                     $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                     $query1 = $query1 . $filtre_cat;
-                    $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
+                    $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN ".NOM_SCHEMA.".option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                 }
             }
 
