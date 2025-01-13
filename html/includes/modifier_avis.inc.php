@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../styles/modifier_avis.css">
 <?php
 require_once "../db_connection.inc.php";
 require_once "../includes/consts.inc.php";

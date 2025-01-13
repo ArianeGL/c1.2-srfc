@@ -1,6 +1,7 @@
 function modifier_avis(button, idavis, idoffre) {
 	let avis = button.parentNode;
 	let form = create_update_form(avis, idavis, idoffre);
+	form.setAttribute("id", "edit-form");
 
 	avis.removeChild(avis.querySelector(".avis-header"));
 	avis.removeChild(avis.querySelector(".commentaire"));
@@ -20,10 +21,16 @@ function create_update_form(avis, idavis, idoffre) {
 	form.setAttribute("enctype", "multipart/form-date");
 	form.setAttribute("action", "../includes/modifier_avis.inc.php");
 
-	append_new_note(form, oldNote);
-	append_new_title(form, oldTitle);
-	append_new_context(form, avis);
-	append_new_comment(form, oldComment);
+	let header = document.createElement("div");
+	header.setAttribute("class", "edit-header");
+	append_new_note(header, oldNote);
+	append_new_title(header, oldTitle);
+	append_new_context(header, avis);
+	let footer = document.createElement("div");
+	footer.setAttribute("class", "edit-footer");
+	append_new_comment(footer, oldComment);
+	form.appendChild(header);
+	form.appendChild(footer);
 
 	let idAvisPost = document.createElement("input");
 	idAvisPost.setAttribute("type", "text");
@@ -44,13 +51,16 @@ function create_update_form(avis, idavis, idoffre) {
 	let submit = document.createElement("input");
 	submit.setAttribute("type", "submit");
 	submit.setAttribute("value", "Valider");
+	submit.setAttribute("class", "smallButton");
 	form.appendChild(submit);
 
 	return form;
 }
 
-function append_new_note(form, oldNote) {
+function append_new_note(div, oldNote) {
 	let noteInput = document.createElement("input");
+	noteInput.setAttribute("class", "input-edit note")
+	noteInput.setAttribute("id", "note")
 	noteInput.setAttribute("type", "number");
 	noteInput.setAttribute("name", "note");
 	noteInput.setAttribute("min", "1");
@@ -58,22 +68,25 @@ function append_new_note(form, oldNote) {
 	noteInput.setAttribute("value", oldNote);
 	noteInput.setAttribute("placeholder", "Note");
 	noteInput.setAttribute("required", "");
-	form.appendChild(noteInput);
+	div.appendChild(noteInput);
 }
 
-function append_new_title(form, oldTitle) {
+function append_new_title(div, oldTitle) {
 	let titreInput = document.createElement("input");
+	titreInput.setAttribute("class", "input-edit titre")
+	titreInput.setAttribute("id", "titre")
 	titreInput.setAttribute("type", "text");
 	titreInput.setAttribute("name", "titre");
 	titreInput.setAttribute("placeholder", "Titre");
 	titreInput.setAttribute("value", oldTitle);
 	titreInput.setAttribute("required", "");
-	form.appendChild(titreInput);
+	div.appendChild(titreInput);
 }
 
-function append_new_context(form, avis) {
+function append_new_context(div, avis) {
 	let contextSelect = document.createElement("select");
 	contextSelect.setAttribute("required", "");
+	contextSelect.setAttribute("id", "contexte");
 	contextSelect.setAttribute("name", "contexte");
 
 	let optSeul = document.createElement("option");
@@ -108,14 +121,14 @@ function append_new_context(form, avis) {
 	contextSelect.appendChild(optAmis);
 	contextSelect.appendChild(optAmoureux);
 
-	form.appendChild(contextSelect);
+	div.appendChild(contextSelect);
 }
 
-function append_new_comment(form, oldComment) {
+function append_new_comment(div, oldComment) {
 	let comment = document.createElement("textarea");
 	comment.setAttribute("required", "");
 	comment.setAttribute("name", "commentaire");
 	comment.setAttribute("placeholder", "Renseigner un commentaire");
 	comment.innerHTML = oldComment;
-	form.appendChild(comment);
+	div.appendChild(comment);
 }
