@@ -4,6 +4,8 @@ function modifier_avis(button, idavis, idoffre) {
 
 	avis.removeChild(avis.querySelector(".avis-header"));
 	avis.removeChild(avis.querySelector(".commentaire"));
+	avis.removeChild(avis.querySelector("#pouceHaut"));
+	avis.removeChild(avis.querySelector("#pouceBas"));
 	avis.appendChild(form);
 	button.style.display = "none";
 }
