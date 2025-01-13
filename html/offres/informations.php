@@ -84,7 +84,7 @@ if (isset($_GET['idoffre'])) {
                     $brunch = $offreCategorisee['brunch'];
 
                     require_once './pages-info-offres/restauration.php';
-                    require_once './crea_avis_re.php';
+                    require_once '../includes/crea_avis_re.php';
 
                     break;
 

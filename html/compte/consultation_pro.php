@@ -4,7 +4,6 @@ require_once "../db_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 global $dbh;
-
 require_once "../includes/verif_connection.inc.php";
 
 function est_membre($email) {
@@ -74,7 +73,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
                 $image = $compte['urlimage'];
             } else { ?> 
                 <script>
-                    window.location = <?php echo LSITE_OFFRES ?>;
+                    window.location = <?php echo LISTE_OFFRES ?>;
                 </script>
             <?php } ?>
 
@@ -85,7 +84,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="./styles/consultation.css">
+    <link rel="stylesheet" href="../styles/consultation.css">
 
     <title>Mon Compte - PACT</title>
 </head>
