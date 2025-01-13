@@ -3,6 +3,8 @@ require_once("../db_connection.inc.php");
 session_start();
 $idoffre = $_GET["idoffre"];
 
+global $idoffre;
+
 /**prend en paramètre la session 
  * renvoie un booléen : vrai si l'offre appartient à la session, false sinon
  */
@@ -58,6 +60,27 @@ function getNomDuMois($numero_du_mois) {
             return "Numéro de mois invalide"; // Gestion des cas hors 1-12
     }
 }    
+/*
+    prend en paramètre l'id d'une facture
+    retourne l'année du mois de la facture
+*/
+function getAnnee($idfacture){
+    global $dbh;
+    
+    try{
+    $query_annee = "SELECT extract(YEAR FROM datefacture - 31) FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
+                        WHERE idfacture = 'Fa-0001';";
+                        $stmt = $dbh->prepare($query_annee);
+                        //$stmt->bindParam(":id",$idfacture);
+                        $stmt->execute();
+                        $rep = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $rep;
+    }catch(PDOException $e){
+        die($e);
+    }
+}
+
 if (offre_appartient($_SESSION['identifiant'])) {
     try{
     $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc,moisprestation FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
@@ -106,7 +129,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
         <?php foreach($res as $line){ ?>
             <div class=facture>
                 <section >
-                    <h1><?php echo getNomDuMois($line["moisprestation"]); ?></h1>
+                    <h1> Facture du mois de <?php echo getNomDuMois($line["moisprestation"]); echo " ".getAnnee($line["idfacture"])["extract"] ?></h1>
                     <p> Date de la facture : <?php echo $line["datefacture"]; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
                 </section>            
                 <section>
