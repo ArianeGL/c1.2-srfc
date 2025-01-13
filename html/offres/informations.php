@@ -131,8 +131,6 @@ if (isset($_GET['idoffre'])) {
 
                     require_once './pages-info-offres/spectacle.php';
                     require_once '../includes/crea_avis.inc.php';
-
-                    break;
             }
             require_once "../includes/afficher_avis.inc.php";
             ?>
