@@ -13,7 +13,8 @@ h1{
 
 .facture{
     width: 45%;
-    background-color: #EEE;
+    border: 2px var(--navy-blue) solid;
     padding-left: 1em;
     padding-bottom: 1em;
+    border-radius: var(--round-corners);
 }

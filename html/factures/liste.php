@@ -1,5 +1,6 @@
 <?php 
 require_once("../db_connection.inc.php");
+require_once("../includes/consts.inc.php");
 session_start();
 $idoffre = $_GET["idoffre"];
 
@@ -124,6 +125,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
         <title>PACT - liste des factures</title>
     </head>
     <body>
+        <?php require_once HEADER; ?>
         <h1> Liste des factures pour l'offre <?php echo $idoffre ?></h1>
         <div class=liste>
         <?php foreach($res as $line){ ?>
@@ -140,6 +142,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
             </div>
             <?php } ?>
         </div>
+        <?php require_once FOOTER; ?>
     </body>
     </html>
 <?php }else{ ?>
