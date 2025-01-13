@@ -1,7 +1,12 @@
+<script src="../scripts/aime.js"></script>
 <?php
-require_once "db_connection.inc.php";
+session_start();
+require_once "../db_connection.inc.php";
 
-
+/*
+ * prend en argument l'id d'une offre pour en afficher touts les avis
+ * recupere touts les avis de l'offre et les passe un par un en argument de afficher_avis(&avis)
+ */
 function afficher_liste_avis($id_offre)
 {
     global $dbh;
@@ -15,6 +20,29 @@ function afficher_liste_avis($id_offre)
     }
 }
 
+function est_membre($email) {
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['pseudo'])) $ret = true;
+
+    return $ret;
+}
+
+function aimeAvis(){
+    //$query=
+    
+    
+    echo "onclick=aime()";
+}
+
+/*
+ * prend en argument un array contenant toutes les informations d'un avis
+ * affiche un div representant l'avis
+ */
 function afficher_avis($avis)
 {
     $date_visite = getdate(strtotime($avis['datevisite']));
@@ -30,15 +58,31 @@ function afficher_avis($avis)
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
         </div>
-
+        
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
+        <?php 
+        if (est_membre($_SESSION["identifiant"])){
+            ?><input type="button" id="pouceHaut" <?php aimeAvis()?> value="<?php echo $avis["nblike"]?>👍"></input> <?php
+            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎" onclick="aimePas()"></input> <?php
+        } else {
+            ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"]?>👍" disabled></input> <?php
+            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎"></input> <?php
+        }
+        ?> 
         <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
 }
 
-function get_jour($date): string
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant le nom du jour associé a la date en francais
+ * retourne false en cas d'erreur
+ */
+function get_jour($date): string | bool
 {
+    $ret = false;
+
     switch ($date['wday']) {
         case 0:
             $ret = "Dimanche";
@@ -66,6 +110,12 @@ function get_jour($date): string
     return $ret;
 }
 
+
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant le nom du jour associé a la date en francais
+ * retourne false en cas d'erreur
+ */
 function get_mois($date): string | bool
 {
     $ret = false;
@@ -112,6 +162,11 @@ function get_mois($date): string | bool
     return $ret;
 }
 
+
+/*
+ * prend en argument un array resultant d'un getdate($timestamp = null)
+ * retourne une string contenant la date dans une phrase en francais
+ */
 function format_date($date): string
 {
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];

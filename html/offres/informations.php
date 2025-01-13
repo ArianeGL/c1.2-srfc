@@ -44,7 +44,7 @@ if (isset($_GET['idoffre'])) {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title><?php echo $name; ?></title>
-            <link rel="stylesheet" href="./styles/infos-offres.css">
+            <link rel="stylesheet" href="../styles/infos-offres.css">
             <link rel="icon" type="image/x-icon" href="favicon.ico">
 
             <script src="../includes/main.js"></script>
@@ -64,7 +64,7 @@ if (isset($_GET['idoffre'])) {
                     $duration = $offreCategorisee['dureeactivite'];
 
                     require_once './pages-info-offres/activite.php';
-                    require_once './crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
@@ -84,7 +84,7 @@ if (isset($_GET['idoffre'])) {
                     $brunch = $offreCategorisee['brunch'];
 
                     require_once './pages-info-offres/restauration.php';
-                    require_once './crea_avis_re.php';
+                    require_once '../includes/crea_avis_re.php';
 
                     break;
 
@@ -99,7 +99,7 @@ if (isset($_GET['idoffre'])) {
                     $isGuided = $offreCategorisee['estguidee'];
 
                     require_once './pages-info-offres/visite.php';
-                    require_once './crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
@@ -115,7 +115,7 @@ if (isset($_GET['idoffre'])) {
                     $ageRequierement = $offreCategorisee['ageminparc'];
 
                     require_once './pages-info-offres/parc-attraction.php';
-                    require_once './crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
 
                     break;
 
@@ -130,7 +130,7 @@ if (isset($_GET['idoffre'])) {
                     $nbSeats = $offreCategorisee['placesspectacle'];
     
                     require_once './pages-info-offres/spectacle.php';
-                    require_once './crea_avis.php';
+                    require_once '../includes/crea_avis.inc.php';
     
                     break;
             }

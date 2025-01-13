@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="./styles/crea_avis.css">
 <?php
 
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 class FunctionException extends Exception
 {

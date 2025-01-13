@@ -154,7 +154,8 @@ CREATE TABLE IF NOT EXISTS sae._historiqueoption
   idoffre   varchar(7) NOT NULL REFERENCES sae._offre(idoffre),
   option    varchar(15) NOT NULL REFERENCES sae._option(type),
   debutsem  DATE       NOT NULL,
-  finsem    DATE       NOT NULL,
+  finsem    DATE,
+  prixoption  real,
   CONSTRAINT _historiqueoption_pkey primary key (idoffre,debutsem)
 );
 ------------------------------------------------------------------------------------
@@ -377,6 +378,8 @@ CREATE TABLE IF NOT EXISTS sae._avis
   nbdislike integer not null,
   blacklist boolean not null,
   signale boolean not null,
+  reponse varchar(9999),
+  datereponse DATE,
   CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
 );
 
@@ -396,13 +399,14 @@ CREATE TABLE IF NOT EXISTS sae._notere
   noteRapportQP real NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS sae._reponse
+CREATE TABLE IF NOT EXISTS sae._aime
 (
-  idrep VARCHAR(7) PRIMARY KEY,
-  idcompte varchar(7) NOT NULL REFERENCES sae._compteprofessionnel(idcompte),
-  idavis varchar(7) NOT NULL REFERENCES sae._avis(idavis),
-  reponse varchar(9999) NOT NULL
+  idcompte  VARCHAR(7) NOT NULL REFERENCES sae._comptemembre(idcompte),
+  idavis  VARCHAR(7)  NOT NULL REFERENCES sae._avis(idavis),
+  aime  BOOLEAN NOT NULL,
+  CONSTRAINT _aime_pk PRIMARY KEY(idcompte,idavis)
 );
+
 
 -----------------------------------------------------------------------
 
@@ -1436,7 +1440,6 @@ VALUES ('Co-0009', 'john.doe@gmail.com', 'motdepasse', '54', 'Imp. Covenant Pasq
 
 
 -------------------------------------------------------------------------------------------
--- tg facture avis notere reponse
 
 
 --- AVIS 
@@ -1519,27 +1522,6 @@ CREATE OR REPLACE TRIGGER tg_posteravisre
 
 
 -------------------------------------------------------------------------------------
--- Reponses
-create or replace view sae.reponse AS
-  select * from sae._reponse;
-
-create or replace function sae.posterreponse()
-  RETURNS trigger
-  AS
-$$
-BEGIN
-  INSERT INTO sae._reponse(idrep,idcompte,idavis,reponse)
-  VALUES(NEW.idrep,NEW.idcompte,NEW.idavis,NEW.reponse);
-  RETURN NEW;
-END;
-$$ language plpgsql;
-
-CREATE OR REPLACE TRIGGER tg_posterreponse
-  INSTEAD OF INSERT ON sae.reponse
-  FOR EACH ROW
-  EXECUTE PROCEDURE sae.posterreponse();
-
--------------------------------------------------------------------------------------
 
 create or replace view sae.facture as
   select * from sae._facture;
@@ -1562,6 +1544,9 @@ BEGIN
       WHERE  NEW.moisprestation = EXTRACT(MONTH FROM datedebut) and NEW.moisprestation = EXTRACT(MONTH FROM datefin)
         AND idoffre = NEW.idoffre
   );
+  IF (NEW.nbjoursenligne is null) THEN
+  	NEW.nbjoursenligne = 0;
+  END IF;
 
   NEW.abonnementHT = NEW.nbjoursenligne * (
       SELECT prixht
@@ -1608,7 +1593,10 @@ BEGIN
 
   NEW.totalHT = NEW.abonnementHT + NEW.optionHT;
   NEW.totalTTC = NEW.abonnementTTC + NEW.optionTTC;
-
+  IF(NEW.totalTTC = 0) THEN
+    RAISE EXCEPTION 'Aucune facture ne peut etre creer si le prix est null';
+  END IF;
+  
   INSERT INTO sae._facture(idfacture,datefacture,idoffre,moisprestation,echeancereglement,
                           nbjoursenligne,abonnementHT,abonnementTTC,optionHT,optionTTC,
                           totalHT,totalTTC)
@@ -1645,8 +1633,8 @@ BEGIN
   VALUES(NEW.idoffre,NEW.option,4,NEW.semainelancement,NEW.active);
 
   IF (NEW.active = true) THEN
-    INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
-    VALUES(NEW.idoffre,NEW.option,NEW.semainelancement,NEW.semainelancement + 7);
+    INSERT INTO sae._historiqueoption(idoffre,option,debutsem,prixoption)
+    VALUES(NEW.idoffre,NEW.option,NEW.semainelancement,(select prixht from sae._option where type = NEW.option));
   END IF;
 
   RETURN NEW;
@@ -1660,24 +1648,23 @@ CREATE OR REPLACE TRIGGER tg_prendreoption
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
 
-UPDATE sae._offre SET datepublication = '2024-11-01', dernieremaj = '2024-11-01' where idoffre = 'Of-0001';
-UPDATE sae._historique set datedebut = '2024-11-01', datefin = '2024-11-22' where idoffre = 'Of-0001';
-INSERT INTO sae._historique(idoffre,datedebut,datefin) VALUES('Of-0001','2024-11-25','2024-11-28');
+UPDATE sae._offre SET datepublication = '2024-12-01'where idoffre = 'Of-0001';
+UPDATE sae._historique set datedebut = '2024-12-01', datefin = '2024-12-08' where idoffre = 'Of-0001';
+INSERT INTO sae._historique(idoffre,datedebut,datefin) VALUES('Of-0001','2024-12-25','2024-12-28');
 INSERT INTO sae.option(idoffre,option,semainelancement,active)
-VALUES('Of-0001','A la une','2024-11-01',true);
-INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
-VALUES('Of-0001','A la une','2024-11-07','2024-11-14');
-INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem)
-VALUES('Of-0001','A la une',CURRENT_DATE,CURRENT_DATE+7);
-
+VALUES('Of-0001','A la une','2024-12-01',false);
+INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem,prixoption)
+VALUES('Of-0001','A la une','2024-12-07','2024-12-14',(select prixht from sae._option where type = 'A la une'));
+INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem,prixoption)
+VALUES('Of-0001','A la une','2024-12-15','2024-12-22', (select prixht from sae._option where type = 'A la une'));
+INSERT INTO sae._historiqueoption(idoffre,option,debutsem,finsem,prixoption)
+VALUES('Of-0001','A la une','2024-12-22','2024-12-29', (select prixht from sae._option where type = 'A la une'));
 
 INSERT INTO sae.option(idoffre,option,semainelancement,active)
 VALUES('Of-0009','En relief',CURRENT_DATE,true);
 
-UPDATE sae._offre SET datepublication = '2024-11-07', dernieremaj = '2024-11-07' where idoffre = 'Of-0006';
-UPDATE sae._historique set datedebut = '2024-11-07' where idoffre = 'Of-0006';
-UPDATE sae._offre SET datepublication = '2024-11-14', dernieremaj = '2024-11-14' where idoffre = 'Of-0009';
-UPDATE sae._historique set datedebut = '2024-11-14' where idoffre = 'Of-0009';
+UPDATE sae._offre SET datepublication = '2024-12-07' where idoffre = 'Of-0006';
+UPDATE sae._offre SET datepublication = '2024-12-14' where idoffre = 'Of-0009';
 
 
 INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre)
@@ -1690,6 +1677,8 @@ VALUES ('Co-0012', 'mathieumahr@gmail.com', 'matmar.67', '2', 'rue Henry Trevill
 INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre,urlimage)
 VALUES ('Co-0013', 'valentineberger69@gmail.com', 'pochaontas?69', '17', 'rue Gilles Fort', 'Lyon', '69000', '0704454693', 'Valentine', 'Berger',
 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBn_e2w-Ne9dtv4yKthY8Z7nKVXB8R9vEtVg&s');
+INSERT INTO sae.comptemembre(idcompte, email, motdepasse, numadressecompte, ruecompte, villecompte, codepostalcompte, telephone, nommembre, prenommembre,pseudo)
+VALUES ('Co-0014', 'noone@gmail.com', 'Q@S!EF#DXSD!46s1r7', '0', 'Nowhere', 'Nowhere', '0', '0000000000', 'Anonymous', 'Anonymous','Anonymous');
 
 -- INSERT AVIS
 
@@ -1698,3 +1687,107 @@ VALUES('Av-0001','Magnifique archipel !','En amoureux','Of-0001','Co-0009','Tres
 
 INSERT INTO sae.avis(idavis,titre,contexte,idoffre,idcompte,commentaire,noteavis)
 VALUES('Av-0002','Kayak abime','Seul','Of-0001','Co-0010','Belle ballade mais le kayak etait legerement abime ce qui etait un petit peu inconfortable a la longue, cela reste cependant un belle endroit breton a visite',3);
+
+
+
+create or replace function daily_check_historique_offre(id varchar)
+  returns void
+  AS
+$$
+BEGIN
+  IF((select enligne from _offre where idoffre = $1) = true) THEN
+    IF(EXTRACT(MONTH from CURRENT_DATE) <> EXTRACT(MONTH from CURRENT_DATE + 1)) THEN
+      UPDATE _historique SET datefin = CURRENT_DATE WHERE idoffre = $1 and datefin is NULL;
+      INSERT INTO _historique(idoffre,datedebut) VALUES($1, CURRENT_DATE + 1);
+    END IF;
+  ELSE
+    UPDATE _historique SET datefin = CURRENT_DATE where idoffre = $1 and datefin is NULL;
+  END IF;
+END;
+$$ language plpgsql;
+
+create or replace function daily_check_historique_option(id varchar, option varchar)
+  returns void
+  AS
+$$
+DECLARE
+  maxdate DATE;
+BEGIN
+  select MAX(debutsem) into maxdate from sae._historiqueoption
+  where idoffre = $1 and option = $2;
+  IF(maxdate + 7 = CURRENT_DATE) THEN
+    UPDATE sae._historiqueoption SET finsem = CURRENT_DATE - 1 where idoffre = $1 and option = $2 and debutsem = maxdate;
+    UPDATE sae._souscriptionoption SET active = false where idoffre = $1 and option = $2;
+  END IF;
+
+  IF((select prixht from sae._historiqueoption where idoffre = $1 and option = $2 and debutsem = maxdate) is null) THEN
+    UPDATE sae._historiqueoption SET prixoption = (select prixht from sae._option where type = $2) WHERE idoffre = $1 and option = $2 and debutsem = maxdate;
+  END IF;
+
+  IF((select semainelancement from sae._souscriptionoption where idoffre = $1 and option = $2) = CURRENT_DATE) THEN
+    UPDATE sae._souscriptionoption SET active = true, 
+                                       nbsemaine = nbsemaine - 1
+    WHERE idoffre = $1 and option = $2;
+
+    INSERT INTO sae._historiqueoption(idoffre,option,debutsem,prixoption)
+    VALUES($1,$2,CURRENT_DATE,(select prixht from sae._option where type = $2));
+  END IF;
+END;
+$$ language plpgsql;
+
+-------------------------------------------------------------
+-- Anonymisation des donnees
+
+CREATE OR REPLACE FUNCTION set_idcompte_to_default()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE sae._avis
+  SET idcompte = 'Co-0014'
+  WHERE idcompte = OLD.idcompte;
+  
+  UPDATE sae._aime
+  SET idcompte = 'Co-0014'
+  WHERE idcompte = OLD.idcompte;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER before_delete_set_idcompte
+BEFORE DELETE ON sae._comptemembre
+FOR EACH ROW
+EXECUTE FUNCTION set_idcompte_to_default();
+
+
+------------------------------------------------------------
+-- Gestion des likes / dislike
+create or replace view sae.aime AS
+  select * from sae._aime;
+
+create or replace function sae.aimeavis()
+  RETURNS trigger
+  AS
+$$
+BEGIN
+  INSERT INTO sae._aime(idcompte,idavis,aime)
+  VALUES(NEW.idcompte,NEW.idavis,NEW.aime);
+
+  IF(NEW.aime = true) THEN
+    UPDATE sae._avis SET nblike = nblike + 1 WHERE idavis = NEW.idavis;
+  ELSE
+    UPDATE sae._avis SET nbdislike = nbdislike + 1 WHERE idavis = NEW.idavis;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ language plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_aimeavis
+  INSTEAD OF INSERT ON sae.aime
+  FOR EACH ROW
+  EXECUTE PROCEDURE sae.aimeavis();
+
+----------------------------------------------------------
+INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0001","Fa-0001");
+INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0009","Fa-0002");
