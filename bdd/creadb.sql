@@ -1593,7 +1593,10 @@ BEGIN
 
   NEW.totalHT = NEW.abonnementHT + NEW.optionHT;
   NEW.totalTTC = NEW.abonnementTTC + NEW.optionTTC;
-
+  IF(NEW.totalTTC = 0) THEN
+    RAISE EXCEPTION 'Aucune facture ne peut etre creer si le prix est null';
+  END IF;
+  
   INSERT INTO sae._facture(idfacture,datefacture,idoffre,moisprestation,echeancereglement,
                           nbjoursenligne,abonnementHT,abonnementTTC,optionHT,optionTTC,
                           totalHT,totalTTC)
