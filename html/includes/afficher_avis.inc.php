@@ -2,6 +2,8 @@
 session_start();
 
 require_once "../db_connection.inc.php";
+require_once "../includes/modifier_avis.inc.php";
+
 
 /*
  * prend en argument l'id d'une offre pour en afficher touts les avis
@@ -12,9 +14,17 @@ function afficher_liste_avis($id_offre)
     global $dbh;
 
     try {
+?>
+        <script src="../scripts/modifier_avis.js"></script>
+        <?php
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
         $liste_avis = $dbh->query($query)->fetchAll();
-        foreach ($liste_avis as $avis) afficher_avis($avis);
+        foreach ($liste_avis as $avis) {
+            afficher_avis($avis);
+        ?>
+            <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+    <?php
+        }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
     }
@@ -27,7 +37,7 @@ function afficher_liste_avis($id_offre)
 function afficher_avis($avis)
 {
     $date_visite = getdate(strtotime($avis['datevisite']));
-?>
+    ?>
     <div class="avis">
         <div class="avis-header">
             <section class="avis-titre">
@@ -44,11 +54,10 @@ function afficher_avis($avis)
         <?php
         if (isset($_SESSION['identifiant']) && avis_appartient($avis['idavis'])) {
         ?>
-            <button type="button">Modifier</button>
+            <button type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="smallButton modifier">Modifier</button>
         <?php
         }
         ?>
-        <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
 }
@@ -162,10 +171,11 @@ function avis_appartient($id_avis): bool
     $ret = false;
 
     try {
-        $query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . VUE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
+        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
         $stmt = $dbh->prepare($query);
         $stmt->bindParam(":id_avis", $id_avis);
-        $stmt->bindParam(":id_compte", $_SESSION['identifiant']);
+        $id_compte = get_account_id();
+        $stmt->bindParam(":id_compte", $id_compte);
         $stmt->execute();
         $ret = $stmt->rowCount() == 1;
     } catch (PDOException $e) {
