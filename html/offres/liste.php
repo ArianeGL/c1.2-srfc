@@ -85,7 +85,6 @@ try {
                     SELECT * FROM ' . NOM_SCHEMA . '._offre 
                     NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
 
-<<<<<<< HEAD
                     ?>
                     <div>
                         <label for="activite">
@@ -125,40 +124,15 @@ try {
                         window.location.href = urlActuelle; // Redirige avec la nouvelle URL
                     }
                 </script>
-=======
-                <select id="SelectionTri" onchange="triOffre()" >
-                    <option value="" disabled selected>Tris</option>
-                    <option value="noteCroissante">Note (↑)</option>
-                    <option value="noteDecroissante">Note (↓)</option>
-                </select>
-	    </div>
-<script>
-    function triOffre() {
-        const optionTri = document.getElementById('SelectionTri').value;
-        const urlActuelle = new URL(window.location.href);
-        urlActuelle.searchParams.set('tri', optionTri); // Met à jour le paramètre "tri"
-        window.location.href = urlActuelle; // Redirige avec la nouvelle URL
-    }
-</script>
->>>>>>> main
             </div>
         </nav>
 
         <section>
             <?php
             if (est_pro(get_account_id())) {
-<<<<<<< HEAD
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
-=======
-                if (!isset($_GET['categorie'])) {
-                    $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
-                    $query1 = $query1 . $filtre_cat;
-
-                    $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN ".NOM_SCHEMA.".option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
-                }
->>>>>>> main
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
@@ -180,21 +154,12 @@ try {
 		        $result = $sth->fetchColumn();
 
                 if ($result != 0) {
-<<<<<<< HEAD
                     ?>
                     <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
                     <?php
 		        } else {
                     ?>
                     <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
-=======
-                    ?>
-                    <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
-                    <?php
-		        } else {
-                    ?>
-                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
->>>>>>> main
                     <?php
                 } 
                 ?>
@@ -209,15 +174,10 @@ try {
                         </section>
                     </div>
                     <div>
-<<<<<<< HEAD
                         <?php
                         $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
                         $images = $dbh->query($query_image)->fetch();?>
                         <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
-=======
-                            <!-- <?php echo $offre['urlimage']; ?> -->
-                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
->>>>>>> main
 
                         <h4><?php echo $offre['villeoffre']; ?></h4>
 
