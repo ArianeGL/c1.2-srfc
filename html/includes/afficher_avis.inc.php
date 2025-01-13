@@ -1,6 +1,6 @@
+<script src="../scripts/aime.js"></script>
 <?php
 session_start();
-
 require_once "../db_connection.inc.php";
 require_once "../includes/modifier_avis.inc.php";
 
@@ -27,6 +27,27 @@ function afficher_liste_avis($id_offre)
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
     }
+}
+
+function est_membre($email)
+{
+    $ret = false;
+    global $dbh;
+
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE email = '" . $email . "';";
+    $row = $dbh->query($query)->fetch();
+
+    if (isset($row['pseudo'])) $ret = true;
+
+    return $ret;
+}
+
+function aimeAvis()
+{
+    //$query=
+
+
+    echo "onclick=aime()";
 }
 
 /*
@@ -56,7 +77,15 @@ function afficher_avis($avis)
             <button type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="smallButton modifier">Modifier</button>
         <?php
         }
-        ?>
+        if (est_membre($_SESSION["identifiant"])) {
+        ?><input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input> <?php
+                                                                                                                    ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input> <?php
+                                                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                                                        ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input> <?php
+                                                                                                                                                                                                                        ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input> <?php
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                        ?>
+        <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
 }
