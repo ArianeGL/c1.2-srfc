@@ -11,6 +11,10 @@
     --round-corners: 5px; /* USE THIS FOR ROUNDED CORNERS, PING ME IF YOU WANT TO HAVE AN OTHER ROUNDED CORNER */
 }
 
+.hidden {
+    display: none;
+}
+
 body {
     height: 1024px;
     margin-top: 7%; /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */

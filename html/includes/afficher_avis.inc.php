@@ -33,10 +33,10 @@ function est_membre($email) {
 }
 
 function aimeAvis(){
-    $query=
+    //$query=
     
     
-    //echo "onclick=aime()";
+    echo "onclick=aime()";
 }
 
 /*

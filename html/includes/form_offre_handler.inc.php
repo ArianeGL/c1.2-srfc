@@ -3,7 +3,7 @@ session_start();
 
 //$id_compte = "Co-0007"; //test, ligne a supprimer
 
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 const IMAGE_DIR = "./images_importees/";
 const DAY_TO_SEC = 86400;

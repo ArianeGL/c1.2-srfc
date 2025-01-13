@@ -215,7 +215,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                             }
 
                             $query1 = $query1 . $filtre_cat . $ordreTri;
-                            $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
+                            // $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                         }
                     } else {
                         ?>
@@ -269,6 +269,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                 if (!isset($_GET['categorie'])) {
                     $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                     $query1 = $query1 . $filtre_cat;
+
                     $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN ".NOM_SCHEMA.".option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
                 }
             }
