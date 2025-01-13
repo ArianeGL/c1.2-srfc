@@ -16,15 +16,6 @@ function get_account_id()
 
 try {
     global $dbh;
-    /*
-    // requete offre
-    $query1 = 'SELECT * FROM '.NOM_SCHEMA.'._offre NATURAL JOIN '.NOM_SCHEMA.'._compteProfessionnel';// INNER JOIN NOM_SCHEMA._imageoffre    sae._offre NATURAL JOIN sae._compteProfessionnel
-    $sth1 = $dbh->prepare($query1);
-    $sth1->execute();
-    $requeteOffres = $sth1->fetchAll();
-    $requeteOffres = $dbh->query('SELECT * FROM sae._compte', PDO::FETCH_ASSOC);
-    print_r($requeteOffres);
-    */
 } catch (PDOException $e) {
     die("SQL Query failed : " . $e->getMessage());
 }
@@ -77,201 +68,71 @@ try {
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
 
-<?php
-$triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
-    $ordreTri = "";
-    $ListeTris = ['noteCroissante', 'noteDecroissante'];
-    switch ($triOption) {
-        case 'noteCroissante':
-            $ordreTri = "ORDER BY note ASC"; 
-            break;
-        case 'noteDecroissante':
-            $ordreTri = "ORDER BY note DESC"; 
-            break;
-        default:
-            $ordreTri = ""; 
-    }
-                    $query1 = '
-                    SELECT DISTINCT ON (' . NOM_SCHEMA . '._offre.idoffre) * FROM ' . NOM_SCHEMA . '._offre 
-                    NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel 
-                    INNER JOIN ' . NOM_SCHEMA . '._imageoffre' . ' 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '._imageoffre.idoffre
-                    INNER JOIN ' . NOM_SCHEMA . '.option 
-                    ON ' . NOM_SCHEMA . '._offre.idoffre = sae.option.idoffre';
-
-                    if (isset($_GET['categorie'])) {
-                        if ($_GET['categorie'] !== '' && $_GET['categorie'] !== 'avpsr') {
-                            $filtre_cat = "";
-
-                            $categorie = $_GET['categorie'];
-
-                            if (str_contains($categorie, 'a')) {
-                    ?>
-                                <div>
-                                    <label for="activite">
-                                        <input type="checkbox" id="activite" name="activite" value="activite" checked />Activit&eacute;</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Activite'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Activite'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="activite">
-                                        <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'v')) {
-                            ?>
-                                <div>
-                                    <label for="visite">
-                                        <input type="checkbox" id="visite" name="visite" value="visite" checked />Visite</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Visite'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Visite'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="visite">
-                                        <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'p')) {
-                            ?>
-                                <div>
-                                    <label for="parcAttraction">
-                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" checked />Parc d'Attraction</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Parc attraction'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Parc attraction'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="parcAttraction">
-                                        <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 's')) {
-                            ?>
-                                <div>
-                                    <label for="spectacle">
-                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" checked />Spectacle</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Spectacle'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Spectacle'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="spectacle">
-                                        <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                                </div>
-                            <?php
-                            }
-
-                            if (str_contains($categorie, 'r')) {
-                            ?>
-                                <div>
-                                    <label for="restauration">
-                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" checked />Restauration</label>
-                                </div>
-                                <?php
-                                if ($filtre_cat === "") {
-                                    $filtre_cat = " WHERE categorie='Restauration'";
-                                } else {
-                                    $filtre_cat = $filtre_cat . " OR categorie='Restauration'";
-                                }
-                            } else {
-                                ?>
-                                <div>
-                                    <label for="restauration">
-                                        <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                                </div>
-                        <?php
-                            }
-                            if (est_pro(get_account_id())) {
-                                $filtre_cat = $filtre_cat . ") AND idcompte = '" . get_account_id() . "'";
-                                $filtre_cat = str_replace("WHERE ", "WHERE (", $filtre_cat);
-                            }
-
-                            $query1 = $query1 . $filtre_cat . $ordreTri;
-                            // $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
-                        }
-                    } else {
-                        ?>
-                        <div>
-                            <label for="activite">
-                                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                        </div>
-                        <div>
-                            <label for="visite">
-                                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                        </div>
-                        <div>
-                            <label for="parcAttraction">
-                                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                        </div>
-                        <div>
-                            <label for="spectacle">
-                                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                        </div>
-                        <div>
-                            <label for="restauration">
-                                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                        </div>
                     <?php
+                    $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
+                    $ListeTris = ['noteCroissante', 'noteDecroissante'];
+                    switch ($triOption) {
+                        case 'noteCroissante':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note ASC'; 
+                            break;
+                        case 'noteDecroissante':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC'; 
+                            break;
+                        default:
+                            $ordreTri = '';
                     }
-                    ?>
-                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
-		</fieldset>
-<div class="tri">
+                    $query1 = '
+                    SELECT * FROM ' . NOM_SCHEMA . '._offre 
+                    NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
 
-                <select id="SelectionTri" onchange="triOffre()" >
-                    <option value="" disabled selected>Tris</option>
-                    <option value="noteCroissante">Note (↑)</option>
-                    <option value="noteDecroissante">Note (↓)</option>
-                </select>
-	    </div>
-<script>
-    function triOffre() {
-        const optionTri = document.getElementById('SelectionTri').value;
-        const urlActuelle = new URL(window.location.href);
-        urlActuelle.searchParams.set('tri', optionTri); // Met à jour le paramètre "tri"
-        window.location.href = urlActuelle; // Redirige avec la nouvelle URL
-    }
-</script>
+                    ?>
+                    <div>
+                        <label for="activite">
+                            <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                    </div>
+                    <div>
+                        <label for="visite">
+                            <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                    </div>
+                    <div>
+                        <label for="parcAttraction">
+                            <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                    </div>
+                    <div>
+                        <label for="spectacle">
+                            <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                    </div>
+                    <div>
+                        <label for="restauration">
+                            <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                    </div>
+                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
+		        </fieldset>
+                <div class="tri">
+
+                    <select id="SelectionTri" onchange="triOffre()" >
+                        <option value="" disabled selected>Tris</option>
+                        <option value="noteCroissante">Note Croissante</option>
+                        <option value="noteDecroissante">Note Décroissante</option>
+                    </select>
+	            </div>
+                <script>
+                    function triOffre() {
+                        const optionTri = document.getElementById('SelectionTri').value;
+                        const urlActuelle = new URL(window.location.href);
+                        urlActuelle.searchParams.set('tri', optionTri); // Met à jour le paramètre "tri"
+                        window.location.href = urlActuelle; // Redirige avec la nouvelle URL
+                    }
+                </script>
             </div>
         </nav>
 
         <section>
             <?php
             if (est_pro(get_account_id())) {
-                if (!isset($_GET['categorie'])) {
-                    $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
-                    $query1 = $query1 . $filtre_cat;
-
-                    $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN ".NOM_SCHEMA.".option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
-                }
+                $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
+                $query1 = $query1 . $filtre_cat;
+                $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
@@ -294,11 +155,11 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
 
                 if ($result != 0) {
                     ?>
-                    <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
                     <?php
 		        } else {
                     ?>
-                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
                     <?php
                 } 
                 ?>
@@ -313,8 +174,10 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                         </section>
                     </div>
                     <div>
-                            <!-- <?php echo $offre['urlimage']; ?> -->
-                        <img src="<?php echo $offre['urlimage']; ?>" alt="Nom_image" class="clopArtImg">
+                        <?php
+                        $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
+                        $images = $dbh->query($query_image)->fetch();?>
+                        <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
 
                         <h4><?php echo $offre['villeoffre']; ?></h4>
 
@@ -353,7 +216,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
 
     let retirerFiltres = document.querySelector("#retirerFiltres");
     retirerFiltres.addEventListener('click', () => {
-        window.location.href = `consulter_liste_offres_cli-1.php`;
+        window.location.href = `liste.php`;
     });
 
     var activite = document.querySelector("#activite");
@@ -362,46 +225,93 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
     var spectacle = document.querySelector("#spectacle");
     var restauration = document.querySelector("#restauration");
 
-    activite.addEventListener("click", categorie_filter);
-    visite.addEventListener("click", categorie_filter);
-    parc_attraction.addEventListener("click", categorie_filter);
-    spectacle.addEventListener("click", categorie_filter);
-    restauration.addEventListener("click", categorie_filter);
+    var articles = document.getElementsByClassName("art-offre");
 
-    function categorie_filter() {
-        // get changed element
-        // refresh and apply change: load(url)
-        // get current url: window.location.href
+    activite.addEventListener("click", fil_cat);
+    visite.addEventListener("click", fil_cat);
+    parc_attraction.addEventListener("click", fil_cat);
+    spectacle.addEventListener("click", fil_cat);
+    restauration.addEventListener("click", fil_cat);
 
-        let cible = 'categorie';
+    function fil_cat_verif() {
+        let all_checked = (spectacle.checked) && (parc_attraction.checked) && (visite.checked) && (activite.checked) && (restauration.checked);
+        let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
 
-        let url = new URL(window.location.href);
-        let params = url.searchParams;
-
-        let categorie_query = "";
-
-        if ((activite.checked)) {
-            categorie_query += "a";
-        }
-        if ((visite.checked)) {
-            categorie_query += "v";
-        }
-        if ((parc_attraction.checked)) {
-            categorie_query += "p";
-        }
-        if ((spectacle.checked)) {
-            categorie_query += "s";
-        }
-        if ((restauration.checked)) {
-            categorie_query += "r";
-        }
-        if (categorie_query === "" || categorie_query === "avpsr") {
-            params.delete(cible);
+        if (all_checked || none_checked) {
+            for (article of articles) {
+                article.classList.remove("cat_hidden");
+            }
+            if (all_checked) {
+                activite.checked = false;
+                visite.checked = false;
+                parc_attraction.checked = false;
+                spectacle.checked = false;
+                restauration.checked = false;
+            }
+            return false;
         } else {
-            params.set(cible, categorie_query);
+            return true;
         }
+    }
 
-        window.location.href = url.toString();
+    function fil_cat() {
+
+        if (fil_cat_verif()){
+            //checkbox eventListener onchange
+            //classList.toggle("hidden")
+            //classList.contains("hidden")
+            //let articles = document.getElementsByClassName("art-offre");
+            
+            for (article of articles) {
+                let art_cat = article.getAttribute('data-categorie');
+
+                switch (art_cat) {
+                    case 'Activite':
+                        if (!activite.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Visite':
+                        if (!visite.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+                    
+                    case 'Spectacle':
+                        if (!spectacle.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Parc attraction':
+                        if (!parc_attraction.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Restauration':
+                        if (!restauration.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    default:
+                        console.log("Erreur de valeur pour le switch.\n");
+                        break;
+                }
+            }
+        }
     }
 </script>
 
