@@ -39,6 +39,31 @@ function aimeAvis(){
     echo "onclick=aime()";
 }
 
+function signalerAvis($idavis){
+    global $dbh;
+
+    $message = "l'avis $idavis de l'offre ".$_GET['idoffre']." à été signalé";
+    $headers = array (
+        'From' => 'moderation.tripenarvor@gmail.com'
+    );
+
+    mail("moderation.tripenarvor@gmail.com","signalement",$message, $headers);
+
+    $query = "UPDATE ". NOM_SCHEMA .".". NOM_TABLE_AVIS."
+              set signale = true where idavis = :idavis";
+    $stmt = $dbh->prepare($query);
+    $stmt->bindParam(":idavis",$idavis);
+    $stmt->execute();
+}
+
+if (isset($_POST['idavis'])) {
+    signalerAvis($_POST['idavis']);
+    echo "<script>alert('signalement envoyé')</script>";
+}
+?>
+
+<?php
+
 /*
  * prend en argument un array contenant toutes les informations d'un avis
  * affiche un div representant l'avis
@@ -56,6 +81,12 @@ function afficher_avis($avis)
             <section class="avis-infos">
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
+            </section>
+            <section>
+                <form method="post">
+                    <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>"> 
+                    <input type="submit" value="Signaler">
+                </form>
             </section>
         </div>
         
