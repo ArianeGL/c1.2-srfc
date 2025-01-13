@@ -132,3 +132,6 @@ section {
     }
 }
 
+.cat_hidden {
+    display: none;
+}
