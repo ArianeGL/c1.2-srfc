@@ -291,11 +291,11 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
 
                 if ($result != 0) {
                     ?>
-                    <article id="art-offre" class="relief" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
                     <?php
 		        } else {
                     ?>
-                    <article id="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')">
+                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
                     <?php
                 } 
                 ?>
@@ -350,7 +350,7 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
 
     let retirerFiltres = document.querySelector("#retirerFiltres");
     retirerFiltres.addEventListener('click', () => {
-        window.location.href = `consulter_liste_offres_cli-1.php`;
+        window.location.href = `liste.php`;
     });
 
     var activite = document.querySelector("#activite");
@@ -359,75 +359,95 @@ $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
     var spectacle = document.querySelector("#spectacle");
     var restauration = document.querySelector("#restauration");
 
-    activite.addEventListener("click", categorie_filter);
-    visite.addEventListener("click", categorie_filter);
-    parc_attraction.addEventListener("click", categorie_filter);
-    spectacle.addEventListener("click", categorie_filter);
-    restauration.addEventListener("click", categorie_filter);
+    var articles = document.getElementsByClassName("art-offre");
+
+    activite.addEventListener("click", fil_cat);
+    visite.addEventListener("click", fil_cat);
+    parc_attraction.addEventListener("click", fil_cat);
+    spectacle.addEventListener("click", fil_cat);
+    restauration.addEventListener("click", fil_cat);
 
     // fonction appliquer filtres en listener à tout evenement
     // fonction par type de filtre pour verifier qu'ils sont actifs
     // fonction qui applique la classe hidden aux articles filtre par filtre
 
-    function categorie_filter() {
-        // get changed element
-        // refresh and apply change: load(url)
-        // get current url: window.location.href
-        /*
-        let cible = 'categorie';
-
-        let url = new URL(window.location.href);
-        let params = url.searchParams;
-
-        let categorie_query = "";
-
-        if ((activite.checked)) {
-            categorie_query += "a";
-        }
-        if ((visite.checked)) {
-            categorie_query += "v";
-        }
-        if ((parc_attraction.checked)) {
-            categorie_query += "p";
-        }
-        if ((spectacle.checked)) {
-            categorie_query += "s";
-        }
-        if ((restauration.checked)) {
-            categorie_query += "r";
-        }
-        if (categorie_query === "" || categorie_query === "avpsr") {
-            params.delete(cible);
-        } else {
-            params.set(cible, categorie_query);
-        }
-
-        window.location.href = url.toString();
-        */
-        
+    function fil_cat_verif() {
         let all_checked = (spectacle.checked) && (parc_attraction.checked) && (visite.checked) && (activite.checked) && (restauration.checked);
         let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
 
         if (all_checked || none_checked) {
-            filtre_categorie = false;
+            for (article of articles) {
+                article.classList.remove("cat_hidden");
+            }
+            if (all_checked) {
+                activite.checked = false;
+                visite.checked = false;
+                parc_attraction.checked = false;
+                spectacle.checked = false;
+                restauration.checked = false;
+            }
+            return false;
         } else {
-            filtre_categorie = true;
-            let categorie_query = "";
+            return true;
+        }
+    }
 
-            if ((activite.checked)) {
-                categorie_query += "a";
-            }
-            if ((visite.checked)) {
-                categorie_query += "v";
-            }
-            if ((parc_attraction.checked)) {
-                categorie_query += "p";
-            }
-            if ((spectacle.checked)) {
-                categorie_query += "s";
-            }
-            if ((restauration.checked)) {
-                categorie_query += "r";
+    function fil_cat() {
+
+        if (fil_cat_verif()){
+            //checkbox eventListener onchange
+            //classList.toggle("hidden")
+            //classList.contains("hidden")
+            //let articles = document.getElementsByClassName("art-offre");
+            
+            for (article of articles) {
+                let art_cat = article.getAttribute('data-categorie');
+
+                switch (art_cat) {
+                    case 'Activite':
+                        if (!activite.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Visite':
+                        if (!visite.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+                    
+                    case 'Spectacle':
+                        if (!spectacle.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Parc attraction':
+                        if (!parc_attraction.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    case 'Restauration':
+                        if (!restauration.checked) {
+                            article.classList.add("cat_hidden");
+                        } else {
+                            article.classList.remove("cat_hidden");
+                        }
+                        break;
+
+                    default:
+                        console.log("Erreur de valeur pour le switch.\n");
+                        break;
+                }
             }
         }
     }
