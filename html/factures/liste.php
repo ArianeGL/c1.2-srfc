@@ -3,6 +3,9 @@ require_once("../db_connection.inc.php");
 session_start();
 $idoffre = $_GET["idoffre"];
 
+/**prend en paramètre la session 
+ * renvoie un booléen : vrai si l'offre appartient à la session, false sinon
+ */
 function offre_appartient($compte): bool
 {
     global $dbh;
@@ -25,16 +28,46 @@ function offre_appartient($compte): bool
     return $appartient;
 }
 
+function getNomDuMois($numero_du_mois) {
+    switch ($numero_du_mois) {
+        case 1:
+            return "Janvier";
+        case 2:
+            return "Février";
+        case 3:
+            return "Mars";
+        case 4:
+            return "Avril";
+        case 5:
+            return "Mai";
+        case 6:
+            return "Juin";
+        case 7:
+            return "Juillet";
+        case 8:
+            return "Août";
+        case 9:
+            return "Septembre";
+        case 10:
+            return "Octobre";
+        case 11:
+            return "Novembre";
+        case 12:
+            return "Décembre";
+        default:
+            return "Numéro de mois invalide"; // Gestion des cas hors 1-12
+    }
+}    
 if (offre_appartient($_SESSION['identifiant'])) {
     try{
-    $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
+    $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc,moisprestation FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
                         WHERE idoffre = :id ORDER BY datefacture DESC;";
                         $stmt = $dbh->prepare($query_idfacture);
                         $stmt->bindParam(":id",$idoffre);
                         $stmt->execute();
                         $res = $stmt->fetchall();
 
-    $query_nomoffre = "SELECT nomoffre FROM ". NOM_SCHEMA .".". TABLE_OFFRE ."
+    $query_nomoffre = "SELECT nomoffre FROM ". NOM_SCHEMA .".". NOM_TABLE_OFFRE ."
                         WHERE idoffre = :id;";
                         $stmt = $dbh->prepare($query_idfacture);
                         $stmt->bindParam(":id",$idoffre);
@@ -73,14 +106,14 @@ if (offre_appartient($_SESSION['identifiant'])) {
         <?php foreach($res as $line){ ?>
             <div class=facture>
                 <section >
-                    <h1><?php echo $line["idfacture"]; ?></h1>
-                    <p> date de la facture : <?php echo $line["datefacture"]; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
+                    <h1><?php echo getNomDuMois($line["moisprestation"]); ?></h1>
+                    <p> Date de la facture : <?php echo $line["datefacture"]; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
                 </section>            
                 <section>
-                    <h3> échéance du règlement : <?php echo $line["echeancereglement"]; ?> </h3>
-                    <p> prix TTC : <?php echo $line["totalttc"]; ?> €</p>
+                    <h3> Échéance du règlement : <?php echo $line["echeancereglement"]; ?> </h3>
+                    <p> Prix TTC : <?php echo $line["totalttc"]; ?> €</p>
                 </section>
-                <button onclick="window.location.href = 'consulter_facture.php?idfacture=<?php echo($line['idfacture']) ?>'";>Afficher la facture</button>
+                <button class=smallButton onclick="window.location.href = 'consulter_facture.php?idfacture=<?php echo($line['idfacture']) ?>'";>Afficher la facture</button>
             </div>
             <?php } ?>
         </div>

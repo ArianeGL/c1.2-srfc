@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "db_connection.inc.php";
+require_once "../db_connection.inc.php";
 
 function debug_to_console($data)
 {
@@ -34,7 +34,7 @@ function est_pro(): bool
 
 ?>
 
-<?php require_once "../includes/consts.php"?>
+<?php require_once "../includes/consts.inc.php"?>
 
 <!DOCTYPE html>
 <html lang="fr">
