@@ -50,11 +50,9 @@ function afficher_avis($avis)
                 <h3>Réponse :</h3>
                 <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
             </div>
-        <?php endif; ?>
-
-        <?php if ($appartient && !reponse_existe($avis['idavis'])): ?>
-            <?php afficher_form_reponse($avis['idavis']); ?>
-        <?php endif; ?>
+        <?php endif; 
+        $reponseExiste = reponse_existe($idAvis);
+        afficher_form_reponse($avis['idavis']); ?>
     </div>
 <?php
 }
@@ -65,16 +63,26 @@ function reponse_existe($idAvis)
     global $dbh;
 
     try {
-        $query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "._reponse WHERE idavis = :idavis";
+        // Requête pour vérifier si une réponse existe pour l'avis donné
+        $query = "SELECT reponse FROM sae._avis WHERE idavis = :idavis";
         $stmt = $dbh->prepare($query);
-        $stmt->bindParam(':idavis', $idAvis);
+        $stmt->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
         $stmt->execute();
-        $count = $stmt->fetchColumn();
-        // Retourne true si une réponse existe, sinon false
-        return $count > 0; 
+
+        // Récupérer la réponse
+        $reponse = $stmt->fetchColumn();
+
+
+        // Vérifier si la réponse est NULL, vide ou égale à "[null]"
+        if ($reponse === null || $reponse === '' || $reponse === '[null]') {
+            return false; // Aucune réponse valide
+        } else {
+            return true; // Une réponse existe
+        }
     } catch (PDOException $e) {
+        // En cas d'erreur, log l'erreur et retourne false
         error_log("Erreur lors de la vérification de l'existence d'une réponse : " . $e->getMessage());
-        return false; 
+        return false;
     }
 }
 

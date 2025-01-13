@@ -1,80 +1,88 @@
-<link rel="stylesheet" href="./styles/crea_rep.css">
 <?php
-
+$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 require_once "../db_connection.inc.php";
 require_once "offre_appartient.php";
+require_once "afficher_avis.inc.php";
 
-
-function can_repondre($idAvis)
-{
-    global $dbh;
-
-    $est_authorise = false;
-    if (isset($_SESSION['identifiant'])) {
-        $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_PROFESSIONNEL . ' WHERE email = :email';
-        $sthCompte = $dbh->prepare($queryCompte);
-        $sthCompte->bindParam(':email', $_SESSION['identifiant'], PDO::PARAM_STR);
-        $sthCompte->execute();
-        $countProfessionnel = $sthCompte->fetchColumn();
-
-        // Vérifie si l'utilisateur est le propriétaire de l'offre associée à l'avis
-        $queryAvis = 'SELECT idoffre FROM ' . NOM_SCHEMA . '.' . VUE_AVIS . ' WHERE idavis = :idavis';
-        $sthAvis = $dbh->prepare($queryAvis);
-        $sthAvis->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
-        $sthAvis->execute();
-        $avis = $sthAvis->fetch(PDO::FETCH_ASSOC);
-
-        if ($countProfessionnel != 0 && offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
-            $est_authorise = true;
-        }
-    }
-    return $est_authorise;
-}
 
 
 function afficher_form_reponse($idAvis)
 {
     global $dbh;
-    if (reponse_existe($idAvis)) {
-        echo "<p>Une réponse a déjà été postée pour cet avis.</p>";
-        return;
+    // Vérifier si une réponse existe
+    $reponseExiste = reponse_existe($idAvis);
+    // Récupérer la réponse existante si elle existe
+    $reponseExistante = '';
+    if ($reponseExiste) {
+        $query = "SELECT reponse FROM sae._avis WHERE idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
+        $stmt->execute();
+        $reponseExistante = $stmt->fetchColumn();
     }
-
-    if (isset($_POST['valider'])) {
-        $reponse = trim($_POST['reponse']);
-
-        // Insère la réponse dans la table
-        $queryInsert = 'UPDATE ' . NOM_SCHEMA . '.'. VUE_AVIS . ' SET reponse = :reponse, datereponse = CURRENT_DATE;';
-        $sth = $dbh->prepare($queryInsert);
-        $sth->bindParam(':reponse', $reponse);
-        $sth->execute();
-        $sth = null;
-
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-        exit();
-    } else {
-?>
-        <button class="button" id="deroulerReponse">Répondre à cet avis</button>
-        <form method="post" enctype="multipart/form-data" id="formReponse">
-            <label for="reponse">
+    if ($reponseExiste) {
+        // Si une réponse existe, afficher le bouton "Modifier"
+        ?>
+        <button class="button deroulerReponse" data-idavis="<?php echo $idAvis; ?>">Modifier</button>
+        <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+            <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
+            <label for="reponse-<?php echo $idAvis; ?>">
                 <h1>Réponse</h1>
             </label>
-            <textarea name="reponse" id="reponse" placeholder=" Votre réponse" required></textarea>
+            <textarea name="reponse" id="reponse-<?php echo $idAvis; ?>" placeholder="Votre réponse" required><?php echo htmlspecialchars($reponseExistante); ?></textarea>
             <br>
-            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider">
+            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
         </form>
+        <?php
+    } else {
+        // Si aucune réponse n'existe, afficher le bouton "Répondre à cet avis"
+        ?>
+        <button class="button deroulerReponse" data-idavis="<?php echo $idAvis; ?>">Répondre à cet avis</button>
+        <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+            <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
+            <label for="reponse-<?php echo $idAvis; ?>">
+                <h1>Réponse</h1>
+            </label>
+            <textarea name="reponse" id="reponse-<?php echo $idAvis; ?>" placeholder="Votre réponse" required></textarea>
+            <br>
+            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
+        </form>
+        <?php
+    }
+    ?>
 
-        <script>
-            let bouton_creer_reponse = document.querySelector("#deroulerReponse");
-            let form_creer_reponse = document.querySelector("#formReponse");
-            bouton_creer_reponse.addEventListener("click", hideAndShow);
+    <script>
+        // Sélectionner tous les boutons avec la classe 'deroulerReponse'
+        document.querySelectorAll('.deroulerReponse').forEach(button => {
+            button.addEventListener('click', function() {
+                const idAvis = this.getAttribute('data-idavis');
+                const form = document.querySelector(`#formReponse-${idAvis}`);
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <?php
+}
 
-            function hideAndShow() {
-                const isVisible = window.getComputedStyle(form_creer_reponse).display === 'block';
-                form_creer_reponse.style.display = isVisible ? 'none' : 'block';
-            }
-        </script>
-<?php
+if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
+    $idAvis = $_POST['idAvis'];
+    $reponse = trim($_POST['reponse']);
+
+    if (can_repondre($idAvis)) {
+        // Insère ou met à jour la réponse dans la table
+        $queryInsert = 'UPDATE sae._avis SET reponse = :reponse, datereponse = CURRENT_DATE WHERE idavis = :idavis;';
+        $sth = $dbh->prepare($queryInsert);
+        $sth->bindParam(':reponse', $reponse, PDO::PARAM_STR);
+        $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR); 
+        $sth->execute();
+        $sth = null;
+        echo '<meta http-equiv="refresh" content="0">'; // Rafraîchit la page après la soumission
+    } else {
+        echo 'Vous n\'avez pas l\'autorisation de répondre à cet avis.';
     }
 }
 ?>

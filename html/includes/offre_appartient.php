@@ -11,8 +11,10 @@ function offre_appartient($compte, $idoffre): bool
         $stmt_compte = $dbh->prepare($query_compte);
         $stmt_compte->bindParam(':idoffre', $idoffre);
         $stmt_compte->execute();
-        $res = $stmt_compte->fetch(PDO::FETCH_ASSOC)["email"];
-        if ($res == $compte) $appartient = true;
+        $res = $stmt_compte->fetch(PDO::FETCH_ASSOC);
+        if ($res && isset($res["email"]) && $res["email"] == $compte) {
+            $appartient = true;
+        }
     } catch (PDOException $e) {
         die("SQL Query error : " . $e->getMessage());
     }
