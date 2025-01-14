@@ -99,25 +99,29 @@ if (isset($_GET['idoffre'])) {
 </head>
 <body>
     <?php
-    $queryFacture = 'SELECT * FROM ' . NOM_SCHEMA . '.'.VUE_FACTURE.' WHERE idoffre = :idoffre and moisprestation = :moisDavant';
+    $queryFacture = 'SELECT * FROM ' . NOM_SCHEMA . '._historique 
+                    NATURAL JOIN ' . NOM_SCHEMA . '.facture 
+                    WHERE EXTRACT(MONTH FROM datedebut) = moisprestation 
+                    AND idfacture = :idfacture';
     $sthFacture = $dbh->prepare($queryFacture);
-    $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
-    $sthFacture->bindParam(':moisDavant', $moisDavant, PDO::PARAM_STR);
+    $sthFacture->bindParam(':idfacture', $idfacture, PDO::PARAM_STR);
     $sthFacture->execute();
     $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
     if($facture){  
-        $idfacture=$facture["idfacture"];
-        $datefacture=$facture["datefacture"];
         $idoffre=$facture["idoffre"];
+        $idfacture=$facture["idfacture"];
+        $date_debut=$facture["datedebut"];
+        $date_fin=$facture["datefin"];
+        $date_facture=$facture["datefacture"];
         $moisprestation=$facture["moisprestation"];
         $echeancereglement=$facture["echeancereglement"];
         $nbjoursenligne=$facture["nbjoursenligne"];
-        $abonnementht=$facture["abonnementht"];
-        $abonnementttc=$facture["abonnementttc"];
-        $optionht=$facture["optionht"];
-        $optionttc=$facture["optionttc"];
-        $totalht=$facture["totalht"];
-        $totalttc=$facture["totalttc"];
+        $abonnement_ht=$facture["abonnementht"];
+        $abonnement_ttc=$facture["abonnementttc"];
+        $option_ht=$facture["optionht"];
+        $option_ttc=$facture["optionttc"];
+        $total_ht=$facture["totalht"];
+        $total_ttc=$facture["totalttc"];
 
         echo "id facture : ".$idfacture;
         ?><br><?php
@@ -155,7 +159,7 @@ if (isset($_GET['idoffre'])) {
         ?><br><?php
     }
     ?>
-    <form action="generate_pdf.php?idoffre=<?php echo $idoffre;?>" method="POST">
+    <form action="generate_pdf.php?idfacture=<?php echo $idfacture;?>" method="POST">
         <button type="submit">Download PDF</button>
     </form>
 </body>
