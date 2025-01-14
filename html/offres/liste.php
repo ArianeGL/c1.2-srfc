@@ -68,6 +68,52 @@ try {
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
 
+                    <div id="filtre_cat">
+                        <div>
+                            <label for="activite">
+                                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                        </div>
+                        <div>
+                            <label for="visite">
+                                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                        </div>
+                        <div>
+                            <label for="parcAttraction">
+                                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                        </div>
+                        <div>
+                            <label for="spectacle">
+                                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                        </div>
+                        <div>
+                            <label for="restauration">
+                                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                        </div>
+                        <button class="smallButton" id="retirerFiltreCat">Enlever le filtre</button>
+                    </div>
+
+                    <h3>Par Note minimale :</h3>
+
+                    <div id="filtre_note">
+                        <div>
+                            <input type="radio" id="sup_a_1" name="fil_note" value="1" />
+                            <label for="sup_a_1">&gt; 1</label>
+
+                            <input type="radio" id="sup_a_2" name="fil_note" value="2" />
+                            <label for="sup_a_2">&gt; 2</label>
+
+                            <input type="radio" id="sup_a_3" name="fil_note" value="3" />
+                            <label for="sup_a_3">&gt; 3</label>
+
+                            <input type="radio" id="sup_a_4" name="fil_note" value="4" />
+                            <label for="sup_a_4">&gt; 4</label>
+                        </div>
+                    <button class="smallButton" id="retirerFiltreNote">Enlever le filtre</button>
+                    </div>
+
+                    <button class="smallButton" id="retirerFiltres">Retirer tous les fitres</button>
+		        </fieldset>
+                <div class="tri">
                     <?php
                     $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                     $ListeTris = ['noteCroissante', 'noteDecroissante'];
@@ -81,34 +127,8 @@ try {
                         default:
                             $ordreTri = '';
                     }
-                    $query1 = '
-                    SELECT * FROM ' . NOM_SCHEMA . '._offre 
-                    NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
 
                     ?>
-                    <div>
-                        <label for="activite">
-                            <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                    </div>
-                    <div>
-                        <label for="visite">
-                            <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                    </div>
-                    <div>
-                        <label for="parcAttraction">
-                            <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                    </div>
-                    <div>
-                        <label for="spectacle">
-                            <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                    </div>
-                    <div>
-                        <label for="restauration">
-                            <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                    </div>
-                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
-		        </fieldset>
-                <div class="tri">
 
                     <select id="SelectionTri" onchange="triOffre()" >
                         <option value="" disabled selected>Tris</option>
@@ -129,6 +149,10 @@ try {
 
         <section>
             <?php
+            $query1 = '
+            SELECT * FROM ' . NOM_SCHEMA . '._offre 
+            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
+            
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
@@ -155,11 +179,11 @@ try {
 
                 if ($result != 0) {
                     ?>
-                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
                     <?php
 		        } else {
                     ?>
-                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
+                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
                     <?php
                 } 
                 ?>
@@ -214,11 +238,6 @@ try {
         champs_filtres.style.display = isVisible ? 'none' : 'flex';
     }
 
-    let retirerFiltres = document.querySelector("#retirerFiltres");
-    retirerFiltres.addEventListener('click', () => {
-        window.location.href = `liste.php`;
-    });
-
     var activite = document.querySelector("#activite");
     var visite = document.querySelector("#visite");
     var parc_attraction = document.querySelector("#parcAttraction");
@@ -233,29 +252,21 @@ try {
     spectacle.addEventListener("click", fil_cat);
     restauration.addEventListener("click", fil_cat);
 
-    function fil_cat_verif() {
+    function fil_cat_verif() 
+    {
         let all_checked = (spectacle.checked) && (parc_attraction.checked) && (visite.checked) && (activite.checked) && (restauration.checked);
         let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
 
         if (all_checked || none_checked) {
-            for (article of articles) {
-                article.classList.remove("cat_hidden");
-            }
-            if (all_checked) {
-                activite.checked = false;
-                visite.checked = false;
-                parc_attraction.checked = false;
-                spectacle.checked = false;
-                restauration.checked = false;
-            }
+            retire_fil_cat();
             return false;
         } else {
             return true;
         }
     }
 
-    function fil_cat() {
-
+    function fil_cat() 
+    {
         if (fil_cat_verif()){
             //checkbox eventListener onchange
             //classList.toggle("hidden")
@@ -312,6 +323,133 @@ try {
                 }
             }
         }
+    }
+
+    let retirerFiltreCat = document.querySelector("#retirerFiltreCat");
+    retirerFiltreCat.addEventListener('click', retire_fil_cat);
+
+    function retire_fil_cat() 
+    {
+        if (activite.checked) {
+            activite.checked = false;
+        }
+        if (visite.checked) {
+            visite.checked = false;
+        }
+        if (parc_attraction.checked) {
+            parc_attraction.checked = false;
+        }
+        if (spectacle.checked) {
+            spectacle.checked = false;
+        }
+        if (restauration.checked) {
+            restauration.checked = false;
+        }
+
+        for (article of articles) {
+            article.classList.remove("cat_hidden");
+        }
+    }
+
+    var sup_a_1 = document.querySelector("#sup_a_1");
+    var sup_a_2 = document.querySelector("#sup_a_2");
+    var sup_a_3 = document.querySelector("#sup_a_3");
+    var sup_a_4 = document.querySelector("#sup_a_4");
+
+    sup_a_1.addEventListener("click", fil_note);
+    sup_a_2.addEventListener("click", fil_note);
+    sup_a_3.addEventListener("click", fil_note);
+    sup_a_4.addEventListener("click", fil_note);
+
+    function fil_note_verif() 
+    {
+        if (sup_a_1.checked || sup_a_2.checked || sup_a_3.checked || sup_a_4.checked) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function fil_note() 
+    {
+        if (fil_note_verif()){
+            //checkbox eventListener onchange
+            //classList.toggle("hidden")
+            //classList.contains("hidden")
+            //let articles = document.getElementsByClassName("art-offre");
+
+            let filtre_note;
+
+            if (sup_a_1.checked) {
+                filtre_note = 1;
+            } else if (sup_a_2.checked) {
+                filtre_note = 2;
+            } else if (sup_a_3.checked) {
+                filtre_note = 3;
+            } else if (sup_a_4.checked) {
+                filtre_note = 4;
+            }
+
+            for (article of articles) {
+                let art_note = article.getAttribute('data-note');
+
+                if (filtre_note > art_note) {
+                    article.classList.add("note_hidden");
+                } else {
+                    article.classList.remove("note_hidden");
+                }
+            }
+        }
+    }
+
+    let retirerFiltreNote = document.querySelector("#retirerFiltreNote");
+    retirerFiltreNote.addEventListener('click', retire_fil_note);
+
+    function retire_fil_note() 
+    {
+        if (sup_a_1.checked) {
+                sup_a_1.checked = false;
+            } 
+            else if (sup_a_2.checked) {
+                sup_a_2.checked = false;
+            } 
+            else if (sup_a_3.checked) {
+                sup_a_3.checked = false;
+            } 
+            else if (sup_a_4.checked) {
+                sup_a_4.checked = false;
+            }
+        
+        for (article of articles) {
+            article.classList.remove("note_hidden");
+        }
+    }
+
+    let retirerFiltres = document.querySelector("#retirerFiltres");
+    retirerFiltres.addEventListener('click', retire_filtres);
+
+    function retire_filtres() {
+        if (fil_cat_verif()) {
+            retire_fil_cat();
+        }
+        if (fil_note_verif()) {
+            retire_fil_note();
+        }
+    }
+
+    function cachees_verif() 
+    {
+        let toutes_cachees = true;
+
+        for (article of articles) {
+            if (!(article.classList.contains("cat_hidden")) && !(article.classList.contains("note_hidden"))) {
+                toutes_cachees = false;
+            }
+        }
+
+        let message_remplace = document.createElement('h1');
+        message_remplace.textContent = 'Aucune offre ne correspond aux filtres appliqués';
+        document.body.appendChild(message_remplace);
     }
 </script>
 
