@@ -1,5 +1,12 @@
 <script src="../scripts/aime.js"></script>
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require "../vendor/autoload.php";
+
 session_start();
 require_once "../db_connection.inc.php";
 
@@ -20,7 +27,8 @@ function afficher_liste_avis($id_offre)
     }
 }
 
-function est_membre($email) {
+function est_membre($email)
+{
     $ret = false;
     global $dbh;
 
@@ -32,28 +40,58 @@ function est_membre($email) {
     return $ret;
 }
 
-function aimeAvis(){
+function aimeAvis()
+{
     //$query=
-    
-    
+
+
     echo "onclick=aime()";
 }
 
-function signalerAvis($idavis){
+function mail_signalement($idavis)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'moderation.tripenarvor@gmail.com';                     //SMTP username
+        $mail->Password   = 'jdqq xxch iihn pdvd ';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
+        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('moderation.tripenarvor@gmail.com', 'admin');
+        $mail->addAddress('moderation.tripenarvor@gmail.com', 'admin');     //Add a recipient
+
+        //Content
+        $mail->Subject = "Signalement d'avis";
+        $mail->Body    = "L'avis " . $idavis . " de l'offre " . $_GET['idoffre'] . " a été signlé par un utilisateur.";
+
+        $mail->send();
+        $mail->smtpClose();
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
+
+function signalerAvis($idavis)
+{
     global $dbh;
 
-    $message = "l'avis $idavis de l'offre ".$_GET['idoffre']." à été signalé";
-    $headers = array (
-        'From' => 'moderation.tripenarvor@gmail.com'
-    );
-
-    mail("moderation.tripenarvor@gmail.com","signalement",$message, $headers);
-
-    $query = "UPDATE ". NOM_SCHEMA .".". NOM_TABLE_AVIS."
+    try {
+        $query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . "
               set signale = true where idavis = :idavis";
-    $stmt = $dbh->prepare($query);
-    $stmt->bindParam(":idavis",$idavis);
-    $stmt->execute();
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+        mail_signalement($idavis);
+    } catch (PDOException $e) {
+        die("Couldn't set review report to true : " . $e->getMessage());
+    }
 }
 
 if (isset($_POST['idavis'])) {
@@ -77,29 +115,35 @@ function afficher_avis($avis)
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
                 <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
-            </section>            
+            </section>
             <section class="avis-infos">
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
-            <section>
-                <form method="post">
-                    <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>"> 
-                    <input type="submit" value="Signaler">
-                </form>
-            </section>
+            <?php
+            if (isset($_SESSION['identifiant']) && !$avis['signale']) {
+            ?>
+                <section>
+                    <form method="post">
+                        <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                        <input type="submit" value="Signaler">
+                    </form>
+                </section>
+            <?php
+            }
+            ?>
         </div>
-        
+
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
-        <?php 
-        if (est_membre($_SESSION["identifiant"])){
-            ?><input type="button" id="pouceHaut" <?php aimeAvis()?> value="<?php echo $avis["nblike"]?>👍"></input> <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎" onclick="aimePas()"></input> <?php
-        } else {
-            ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"]?>👍" disabled></input> <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎"></input> <?php
-        }
-        ?> 
+        <?php
+        if (est_membre($_SESSION["identifiant"])) {
+        ?><input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input> <?php
+                                                                                                                    ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input> <?php
+                                                                                                                                                                                                                                } else {
+                                                                                                                                                                                                                                    ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input> <?php
+                                                                                                                                                                                                                                                                                                                                    ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input> <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                ?>
         <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
