@@ -1,5 +1,12 @@
 <script src="../scripts/aime.js"></script>
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require "../vendor/autoload.php";
+
 session_start();
 require_once "../db_connection.inc.php";
 require_once "../includes/modifier_avis.inc.php";
@@ -22,7 +29,7 @@ function afficher_liste_avis($id_offre)
             afficher_avis($avis);
         ?>
             <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-    <?php
+<?php
         }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
@@ -50,6 +57,60 @@ function aimeAvis()
     echo "onclick=aime()";
 }
 
+function mail_signalement($idavis)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'moderation.tripenarvor@gmail.com';                     //SMTP username
+        $mail->Password   = 'jdqq xxch iihn pdvd ';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
+        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('moderation.tripenarvor@gmail.com', 'admin');
+        $mail->addAddress('moderation.tripenarvor@gmail.com', 'admin');     //Add a recipient
+
+        //Content
+        $mail->Subject = "Signalement d'avis";
+        $mail->Body    = "L'avis " . $idavis . " de l'offre " . $_GET['idoffre'] . " a été signlé par un utilisateur.";
+
+        $mail->send();
+        $mail->smtpClose();
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
+
+function signalerAvis($idavis)
+{
+    global $dbh;
+
+    try {
+        $query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . "
+              set signale = true where idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+        mail_signalement($idavis);
+    } catch (PDOException $e) {
+        die("Couldn't set review report to true : " . $e->getMessage());
+    }
+}
+
+if (isset($_POST['idavis'])) {
+    signalerAvis($_POST['idavis']);
+    echo "<script>alert('signalement envoyé')</script>";
+}
+?>
+
+<?php
+
 /*
  * prend en argument un array contenant toutes les informations d'un avis
  * affiche un div representant l'avis
@@ -57,7 +118,7 @@ function aimeAvis()
 function afficher_avis($avis)
 {
     $date_visite = getdate(strtotime($avis['datevisite']));
-    ?>
+?>
     <div class="avis">
         <div class="avis-header">
             <section class="avis-titre">
@@ -68,6 +129,18 @@ function afficher_avis($avis)
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
+            <?php
+            if (isset($_SESSION['identifiant']) && !$avis['signale']) {
+            ?>
+                <section>
+                    <form method="post">
+                        <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                        <input type="submit" value="Signaler">
+                    </form>
+                </section>
+            <?php
+            }
+            ?>
         </div>
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
@@ -78,13 +151,15 @@ function afficher_avis($avis)
         <?php
         }
         if (est_membre($_SESSION["identifiant"])) {
-        ?><input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input> <?php
-                                                                                                                    ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input> <?php
-                                                                                                                                                                                                                                } else {
-                                                                                                                                                                                                                                    ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input> <?php
-                                                                                                                                                                                                                                                                                                                                    ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input> <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                    ?>
+        ?>
+            <input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input>
+            <?php
+            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input> <?php
+                                                                                                                        } else {
+                                                                                                                            ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input> <?php
+                                                                                                            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input> <?php
+                                                                                                                        }
+                                                                                                        ?>
     </div>
 <?php
 }
