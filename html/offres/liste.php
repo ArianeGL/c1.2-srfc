@@ -447,9 +447,17 @@ try {
             }
         }
 
-        let message_remplace = document.createElement('h1');
-        message_remplace.textContent = 'Aucune offre ne correspond aux filtres appliqués';
-        document.body.appendChild(message_remplace);
+        if (toutes_cachees){
+            let message_remplace = document.createElement('h1');
+            message_remplace.id = 'ListeVide';
+            message_remplace.textContent = 'Aucune offre ne correspond aux filtres appliqués';
+            document.body.appendChild(message_remplace);
+        } else {
+            let retirer = document.getElementById('ListeVide');
+            retirer.remove();
+        }
+
+
     }
 </script>
 
