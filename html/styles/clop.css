@@ -135,3 +135,7 @@ section {
 .cat_hidden {
     display: none;
 }
+
+.note_hidden {
+    display: none;
+}
