@@ -16,7 +16,6 @@
 }
 
 body {
-    height: 1024px;
     margin-top: 7%; /* SO IT DOESNT GO BEHIND THE HEADER, DONT TOUCH */
     margin-bottom: 7%; 
 
@@ -343,5 +342,3 @@ form textarea{
 
     margin-bottom: 20px;
 }
-    
-    
