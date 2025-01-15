@@ -129,37 +129,38 @@ function afficher_avis($avis)
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
-            <?php
-            if (isset($_SESSION['identifiant']) && !$avis['signale']) {
-            ?>
-                <section>
-                    <form method="post">
-                        <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
-                        <input type="submit" value="Signaler">
-                    </form>
-                </section>
-            <?php
-            }
-            ?>
         </div>
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
         <?php
+        if (isset($_SESSION['identifiant']) && !$avis['signale'] && !avis_appartient($avis['idavis'])) {
+        ?>
+            <form method="post">
+                <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                <input type="submit" class="smallButton" value="Signaler">
+            </form>
+        <?php
+        }
         if (isset($_SESSION['identifiant']) && avis_appartient($avis['idavis'])) {
         ?>
-            <button type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="smallButton modifier">Modifier</button>
+            <div>
+                <button type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="smallButton modifier">Modifier</button>
+            </div>
         <?php
         }
         if (est_membre($_SESSION["identifiant"])) {
         ?>
             <input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input>
             <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input> <?php
-                                                                                                                        } else {
-                                                                                                                            ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input> <?php
-                                                                                                            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input> <?php
-                                                                                                                        }
-                                                                                                        ?>
+            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input>
+        <?php
+        } else {
+        ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input>
+            <?php
+            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input>
+        <?php
+        }
+        ?>
     </div>
 <?php
 }
