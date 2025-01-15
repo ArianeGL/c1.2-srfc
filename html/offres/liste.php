@@ -29,7 +29,7 @@ try {
     <link rel="stylesheet" href="../styles/clop.css">
 
     <script src="../includes/main.js"></script>
-	<script src="../scripts/recherche.js"></script>
+    <script src="../scripts/recherche.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
@@ -119,10 +119,10 @@ try {
                     $ListeTris = ['noteCroissante', 'noteDecroissante'];
                     switch ($triOption) {
                         case 'noteCroissante':
-                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note ASC'; 
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note ASC';
                             break;
                         case 'noteDecroissante':
-                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC'; 
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC';
                             break;
                         default:
                             $ordreTri = '';
@@ -130,12 +130,12 @@ try {
 
                     ?>
 
-                    <select id="SelectionTri" onchange="triOffre()" >
+                    <select id="SelectionTri" onchange="triOffre()">
                         <option value="" disabled selected>Tris</option>
                         <option value="noteCroissante">Note Croissante</option>
                         <option value="noteDecroissante">Note Décroissante</option>
                     </select>
-	            </div>
+                </div>
                 <script>
                     function triOffre() {
                         const optionTri = document.getElementById('SelectionTri').value;
@@ -175,7 +175,7 @@ try {
                 $sth = $dbh->prepare($query);
                 $sth->bindParam(':idoffre', $offre['idoffre']);
                 $sth->execute();
-		        $result = $sth->fetchColumn();
+                $result = $sth->fetchColumn();
 
                 if ($result != 0) {
                     ?>
@@ -183,38 +183,39 @@ try {
                     <?php
 		        } else {
                     ?>
-                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
-                    <?php
-                } 
-                ?>
-                    <div>
-                        <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
-                        <section class="art-header">
-                            <h3><?php echo $offre['categorie']; ?></h3>
-                            <div>
-                                <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                            </div>
-                            <p><?php echo $offre['prixmin']; ?> &#8364;</p>
-                        </section>
-                    </div>
-                    <div>
+                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
                         <?php
-                        $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
-                        $images = $dbh->query($query_image)->fetch();?>
-                        <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
-
-                        <h4><?php echo $offre['villeoffre']; ?></h4>
-
-                        <div class="fade-out-container">
-                            <p><?php echo $offre['resume']; ?></p>
+                    }
+                        ?>
+                        <div>
+                            <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
+                            <h3><?php echo $offre['note'] . "/5" ?></h3>
+                            <section class="art-header">
+                                <h3><?php echo $offre['categorie']; ?></h3>
+                                <div>
+                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
+                                </div>
+                                <p><?php echo $offre['prixmin']; ?> &#8364;</p>
+                            </section>
                         </div>
-                        
-                        <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
-                    </div>
-                </article>
-            <?php
-            }
-            ?>
+                        <div>
+                            <?php
+                            $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
+                            $images = $dbh->query($query_image)->fetch(); ?>
+                            <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
+
+                            <h4><?php echo $offre['villeoffre']; ?></h4>
+
+                            <div class="fade-out-container">
+                                <p><?php echo $offre['resume']; ?></p>
+                            </div>
+
+                            <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
+                        </div>
+                        </article>
+                    <?php
+                }
+                    ?>
         </section>
 
     </main>
@@ -272,7 +273,7 @@ try {
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
-            
+
             for (article of articles) {
                 let art_cat = article.getAttribute('data-categorie');
 
@@ -292,7 +293,7 @@ try {
                             article.classList.remove("cat_hidden");
                         }
                         break;
-                    
+
                     case 'Spectacle':
                         if (!spectacle.checked) {
                             article.classList.add("cat_hidden");
@@ -428,7 +429,8 @@ try {
     let retirerFiltres = document.querySelector("#retirerFiltres");
     retirerFiltres.addEventListener('click', retire_filtres);
 
-    function retire_filtres() {
+    function retire_filtres() 
+    {
         if (fil_cat_verif()) {
             retire_fil_cat();
         }
