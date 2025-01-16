@@ -48,81 +48,19 @@ function est_membre($email)
 
     return $ret;
 }
-
-function aimeAvis()
-{
-    //$query=
-
-
-    echo "onclick=aime()";
-}
-
-function mail_signalement($idavis)
-{
-    $mail = new PHPMailer(true);
-
-    try {
-        //Server settings
-        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-        $mail->isSMTP();                                            //Send using SMTP
-        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'moderation.tripenarvor@gmail.com';                     //SMTP username
-        $mail->Password   = 'jdqq xxch iihn pdvd ';                               //SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-        //Recipients
-        $mail->setFrom('moderation.tripenarvor@gmail.com', 'admin');
-        $mail->addAddress('moderation.tripenarvor@gmail.com', 'admin');     //Add a recipient
-
-        //Content
-        $mail->Subject = "Signalement d'avis";
-        $mail->Body    = "L'avis " . $idavis . " de l'offre " . $_GET['idoffre'] . " a été signlé par un utilisateur.";
-
-        $mail->send();
-        $mail->smtpClose();
-    } catch (Exception $e) {
-        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-    }
-}
-
-function signalerAvis($idavis)
-{
-    global $dbh;
-
-    try {
-        $query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . "
-              set signale = true where idavis = :idavis";
-        $stmt = $dbh->prepare($query);
-        $stmt->bindParam(":idavis", $idavis);
-        $stmt->execute();
-        mail_signalement($idavis);
-    } catch (PDOException $e) {
-        die("Couldn't set review report to true : " . $e->getMessage());
-    }
-}
-
-if (isset($_POST['idavis'])) {
-    signalerAvis($_POST['idavis']);
-    echo "<script>alert('signalement envoyé')</script>";
-}
-?>
-
-<?php
+    
 
 /*
  * prend en argument un array contenant toutes les informations d'un avis
  * affiche un div representant l'avis
  */
-function afficher_avis($avis)
-{
+function afficher_avis($avis) {
     $date_visite = getdate(strtotime($avis['datevisite']));
 ?>
     <div class="avis">
         <div class="avis-header">
             <section class="avis-titre">
-                <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
+                <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
                 <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
             </section>
             <section class="avis-infos">
@@ -132,35 +70,27 @@ function afficher_avis($avis)
         </div>
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
-        <?php
-        if (isset($_SESSION['identifiant']) && !$avis['signale'] && !avis_appartient($avis['idavis'])) {
-        ?>
-            <form method="post">
-                <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
-                <input type="submit" class="smallButton" value="Signaler">
-            </form>
-        <?php
-        }
-        if (isset($_SESSION['identifiant']) && avis_appartient($avis['idavis'])) {
-        ?>
-            <div>
-                <button type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="smallButton modifier">Modifier</button>
-            </div>
-        <?php
-        }
-        if (est_membre($_SESSION["identifiant"])) {
-        ?>
-            <input type="button" id="pouceHaut" <?php aimeAvis() ?> value="<?php echo $avis["nblike"] ?>👍"></input>
-            <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎" onclick="aimePas()"></input>
-        <?php
-        } else {
-        ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"] ?>👍" disabled></input>
-            <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"] ?>👎"></input>
-        <?php
-        }
-        ?>
+        <?php 
+        // Vérifier si l'utilisateur a déjà liké ou disliké cet avis
+        global $dbh;
+        $email = $_SESSION["identifiant"];
+        $idCompte = get_account_id($email);
+        $idAvis = $avis["idavis"];
+        $query = "SELECT aime FROM " . NOM_SCHEMA . "." . VUE_AIME_AVIS . " WHERE idcompte = :idcompte AND idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->execute([':idcompte' => $idCompte, ':idavis' => $idAvis]);
+        $vote = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $isLiked = ($vote && $vote['aime'] === true);
+        $isDisliked = ($vote && $vote['aime'] === false);
+        if (est_membre($_SESSION["identifiant"])): ?>
+            <input type="button" class="pouceHaut <?php echo $isLiked ? 'active' : ''; ?>" data-avis-id="<?php echo $idAvis; ?>" value="<?php echo $avis["nblike"]?>👍"></input>
+            <input type="button" class="pouceBas <?php echo $isDisliked ? 'active' : ''; ?>" data-avis-id="<?php echo $idAvis; ?>" value="<?php echo $avis["nbdislike"]?>👎"></input>
+        <?php else: ?>
+            <input type="button" class="pouceHaut" value="<?php echo $avis["nblike"]?>👍" disabled></input>
+            <input type="button" class="pouceBas" value="<?php echo $avis["nbdislike"]?>👎" disabled></input>
+        <?php endif; ?>
+        <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
 }
