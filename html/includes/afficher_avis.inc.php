@@ -1,6 +1,5 @@
 <script src="../scripts/aime.js"></script>
 <?php
-session_start();
 require_once "../db_connection.inc.php";
 
 /*
@@ -31,26 +30,19 @@ function est_membre($email) {
 
     return $ret;
 }
-
-function aimeAvis(){
-    //$query=
     
-    
-    echo "onclick=aime()";
-}
 
 /*
  * prend en argument un array contenant toutes les informations d'un avis
  * affiche un div representant l'avis
  */
-function afficher_avis($avis)
-{
+function afficher_avis($avis) {
     $date_visite = getdate(strtotime($avis['datevisite']));
 ?>
     <div class="avis">
         <div class="avis-header">
             <section class="avis-titre">
-                <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
+                <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
                 <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
             </section>            
             <section class="avis-infos">
@@ -61,14 +53,25 @@ function afficher_avis($avis)
         
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
         <?php 
-        if (est_membre($_SESSION["identifiant"])){
-            ?><input type="button" id="pouceHaut" <?php aimeAvis()?> value="<?php echo $avis["nblike"]?>👍"></input> <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎" onclick="aimePas()"></input> <?php
-        } else {
-            ?><input type="button" id="pouceHaut" value="<?php echo $avis["nblike"]?>👍" disabled></input> <?php
-            ?><input type="button" id="pouceBas" value="<?php echo $avis["nbdislike"]?>👎"></input> <?php
-        }
-        ?> 
+        // Vérifier si l'utilisateur a déjà liké ou disliké cet avis
+        global $dbh;
+        $email = $_SESSION["identifiant"];
+        $idCompte = get_account_id($email);
+        $idAvis = $avis["idavis"];
+        $query = "SELECT aime FROM " . NOM_SCHEMA . "." . VUE_AIME_AVIS . " WHERE idcompte = :idcompte AND idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->execute([':idcompte' => $idCompte, ':idavis' => $idAvis]);
+        $vote = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $isLiked = ($vote && $vote['aime'] === true);
+        $isDisliked = ($vote && $vote['aime'] === false);
+        if (est_membre($_SESSION["identifiant"])): ?>
+            <input type="button" class="pouceHaut <?php echo $isLiked ? 'active' : ''; ?>" data-avis-id="<?php echo $idAvis; ?>" value="<?php echo $avis["nblike"]?>👍"></input>
+            <input type="button" class="pouceBas <?php echo $isDisliked ? 'active' : ''; ?>" data-avis-id="<?php echo $idAvis; ?>" value="<?php echo $avis["nbdislike"]?>👎"></input>
+        <?php else: ?>
+            <input type="button" class="pouceHaut" value="<?php echo $avis["nblike"]?>👍" disabled></input>
+            <input type="button" class="pouceBas" value="<?php echo $avis["nbdislike"]?>👎" disabled></input>
+        <?php endif; ?>
         <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     </div>
 <?php
