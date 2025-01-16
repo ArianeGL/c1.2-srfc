@@ -31,7 +31,7 @@ function afficher_form_reponse($idAvis)
     if ($reponseExiste) {
         // Si une réponse existe, afficher le bouton "Modifier"
         ?>
-        <button class="button deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
+        <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
     <?php echo EDIT; ?>
 </button>
         <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
@@ -47,7 +47,8 @@ function afficher_form_reponse($idAvis)
     } else {
         // Si aucune réponse n'existe, afficher le bouton "Répondre à cet avis"
         ?>
-        <button class="button deroulerReponse" data-idavis="<?php echo $idAvis; ?>">Répondre à cet avis</button>
+        <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
+        <?php echo EDIT; ?>
         <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
