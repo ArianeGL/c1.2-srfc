@@ -51,6 +51,6 @@
                 ?><button class="redButton" onclick="window.location='mettre_en_ligne.php?idoffre=<?php echo $id ?>'">Mettre en ligne</button><?php
             }
             ?><button class="button" onclick="window.location='modifier_offre-1.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
-            ?><button class="button" onclick="window.location='consulter_facture-2.php?idoffre=<?php echo $id ?>'">Facture</button><?php
+            ?><button class="button" onclick="window.location='../factures/consulter.php?idoffre=<?php echo $id ?>'">Facture</button><?php
         }?>
     </section>

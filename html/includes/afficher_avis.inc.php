@@ -1,6 +1,15 @@
 <script src="../scripts/aime.js"></script>
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require "../vendor/autoload.php";
+
+session_start();
 require_once "../db_connection.inc.php";
+require_once "../includes/modifier_avis.inc.php";
 
 /*
  * prend en argument l'id d'une offre pour en afficher touts les avis
@@ -11,15 +20,24 @@ function afficher_liste_avis($id_offre)
     global $dbh;
 
     try {
+?>
+        <script src="../scripts/modifier_avis.js"></script>
+        <?php
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
         $liste_avis = $dbh->query($query)->fetchAll();
-        foreach ($liste_avis as $avis) afficher_avis($avis);
+        foreach ($liste_avis as $avis) {
+            afficher_avis($avis);
+        ?>
+            <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+<?php
+        }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
     }
 }
 
-function est_membre($email) {
+function est_membre($email)
+{
     $ret = false;
     global $dbh;
 
@@ -44,13 +62,13 @@ function afficher_avis($avis) {
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
                 <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
-            </section>            
+            </section>
             <section class="avis-infos">
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
         </div>
-        
+
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
         <?php 
         // Vérifier si l'utilisateur a déjà liké ou disliké cet avis
@@ -173,4 +191,29 @@ function get_mois($date): string | bool
 function format_date($date): string
 {
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
+}
+
+/*
+ * prend en parametre l'id d'un avis
+ * retourne true si l'avis appartient au compte connecté
+ * retourne false sinon
+ */
+function avis_appartient($id_avis): bool
+{
+    global $dbh;
+    $ret = false;
+
+    try {
+        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":id_avis", $id_avis);
+        $id_compte = get_account_id();
+        $stmt->bindParam(":id_compte", $id_compte);
+        $stmt->execute();
+        $ret = $stmt->rowCount() == 1;
+    } catch (PDOException $e) {
+        die("Couldn't check review belonging : " . $e->getMessage());
+    }
+
+    return $ret;
 }

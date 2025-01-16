@@ -160,16 +160,16 @@ function afficher_form_avis($idOffre)
             <br>
 
             <label for="notecuisine">Note de la Cuisine *</label>
-            <input type="text" name="notecuisine" id="notecuisine" placeholder="Renseigner une note" required />
+            <input type="number" min="1" max="5" value="1" name="notecuisine" id="notecuisine" placeholder="Renseigner une note" required />
             <br>
             <label for="noteservice">Note du Service *</label>
-            <input type="text" name="noteservice" id="noteservice" placeholder="Renseigner une note" required />
+            <input type="number" min="1" max="5" value="1" name="noteservice" id="noteservice" placeholder="Renseigner une note" required />
             <br>
             <label for="noteambiance">Note de l'Ambiance *</label>
-            <input type="text" name="noteambiance" id="noteambiance" placeholder="Renseigner une note" required />
+            <input type="number" min="1" max="5" value="1" name="noteambiance" id="noteambiance" placeholder="Renseigner une note" required />
             <br>
             <label style="font-size:0.9em" for="noterapportqp">Note du Rapport Qualité/Prix *</label>
-            <input type="text" name="noterapportqp" id="noterapportqp" placeholder="Renseigner une note" required />
+            <input type="number" min="1" max="5" value="1" name="noterapportqp" id="noterapportqp" placeholder="Renseigner une note" required />
             <br>
 
             <script src="image_preview.js"></script>

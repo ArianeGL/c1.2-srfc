@@ -1770,24 +1770,34 @@ create or replace function sae.aimeavis()
   AS
 $$
 BEGIN
-  INSERT INTO sae._aime(idcompte,idavis,aime)
-  VALUES(NEW.idcompte,NEW.idavis,NEW.aime);
+  IF(TG_OP = 'INSERT') THEN
+    INSERT INTO sae._aime(idcompte,idavis,aime)
+    VALUES(NEW.idcompte,NEW.idavis,NEW.aime);
 
-  IF(NEW.aime = true) THEN
-    UPDATE sae._avis SET nblike = nblike + 1 WHERE idavis = NEW.idavis;
-  ELSE
-    UPDATE sae._avis SET nbdislike = nbdislike + 1 WHERE idavis = NEW.idavis;
+    IF(NEW.aime = true) THEN
+      UPDATE sae._avis SET nblike = nblike + 1 WHERE idavis = NEW.idavis;
+    ELSE
+      UPDATE sae._avis SET nbdislike = nbdislike + 1 WHERE idavis = NEW.idavis;
+    END IF;
+  ELSEIF(TG_OP = 'UPDATE')THEN
+    IF(NEW.aime = false) THEN
+      UPDATE sae._avis SET nblike = nblike - 1, nbdislike = nbdislike + 1 WHERE idavis = NEW.idavis;
+      UPDATE sae._aime set aime = false WHERE idcompte = NEW.idcompte and idavis = NEW.idavis;
+    ELSEIF(NEW.aime = true) THEN
+      UPDATE sae._avis SET nblike = nblike + 1, nbdislike = nbdislike - 1 WHERE idavis = NEW.idavis;
+      UPDATE sae._aime set aime = true WHERE idcompte = NEW.idcompte and idavis = NEW.idavis;
+    END IF;
   END IF;
-  
   RETURN NEW;
 END;
 $$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER tg_aimeavis
-  INSTEAD OF INSERT ON sae.aime
+  INSTEAD OF INSERT OR UPDATE ON sae.aime
   FOR EACH ROW
   EXECUTE PROCEDURE sae.aimeavis();
 
 ----------------------------------------------------------
 INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0001","Fa-0001");
 INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0009","Fa-0002");
+
