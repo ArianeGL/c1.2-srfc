@@ -37,7 +37,7 @@ function rechercheOffre() {
 
 function rechercheOffreConsultation() {
     const input = document.getElementById('rechercheOffre').value.toUpperCase().trim();
-    const offres = document.querySelectorAll('#art-offre'); // Sélectionne les éléments des offres
+    const offres = document.querySelectorAll('.art-offre'); // Sélectionne les éléments des offres
 
     if (input === '') {
         offres.forEach(offre => { // Si la barre de recherche est vide, affiche toutes les offres
@@ -47,23 +47,34 @@ function rechercheOffreConsultation() {
         const searchTokens = input.split(' '); // Divise l'entrée en mots-clés
         offres.forEach(offre => {
             const nomOffre = (offre.querySelector('.clopTitre')?.textContent || '').toUpperCase().trim(); // Récupère le titre de l'offre
+            const nomCat = (offre.querySelector('#clopCategorie')?.textContent || '').toUpperCase().trim();
+            const nomVille = (offre.querySelector('#clopVille')?.textContent || '').toUpperCase().trim();
             const offerTokens = nomOffre.split(' '); // Divise le titre de l'offre en mots
             let allMatch = true; 
 
             searchTokens.forEach(searchToken => {
                 let tokenMatch = false; 
-                offerTokens.forEach(offerToken => {
-                    const distance = levenshtein(searchToken, offerToken); // Calcule la distance de Levenshtein
-                    const threshold = Math.ceil(searchToken.length * 0.2); // Définit un seuil de tolérance à 20%
-                    if (distance <= threshold) {
-                        tokenMatch = true; // Si un mot correspond, marque ce mot-clé comme trouvé
-                    }
-                });
+                switch(true) {
+                    case offerTokens.some(offerToken => {
+                        const distance = levenshtein(searchToken, offerToken);
+                        const threshold = Math.ceil(searchToken.length * 0.2);
+                        return distance <= threshold;
+                    }):
+                        tokenMatch = true;
+                        break;
+                    case (nomCat && levenshtein(searchToken, nomCat) <= Math.ceil(searchToken.length * 0.2)):
+                        tokenMatch = true;
+                        break;
+                    case (nomVille && levenshtein(searchToken, nomVille) <= Math.ceil(searchToken.length * 0.2)):
+                        tokenMatch = true;
+                        break;
+                    default:
+                        tokenMatch = false;
+                }
                 if (!tokenMatch) {
-                    allMatch = false; // Si un mot-clé ne correspond pas, marque l'ensemble comme non valide
+                    allMatch = false;
                 }
             });
-
             // Affiche ou cache l'offre en fonction de la correspondance
             offre.style.display = allMatch ? 'flex' : 'none';
         });

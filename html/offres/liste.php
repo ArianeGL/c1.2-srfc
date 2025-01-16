@@ -191,7 +191,7 @@ try {
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
                             <section class="art-header">
-                                <h3><?php echo $offre['categorie']; ?></h3>
+                                <h3 id="clopCategorie"><?php echo $offre['categorie']; ?></h3>
                                 <div>
                                     <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
                                 </div>
@@ -204,7 +204,7 @@ try {
                             $images = $dbh->query($query_image)->fetch(); ?>
                             <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
 
-                            <h4><?php echo $offre['villeoffre']; ?></h4>
+                            <h4 id="clopVille"><?php echo $offre['villeoffre']; ?></h4>
 
                             <div class="fade-out-container">
                                 <p><?php echo $offre['resume']; ?></p>
