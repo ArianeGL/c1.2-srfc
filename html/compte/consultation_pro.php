@@ -4,7 +4,6 @@ require_once "../db_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 global $dbh;
-
 require_once "../includes/verif_connection.inc.php";
 
 function est_membre($email) {
