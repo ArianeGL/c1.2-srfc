@@ -1,12 +1,11 @@
 function modifier_avis(button, idavis, idoffre) {
-	let avis = button.parentNode;
+	let avis = button.parentNode.parentNode;
 	let form = create_update_form(avis, idavis, idoffre);
 	form.setAttribute("id", "edit-form");
 
 	avis.removeChild(avis.querySelector(".avis-header"));
 	avis.removeChild(avis.querySelector(".commentaire"));
-	avis.removeChild(avis.querySelector("#pouceHaut"));
-	avis.removeChild(avis.querySelector("#pouceBas"));
+	avis.removeChild(avis.querySelector("#like"));
 	avis.appendChild(form);
 	button.style.display = "none";
 }
