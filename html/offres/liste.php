@@ -111,6 +111,21 @@ try {
                     <button class="smallButton" id="retirerFiltreNote">Enlever le filtre</button>
                     </div>
 
+                    <div id="filtre_prix">
+                        <h3>Par Prix :</h3>
+                        <div>
+                            <p>Minimal :</p>
+                            <input type="range" id="slider_min" min="0" max="100" value="0">
+                            <input type="number" id="number_min" min="0" max="100" value="0">
+                        </div>
+                        <div>
+                            <p>Maximal :</p>
+                            <input type="range" id="slider_max" min="0" max="100" value="100">
+                            <input type="number" id="number_max" min="0" max="100" value="100">
+                        </div>
+                    </div>
+                    <button class="smallButton" id="retirerFiltrePrix">Enlever le filtre</button>
+
                     <button class="smallButton" id="retirerFiltres">Retirer tous les fitres</button>
 		        </fieldset>
                 <div class="tri">
@@ -124,16 +139,25 @@ try {
                         case 'noteDecroissante':
                             $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC';
                             break;
+                        case 'prixCroissant':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.prixmin ASC';
+                            break;
+                        case 'prixDecroissant':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.prixmin DESC';
+                            break;
                         default:
                             $ordreTri = '';
                     }
 
                     ?>
 
-                    <select id="SelectionTri" onchange="triOffre()">
+                    <select id="SelectionTri" class="smallButton" onchange="triOffre()">
                         <option value="" disabled selected>Tris</option>
                         <option value="noteCroissante">Note Croissante</option>
-                        <option value="noteDecroissante">Note Décroissante</option>
+                        <option value="noteDecroissante">Note D&eacute;croissante</option>
+                        <option value="prixCroissant">Prix Croissant</option>
+                        <option value="prixDecroissant">Prix D&eacute;croissant</option>
+                        <option value="retireTri">Retirer Tri</option>
                     </select>
                 </div>
                 <script>
@@ -179,11 +203,11 @@ try {
 
                 if ($result != 0) {
                     ?>
-                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                     <?php
 		        } else {
                     ?>
-                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>" data-note="<?php echo $offre['note'] ?>">
+                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                     }
                         ?>
@@ -192,9 +216,6 @@ try {
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
                             <section class="art-header">
                                 <h3><?php echo $offre['categorie']; ?></h3>
-                                <div>
-                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                                </div>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>
                             </section>
                         </div>
@@ -282,7 +303,9 @@ try {
                         if (!activite.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -290,7 +313,9 @@ try {
                         if (!visite.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -298,7 +323,9 @@ try {
                         if (!spectacle.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -306,7 +333,9 @@ try {
                         if (!parc_attraction.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -314,7 +343,9 @@ try {
                         if (!restauration.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -324,6 +355,8 @@ try {
                 }
             }
         }
+
+        cachees_verif();
     }
 
     let retirerFiltreCat = document.querySelector("#retirerFiltreCat");
@@ -348,8 +381,12 @@ try {
         }
 
         for (article of articles) {
-            article.classList.remove("cat_hidden");
+            if (article.classList.contains("cat_hidden")) {
+                article.classList.remove("cat_hidden");
+            }
         }
+
+        cachees_verif();
     }
 
     var sup_a_1 = document.querySelector("#sup_a_1");
@@ -397,10 +434,14 @@ try {
                 if (filtre_note > art_note) {
                     article.classList.add("note_hidden");
                 } else {
-                    article.classList.remove("note_hidden");
+                    if (article.classList.contains("note_hidden")) {
+                        article.classList.remove("note_hidden");
+                    }
                 }
             }
         }
+
+        cachees_verif();
     }
 
     let retirerFiltreNote = document.querySelector("#retirerFiltreNote");
@@ -422,8 +463,101 @@ try {
             }
         
         for (article of articles) {
-            article.classList.remove("note_hidden");
+            if (article.classList.contains("note_hidden")) {
+                article.classList.remove("note_hidden");
+            }
         }
+
+        cachees_verif();
+    }
+
+    var slid_min = document.getElementById('slider_min');
+    var slid_max = document.getElementById('slider_max');
+    var num_min = document.getElementById('number_min');
+    var num_max = document.getElementById('number_max');
+    
+    slid_min.addEventListener('mouseup', fil_prix);
+    slid_max.addEventListener('mouseup', fil_prix);
+    num_min.addEventListener('blur', fil_prix);
+    num_max.addEventListener('blur', fil_prix);
+    num_min.addEventListener('click', fil_prix);
+    num_max.addEventListener('click', fil_prix);
+
+    function fil_prix(event) 
+    {
+        let new_val = event.target.value;
+
+        if (new_val === '') {
+            new_val = 0;
+        }
+
+        switch(event.target.id) {
+            case 'slider_min':
+                if (Number(new_val) > Number(slid_max.value)) {
+                    slid_min.value = slid_min.min;
+                    num_min.value = num_min.min;
+                } else {
+                    num_min.value = new_val;
+                }
+                break;
+            case 'slider_max':
+                if (Number(new_val) < Number(slid_min.value)) {
+                    slid_max.value = slid_max.max;
+                    num_max.value = num_max.max;
+                } else {
+                    num_max.value = new_val;
+                }
+                break;
+            case 'number_min':
+                if (Number(new_val) > Number(num_max.value)) {
+                    slid_min.value = slid_min.min;
+                    num_min.value = num_min.min;
+                } else {
+                    slid_min.value = new_val;
+                }
+                break;
+            case 'number_max':
+                if (Number(new_val) < Number(num_min.value)) {
+                    slid_max.value = slid_max.max;
+                    num_max.value = num_max.max;
+                } else {
+                    slid_max.value = new_val;
+                }
+                break;
+        }
+
+        for (article of articles) {
+            let art_prix = article.getAttribute('data-prix');
+
+            if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
+                    article.classList.add("prix_hidden");
+            } else {
+                if (article.classList.contains("prix_hidden")) {
+                    article.classList.remove("prix_hidden");
+                }
+            }
+        }
+
+        cachees_verif();
+    }
+
+    let retirerFiltrePrix = document.querySelector("#retirerFiltrePrix");
+    retirerFiltrePrix.addEventListener('click', retire_fil_prix);
+
+    function retire_fil_prix() 
+    {
+        slid_min.value = slid_min.min;
+        slid_max.value = slid_max.max;
+        num_min.value = num_min.min;
+        num_max.value = num_max.max;
+
+        for (article of articles) {
+            if (article.classList.contains("prix_hidden")) {
+                    article.classList.remove("prix_hidden");
+                }
+        }
+
+        cachees_verif();
     }
 
     let retirerFiltres = document.querySelector("#retirerFiltres");
@@ -434,9 +568,14 @@ try {
         if (fil_cat_verif()) {
             retire_fil_cat();
         }
+
         if (fil_note_verif()) {
             retire_fil_note();
         }
+
+        retire_fil_prix();
+
+        cachees_verif();
     }
 
     function cachees_verif() 
@@ -444,22 +583,26 @@ try {
         let toutes_cachees = true;
 
         for (article of articles) {
-            if (!(article.classList.contains("cat_hidden")) && !(article.classList.contains("note_hidden"))) {
+            if (!(article.classList.contains("cat_hidden")) && !(article.classList.contains("note_hidden")) && !(article.classList.contains("prix_hidden"))) {
                 toutes_cachees = false;
             }
         }
 
+        let retirer = document.getElementById('ListeVide');
+
         if (toutes_cachees){
-            let message_remplace = document.createElement('h1');
-            message_remplace.id = 'ListeVide';
-            message_remplace.textContent = 'Aucune offre ne correspond aux filtres appliqués';
-            document.body.appendChild(message_remplace);
+            if (!retirer) {
+                let message_remplace = document.createElement('h1');
+                message_remplace.id = 'ListeVide';
+                message_remplace.textContent = 'On ne peut rien vous proposer avec votre sélection, désolé...';
+                navigateur = document.querySelector('nav');
+                navigateur.appendChild(message_remplace);
+            }
         } else {
-            let retirer = document.getElementById('ListeVide');
-            retirer.remove();
+            if (retirer) {
+                retirer.remove();
+            }
         }
-
-
     }
 </script>
 
