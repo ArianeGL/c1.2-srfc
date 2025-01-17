@@ -66,6 +66,53 @@ function est_membre($email)
     return $ret;
 }
 
+function mail_signalement($idavis)
+{
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'moderation.tripenarvor@gmail.com';                     //SMTP username
+        $mail->Password   = 'jdqq xxch iihn pdvd ';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
+        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        //Recipients
+        $mail->setFrom('moderation.tripenarvor@gmail.com', 'admin');
+        $mail->addAddress('moderation.tripenarvor@gmail.com', 'admin');     //Add a recipient
+        //Content
+        $mail->Subject = "Signalement d'avis";
+        $mail->Body    = "L'avis " . $idavis . " de l'offre " . $_GET['idoffre'] . " a été signlé par un utilisateur.";
+        $mail->send();
+        $mail->smtpClose();
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
+
+function signalerAvis($idavis)
+{
+    global $dbh;
+
+    try {
+        $query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . "
+              set signale = true where idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+        mail_signalement($idavis);
+    } catch (PDOException $e) {
+        die("Couldn't set review report to true : " . $e->getMessage());
+    }
+}
+
+if (isset($_POST['idavis'])) {
+    signalerAvis($_POST['idavis']);
+    echo "<script>alert('signalement envoyé')</script>";
+}
+
 
 /*
  * prend en argument un array contenant toutes les informations d'un avis
@@ -75,10 +122,9 @@ function afficher_avis($avis)
 {
     global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
-    ?>
     $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
-    <div class="avis" id="modifier_avis">
-        ?>
+    ?>
+    <div class="avis">
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
@@ -110,7 +156,7 @@ function afficher_avis($avis)
         <?php
         if (isset($_SESSION['identifiant']) && !$avis['signale'] && !avis_appartient($avis['idavis'])) {
         ?>
-            <form method="post">
+            <form id="form-signaler" method="post" enctype="multipart/form-data">
                 <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
                 <label>
                     <input style="display: none;" type="submit" class="smallButton" value="Signaler">
