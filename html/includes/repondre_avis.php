@@ -54,15 +54,11 @@ function afficher_form_reponse($idAvis) {
         $stmt->execute();
         $reponseExistante = $stmt->fetchColumn();
         error_log("Réponse existante récupérée : " . $reponseExistante);
-    }
-
-    if ($reponseExiste) {
-        // Si une réponse existe, afficher le bouton "Modifier"
 ?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
             <?php echo EDIT; ?>
         </button>
-        <form method="post" action="informations.php?idoffre=<?php echo htmlspecialchars($idOffre); ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+        <form method="post" action="informations.php?idoffre=<?php echo $idOffre; ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: block;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
                 <h1>Réponse</h1>
@@ -78,7 +74,7 @@ function afficher_form_reponse($idAvis) {
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
             <?php echo EDIT; ?>
         </button>
-        <form method="post" action="informations.php?idoffre=<?php echo htmlspecialchars($idOffre); ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+        <form method="post" action="informations.php?idoffre=<?php echo $idOffre; ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: block;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
                 <h1>Réponse</h1>
@@ -108,7 +104,7 @@ function afficher_form_reponse($idAvis) {
                     form.style.display = 'none';
                     console.log("Formulaire masqué pour l'avis ID : " + idAvis);
                 }
-            });
+                })});
         </script>
     <?php
 }
