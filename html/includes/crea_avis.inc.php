@@ -127,6 +127,7 @@ function afficher_form_avis($idOffre)
     } else {
 ?>
         <div id="crea_avis">
+        <div>
         <button class="button" id="deroulerAvis">Ajouter un avis</button>
         <form method="post" enctype="multipart/form-data" id="formAvis">
 
@@ -162,6 +163,7 @@ function afficher_form_avis($idOffre)
             <br>
             <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
         </form>
+        </div>
         </div>
 
         <script>

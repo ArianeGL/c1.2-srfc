@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="creation_offre">
 
 <head>
     <meta charset="UTF-8">

@@ -1017,6 +1017,209 @@ legend {
 
 }
 
+#informations_offre {
+main {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+
+    section {
+        display: flex;
+        flex-direction: row;
+
+        img-container {
+            display: block;
+            width: 500px;
+        }
+
+        img {
+            border-radius: var(--round-corners);
+            width: auto;
+            height: auto;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px; 
+        }
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .button {
+        background-color: var(--navy-blue);
+        height: 100px;
+        width: 500px;
+        color: white;
+        border: none;
+        text-align: center;
+        cursor: pointer;
+        border-radius: var(--round-corners);
+    
+        font-size: 1.5em;
+        font-family: "SUSE", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+        th, td {
+            border: 1px solid var(--light-grey);
+            padding: 8px;
+            text-align: left;
+        }
+    }
+}
+}
+
+#modification_offre {
+    main{
+        padding: 0 10%;
+    }
+    
+    h1{
+        text-align: center;
+    }
+    
+    form div{
+        width: 100%;
+    }
+    
+    form textarea{
+        width: 100%;
+        height: 10em;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+    
+    form div label{
+        width: max-content;
+        white-space: nowrap;
+        margin-right: 1em;
+    }
+    
+    form div input{
+        width:100%;
+        height: 3em;
+    
+        padding-left: 1em;
+        padding-right: 1em;
+        padding-bottom: -1em;
+        font-size: 1em;
+    
+        border: 2px solid var(--dark-grey);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+    
+    form div select{
+        width: 100%;
+        height: 3em;
+        background-color: white;
+    
+        padding-left: 1em;
+        padding-right: 1em;
+        font-size: 1em;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        
+        border: 2px solid var(--dark-grey);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+    
+    textarea{
+        width: 50%;
+        height: 5em;
+        border-radius: var(--round-corners);
+        padding-top: 1em;
+        font-size: 1em;
+        
+        border: 2px solid var(--dark-grey);
+    }
+    
+    form{
+        display: flex;
+        flex-direction: column;
+    
+        div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5%;
+            margin-bottom: 1.5%;
+            margin-right: 3%;
+        }
+    }
+    
+    #profile{
+        width: 10em;
+        height: 10em;
+    }
+    
+    #divButton{
+        display: flex;
+        flex-direction: column;
+    }
+    
+    div button{
+        width: 40%;
+        height: 2em;
+        margin: 2em;
+    }
+    
+    #submit{
+        height: 2em;
+        margin: 2em;
+    }
+    
+    #fichier{
+        border-radius: 0;
+        margin: 0;
+        padding-top: 2%;
+        margin-left: 1em;
+    }
+    
+    .bouton{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+    
+    .smallButton{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    input[type="file"] {
+        display: none;
+    }    
+}
+
+/**********/
+/**********/
+/** avis **/
+/**********/
+/**********/
+/**********/
+
+
 #crea_avis {
 #formAvis {
     display: none;
@@ -1063,4 +1266,65 @@ form {
         margin-right: 20px;
     }
 }
+}
+
+#modifier_avis {
+    #edit-form {
+        display : flex;
+        flex-direction: column;
+        /*justify-content: space-around;*/
+        align-items: center;
+        width: 100%;
+    }
+    
+    /* Barre de saisie avec ligne du bas uniquement visible */
+    .input-edit {
+      width: 100%;
+      padding: 8px;
+      margin: 20px;
+      border: none;
+      border-bottom: 2px solid var(--light-grey);
+      margin-bottom: 10px;
+      background-color: transparent;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 40px;
+    }
+    
+    .edit-header {
+        display: flex;
+    }
+    
+    #note {
+        width: 15%;
+    }
+    
+    #titre {
+        width: 100%;
+    }
+    
+    #contexte {
+        width: 100%;
+        padding: 8px;
+        margin: 20px;
+        border: none;
+        border-bottom: 2px solid var(--light-grey);
+        margin-bottom: 10px;
+        background-color: transparent;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 40px;
+    }
+    
+    textarea::placeholder {
+        font-size: 1.5em;
+    }
+    
+    textarea{
+        border-color: var(--dark-grey);
+        width: 50em;
+        height: 5em;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        font-family: 'Exo 2', sans-serif;
+    }
+    
 }

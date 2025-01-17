@@ -78,7 +78,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
             <?php } ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="consultation">
 
 <head>
     <meta charset="UTF-8">
@@ -92,7 +92,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
 <body>
     <?php require_once HEADER ?>
 
-    <main id="consultation">
+    <main>
         <section class="profile">
             <div class="profile-header">
                 <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>

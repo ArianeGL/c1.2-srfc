@@ -147,7 +147,7 @@ try {
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="creation_compte">
 
 <head>
     <meta charset="UTF-8">
@@ -160,7 +160,7 @@ try {
 
     <?php include HEADER; ?>
 
-    <main id="creation_compte">
+    <main>
     <section>
         <h1>Création du compte professionnel</h1>
         <form action="creation_pro.php" method="post" enctype="multipart/form-data">

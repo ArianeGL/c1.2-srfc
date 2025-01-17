@@ -119,7 +119,7 @@ function afficher_avis($avis)
 {
     $date_visite = getdate(strtotime($avis['datevisite']));
 ?>
-    <div class="avis">
+    <div class="avis" id="modifier_avis">
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
