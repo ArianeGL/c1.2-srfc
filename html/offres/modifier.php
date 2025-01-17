@@ -353,8 +353,8 @@ if (offre_appartient($_SESSION['identifiant'])) { // l'offre appartient à la se
 
 
 
-        header('Status: 301 Moved Permanently', false, 301); // redirection automatique après avoir remplis le formulaire
-        header('Location: informations_offre-1.php?idoffre=' . $post_idoffre);
+        header('Status: 301 Moved Permanently', false, 301);
+        header('Location: informations.php?idoffre=' . $post_idoffre);
         exit();
     } else { // si on ne vient pas de remplir le formulaire
 
@@ -459,12 +459,12 @@ if (offre_appartient($_SESSION['identifiant'])) { // l'offre appartient à la se
     ?>
 
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="en" id="modification_offre">
 
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="./styles/style_modifier_offre.css">
+            <link rel="stylesheet" href="./includes/style.css">
 
             <title>Modifer votre offre - PACT</title>
             <script src="../scripts/image_preview.js"></script>
@@ -475,7 +475,7 @@ if (offre_appartient($_SESSION['identifiant'])) { // l'offre appartient à la se
             <!-- Main content -->
             <main id="top">
                 <h1>Modifier une offre</h1>
-                <form action="modifier_offre-1.php?idoffre=<?php echo $idoffre ?>" method="POST" enctype="multipart/form-data" id="modifier_offre">
+                <form action="modifier.php?idoffre=<?php echo $idoffre ?>" method="POST" enctype="multipart/form-data" id="modifier_offre">
                     <div class="element_form row-form">
 
                         <label for="titre">Titre : </label>

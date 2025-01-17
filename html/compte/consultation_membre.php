@@ -77,13 +77,13 @@ if ($compte) {
 <?php } ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="consultation">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../styles/consultation.css">
+    <link rel="stylesheet" href="../includes/style.css">
 
     <title>Mon Compte - PACT</title>
 </head>
@@ -91,7 +91,7 @@ if ($compte) {
 <body>
     <?php require_once HEADER ?>
 
-    <main id="box">
+    <main>
         <section class="profile">
             <div class="profile-header">
                 <h1>Bonjour, <?php echo htmlspecialchars($pseudo); ?></h1>

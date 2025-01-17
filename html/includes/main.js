@@ -24,36 +24,7 @@ window.onload = function() {
 			// window.location.href = "index.html"; // Home page, change link when we get it
 		});
 	}
-
-	if (w >= 1400) {
-		document.getElementById("slogan").classList.add("sloganShow");
-		document.getElementById("slogan").classList.remove("sloganHide");
-	}
-
-	if (w <= 1400) {
-		document.getElementById("slogan").classList.add("sloganHide");
-		document.getElementById("slogan").classList.remove("sloganShow");
-	}
-
-	// If you create functions, add them here
-	// showCorrectDiv();
 };
-
-
-// Takes care of showing or not the slogan in the header, depending on window size and dinamically getting updated
-window.onresize = function() {
-	var w = window.innerWidth;
-
-	if (w >= 1400) {
-		document.getElementById("slogan").classList.add("sloganShow");
-		document.getElementById("slogan").classList.remove("sloganHide");
-	}
-
-	if (w <= 1400) {
-		document.getElementById("slogan").classList.add("sloganHide");
-		document.getElementById("slogan").classList.remove("sloganShow");
-	}
-}
 
 function detect_category(tagre) {
 	let elem = document.getElementById("categorie");

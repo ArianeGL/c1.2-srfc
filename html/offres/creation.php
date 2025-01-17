@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="creation_offre">
 
 <head>
     <meta charset="UTF-8">
@@ -62,7 +62,7 @@
 
     if (isset($_SESSION['identifiant']) && valid_account()) {
     ?>
-        <main>
+        <main id="creation_offre">
             <h1>Cr&eacute;ation d'une offre</h1>
             <form method="post" action="../includes/form_offre_handler.inc.php" enctype="multipart/form-data" id="creation_offre">
                 <div id="titre_cate">
