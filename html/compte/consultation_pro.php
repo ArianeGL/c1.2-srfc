@@ -84,7 +84,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../styles/consultation.css">
+    <link rel="stylesheet" href="../includes/style.css">
 
     <title>Mon Compte - PACT</title>
 </head>
@@ -92,7 +92,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
 <body>
     <?php require_once HEADER ?>
 
-    <main id="box">
+    <main id="consultation">
         <section class="profile">
             <div class="profile-header">
                 <h1>Bonjour, <?php echo htmlspecialchars($denomination); ?></h1>

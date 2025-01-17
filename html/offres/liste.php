@@ -26,7 +26,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/clop.css">
+    <link rel="stylesheet" href="../includes/style.css">
 
     <script src="../includes/main.js"></script>
 	<script src="../scripts/recherche.js"></script>
@@ -48,7 +48,7 @@ try {
 <body>
     <?php require_once HEADER; ?>
     <!-- Main content -->
-    <main style="margin-bottom: 700px;">
+    <main id="liste_offre" style="margin-bottom: 700px;">
         <nav>
             <div>
                 <svg height="30px" fill="#254766" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 385.00 385.00" xml:space="preserve" stroke="#000000" stroke-width="0.00385" transform="rotate(0)">

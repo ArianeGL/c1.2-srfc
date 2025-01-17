@@ -1,4 +1,4 @@
-@import "../includes/style.css";formof
+@import "../includes/style.css";
 
 main {
     background: white;
@@ -34,13 +34,13 @@ textarea{
     border-color: var(--dark-grey);
 }
 
-#creeation_offre > div > select{
+#creation_offre > div > select{
     width: 45%;
     height: 3em;
     border-radius: 5px;
 }
 
-#creeation_offre > select{
+#creation_offre > select{
     width: 45%;
     height: 3em;
     border-radius: 5px;

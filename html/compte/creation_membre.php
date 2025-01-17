@@ -133,13 +133,14 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/creation.css"> 
+    <link rel="stylesheet" href="../includes/style.css"> 
     <title>Création compte membre - PACT</title>
 </head>
 <body>
 
     <?php require_once HEADER; ?>
 
+    <main id="creation_compte">
     <section>
     <h1>Création du compte membre</h1>
         <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
@@ -200,6 +201,7 @@ try {
             </div>
         </form>
     </section>
+    </main>
     <?php require_once FOOTER; ?>
 
 </body>

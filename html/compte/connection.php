@@ -38,13 +38,13 @@ function est_pro(): bool
 <?php require_once "../includes/consts.inc.php"?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="connection">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="stylesheet" href="../styles/connexion.css">
+    <link rel="stylesheet" href="../includes/style.css">
     
     <title>PACT - Se Connecter</title>
 </head>
