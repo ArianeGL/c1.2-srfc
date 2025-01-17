@@ -43,7 +43,10 @@ try {
     <?php require_once HEADER; ?>
     <!-- Main content -->
     <main style="margin-bottom: 700px;">
-        <nav>
+        <?php if(isset($_SESSION['identifiant'])){ ?>
+            <button style="margin-bottom:30px" class="button" onclick="window.location='creation.php'">Créer une offre</button>
+        <?php } ?>
+        <nav>   
             <div>
                 <svg height="30px" fill="#254766" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 385.00 385.00" xml:space="preserve" stroke="#000000" stroke-width="0.00385" transform="rotate(0)">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
