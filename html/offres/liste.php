@@ -224,10 +224,6 @@ try {
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
                             <section class="art-header">
-                                <h3 id="clopCategorie"><?php echo $offre['categorie']; ?></h3>
-                                <div>
-                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                                </div>
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>
                             </section>
