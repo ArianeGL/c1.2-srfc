@@ -1,8 +1,9 @@
 <?php
 session_start();
 require_once "../db_connection.inc.php";
-global $dbh;
+require_once "../includes/consts.inc.php";
 
+global $dbh;
 require_once "../includes/verif_connection.inc.php";
 
 function est_membre($email) {
@@ -72,7 +73,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
                 $image = $compte['urlimage'];
             } else { ?> 
                 <script>
-                    window.location = <?php echo LSITE_OFFRES ?>;
+                    window.location = <?php echo LISTE_OFFRES ?>;
                 </script>
             <?php } ?>
 
@@ -83,7 +84,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="./styles/consultation.css">
+    <link rel="stylesheet" href="../styles/consultation.css">
 
     <title>Mon Compte - PACT</title>
 </head>
@@ -131,7 +132,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
 
                 <div class="actions-profil">
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
-                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro-3.php'">Modifier informations</button>
+                    <button id="bouton-modifier" type="button" onclick="window.location.href='modification_pro.php'">Modifier informations</button>
                     <button id="bouton-supprimer" type="button">Supprimer le compte</button>
                     <form action="../includes/deconnection.inc.php" method="post" enctype="multipart/form-data">
                         <input id="bouton-supprimer" type="submit" value="Se déconnecter">

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	// Get the page name of the parent folder of the current page
-	const pageName = window.location.pathname.split('/').pop();
+	const pageName = window.location.pathname;
 	const indicators = {
 		div1: "offres",
 		div2: "factures",
