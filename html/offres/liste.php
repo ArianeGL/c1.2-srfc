@@ -131,7 +131,7 @@ try {
                     <button class="smallButton" id="retirerFiltrePrix">Enlever le filtre</button>
 
                     <button class="smallButton" id="retirerFiltres">Retirer tous les fitres</button>
-		        </fieldset>
+                </fieldset>
                 <div class="tri">
                     <?php
                     $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
@@ -179,12 +179,13 @@ try {
             <?php
             $query1 = '
             SELECT * FROM ' . NOM_SCHEMA . '._offre 
-            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
-            
+            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel
+            INNER JOIN ' . NOM_SCHEMA . '.option ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre' . $ordreTri;
+
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
-                $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
+                $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN " . NOM_SCHEMA . ".option.option = 'A la une' THEN 1 ELSE 2 END, " . NOM_SCHEMA . "._offre.idoffre ASC;";
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
@@ -206,10 +207,10 @@ try {
                 $result = $sth->fetchColumn();
 
                 if ($result != 0) {
-                    ?>
+            ?>
                     <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                     <?php
-		        } else {
+                } else {
                     ?>
                         <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
@@ -219,6 +220,10 @@ try {
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
                             <section class="art-header">
+                                <h3 id="clopCategorie"><?php echo $offre['categorie']; ?></h3>
+                                <div>
+                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
+                                </div>
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>
                             </section>
@@ -229,7 +234,7 @@ try {
                             $images = $dbh->query($query_image)->fetch(); ?>
                             <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
 
-                            <h4><?php echo $offre['villeoffre']; ?></h4>
+                            <h4 id="clopVille"><?php echo $offre['villeoffre']; ?></h4>
 
                             <div class="fade-out-container">
                                 <p><?php echo $offre['resume']; ?></p>
@@ -278,8 +283,7 @@ try {
     spectacle.addEventListener("click", fil_cat);
     restauration.addEventListener("click", fil_cat);
 
-    function fil_cat_verif() 
-    {
+    function fil_cat_verif() {
         let all_checked = (spectacle.checked) && (parc_attraction.checked) && (visite.checked) && (activite.checked) && (restauration.checked);
         let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
 
@@ -291,9 +295,8 @@ try {
         }
     }
 
-    function fil_cat() 
-    {
-        if (fil_cat_verif()){
+    function fil_cat() {
+        if (fil_cat_verif()) {
             //checkbox eventListener onchange
             //classList.toggle("hidden")
             //classList.contains("hidden")
@@ -366,8 +369,7 @@ try {
     let retirerFiltreCat = document.querySelector("#retirerFiltreCat");
     retirerFiltreCat.addEventListener('click', retire_fil_cat);
 
-    function retire_fil_cat() 
-    {
+    function retire_fil_cat() {
         if (activite.checked) {
             activite.checked = false;
         }
@@ -403,8 +405,7 @@ try {
     sup_a_3.addEventListener("click", fil_note);
     sup_a_4.addEventListener("click", fil_note);
 
-    function fil_note_verif() 
-    {
+    function fil_note_verif() {
         if (sup_a_1.checked || sup_a_2.checked || sup_a_3.checked || sup_a_4.checked) {
             return true;
         } else {
@@ -412,9 +413,8 @@ try {
         }
     }
 
-    function fil_note() 
-    {
-        if (fil_note_verif()){
+    function fil_note() {
+        if (fil_note_verif()) {
             //checkbox eventListener onchange
             //classList.toggle("hidden")
             //classList.contains("hidden")
@@ -451,21 +451,17 @@ try {
     let retirerFiltreNote = document.querySelector("#retirerFiltreNote");
     retirerFiltreNote.addEventListener('click', retire_fil_note);
 
-    function retire_fil_note() 
-    {
+    function retire_fil_note() {
         if (sup_a_1.checked) {
-                sup_a_1.checked = false;
-            } 
-            else if (sup_a_2.checked) {
-                sup_a_2.checked = false;
-            } 
-            else if (sup_a_3.checked) {
-                sup_a_3.checked = false;
-            } 
-            else if (sup_a_4.checked) {
-                sup_a_4.checked = false;
-            }
-        
+            sup_a_1.checked = false;
+        } else if (sup_a_2.checked) {
+            sup_a_2.checked = false;
+        } else if (sup_a_3.checked) {
+            sup_a_3.checked = false;
+        } else if (sup_a_4.checked) {
+            sup_a_4.checked = false;
+        }
+
         for (article of articles) {
             if (article.classList.contains("note_hidden")) {
                 article.classList.remove("note_hidden");
@@ -516,15 +512,14 @@ try {
     num_min.addEventListener('click', fil_prix);
     num_max.addEventListener('click', fil_prix);
 
-    function fil_prix(event) 
-    {
+    function fil_prix(event) {
         let new_val = event.target.value;
 
         if (new_val === '') {
             new_val = 0;
         }
 
-        switch(event.target.id) {
+        switch (event.target.id) {
             case 'slider_min':
                 if (Number(new_val) > Number(slid_max.value)) {
                     slid_min.value = slid_min.min;
@@ -563,7 +558,7 @@ try {
             let art_prix = article.getAttribute('data-prix');
 
             if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
-                    article.classList.add("prix_hidden");
+                article.classList.add("prix_hidden");
             } else {
                 if (article.classList.contains("prix_hidden")) {
                     article.classList.remove("prix_hidden");
@@ -577,8 +572,7 @@ try {
     let retirerFiltrePrix = document.querySelector("#retirerFiltrePrix");
     retirerFiltrePrix.addEventListener('click', retire_fil_prix);
 
-    function retire_fil_prix() 
-    {
+    function retire_fil_prix() {
         slid_min.value = slid_min.min;
         slid_max.value = slid_max.max;
         num_min.value = num_min.min;
@@ -586,8 +580,8 @@ try {
 
         for (article of articles) {
             if (article.classList.contains("prix_hidden")) {
-                    article.classList.remove("prix_hidden");
-                }
+                article.classList.remove("prix_hidden");
+            }
         }
 
         cachees_verif();
@@ -596,8 +590,7 @@ try {
     let retirerFiltres = document.querySelector("#retirerFiltres");
     retirerFiltres.addEventListener('click', retire_filtres);
 
-    function retire_filtres() 
-    {
+    function retire_filtres() {
         if (fil_cat_verif()) {
             retire_fil_cat();
         }
@@ -611,8 +604,7 @@ try {
         cachees_verif();
     }
 
-    function cachees_verif() 
-    {
+    function cachees_verif() {
         let toutes_cachees = true;
 
         for (article of articles) {
@@ -623,7 +615,7 @@ try {
 
         let retirer = document.getElementById('ListeVide');
 
-        if (toutes_cachees){
+        if (toutes_cachees) {
             if (!retirer) {
                 let message_remplace = document.createElement('h1');
                 message_remplace.id = 'ListeVide';

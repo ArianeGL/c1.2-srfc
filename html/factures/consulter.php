@@ -52,29 +52,29 @@ if (isset($_GET['idoffre'])) {
         $sthCompte->bindParam(':idcompte', $idcompte, PDO::PARAM_STR);
         $sthCompte->execute();
         $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
-        if($compte){
-            if($compte["email"]==$_SESSION["identifiant"]){
-                $email=$compte["email"];
-                $num=$compte["numadressecompte"];
-                $rue=$compte["ruecompte"];
-                $ville=$compte["villecompte"];
-                $cp=$compte["codepostalcompte"];
-                $denomination=$compte["denomination"];
-                $moisDavant=date('n')-1;
-                if ($moisDavant==0){
-                    $moisDavant=12;
+        if ($compte) {
+            if ($compte["email"] == $_SESSION["identifiant"]) {
+                $email = $compte["email"];
+                $num = $compte["numadressecompte"];
+                $rue = $compte["ruecompte"];
+                $ville = $compte["villecompte"];
+                $cp = $compte["codepostalcompte"];
+                $denomination = $compte["denomination"];
+                $moisDavant = date('n') - 1;
+                if ($moisDavant == 0) {
+                    $moisDavant = 12;
                 }
-                $queryFacture = 'SELECT idfacture FROM ' . NOM_SCHEMA . '.'.VUE_FACTURE.' WHERE idoffre = :idoffre and moisprestation = :moisDavant';
+                $queryFacture = 'SELECT idfacture FROM ' . NOM_SCHEMA . '.' . VUE_FACTURE . ' WHERE idoffre = :idoffre and moisprestation = :moisDavant';
                 $sthFacture = $dbh->prepare($queryFacture);
                 $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
                 $sthFacture->bindParam(':moisDavant', $moisDavant, PDO::PARAM_STR);
                 $sthFacture->execute();
                 $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
-                if($facture){  
-                    $idfacture=$facture["idfacture"];
-                }else{
-                    $idfacture=generate_id();
-                    $queryFacture = 'INSERT INTO ' . NOM_SCHEMA . '.'.VUE_FACTURE.' (idoffre,idfacture) 
+                if ($facture) {
+                    $idfacture = $GET["idfacture"];
+                } else {
+                    $idfacture = $_GET["idfacture"];
+                    $queryFacture = 'INSERT INTO ' . NOM_SCHEMA . '.' . VUE_FACTURE . ' (idoffre,idfacture) 
                     VALUES(:idoffre,:idfacture)';
                     $sthFacture = $dbh->prepare($queryFacture);
                     $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
@@ -92,11 +92,13 @@ if (isset($_GET['idoffre'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture - PACT</title>
 </head>
+
 <body>
     <?php
     $queryFacture = 'SELECT * FROM ' . NOM_SCHEMA . '._historique 
@@ -107,60 +109,62 @@ if (isset($_GET['idoffre'])) {
     $sthFacture->bindParam(':idfacture', $idfacture, PDO::PARAM_STR);
     $sthFacture->execute();
     $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
-    if($facture){  
-        $idoffre=$facture["idoffre"];
-        $idfacture=$facture["idfacture"];
-        $date_debut=$facture["datedebut"];
-        $date_fin=$facture["datefin"];
-        $date_facture=$facture["datefacture"];
-        $moisprestation=$facture["moisprestation"];
-        $echeancereglement=$facture["echeancereglement"];
-        $nbjoursenligne=$facture["nbjoursenligne"];
-        $abonnement_ht=$facture["abonnementht"];
-        $abonnement_ttc=$facture["abonnementttc"];
-        $option_ht=$facture["optionht"];
-        $option_ttc=$facture["optionttc"];
-        $total_ht=$facture["totalht"];
-        $total_ttc=$facture["totalttc"];
+    if ($facture) {
+        $idfacture = $_GET["idfacture"];
+        $datefacture = $facture["datefacture"];
+        $idoffre = $facture["idoffre"];
+        $date_debut = $facture["datedebut"];
+        $date_fin = $facture["datefin"];
+        $date_facture = $facture["datefacture"];
+        $moisprestation = $facture["moisprestation"];
+        $echeancereglement = $facture["echeancereglement"];
+        $nbjoursenligne = $facture["nbjoursenligne"];
+        $abonnement_ht = $facture["abonnementht"];
+        $abonnement_ttc = $facture["abonnementttc"];
+        $option_ht = $facture["optionht"];
+        $option_ttc = $facture["optionttc"];
+        $total_ht = $facture["totalht"];
+        $total_ttc = $facture["totalttc"];
 
-        echo "id facture : ".$idfacture;
-        ?><br><?php
-        echo "date facture : ".$datefacture;
-        ?><br><?php
-        echo "id offre : ".$idoffre;
-        ?><br><?php
-        echo "mois prestation : ".$moisprestation;
-        ?><br><?php
-        echo "echeance reglement : ".$echeancereglement;
-        ?><br><?php
-        echo "nb jours en ligne : ".$nbjoursenligne;
-        ?><br><?php
-        echo "abonnement ht : ".$abonnementht;
-        ?><br><?php
-        echo "abonnement ttc : ".$abonnementttc;
-        ?><br><?php
-        echo "option ht : ".$optionht;
-        ?><br><?php
-        echo "option ttc : ".$optionttc;
-        ?><br><?php
-        echo "total ht : ".$totalht;
-        ?><br><?php
-        echo "total ttc : ".$totalttc;
-        ?><br><?php
-        echo "abonnement : ".$abonnement;
-        ?><br><?php
-        echo "email : ".$email;
-        ?><br><?php
-        echo "num : ".$num;
-        ?><br><?php
-        echo "rue : ".$rue;
-        ?><br><?php
-        echo "denomination : ".$denomination;
-        ?><br><?php
-    }
-    ?>
-    <form action="generate_pdf.php?idfacture=<?php echo $idfacture;?>" method="POST">
+        echo "id facture : " . $idfacture;
+    ?><br><?php
+            echo "date facture : " . $datefacture;
+            ?><br><?php
+                        echo "id offre : " . $idoffre;
+                        ?><br><?php
+                        echo "mois prestation : " . $moisprestation;
+                        ?><br><?php
+                        echo "echeance reglement : " . $echeancereglement;
+                        ?><br><?php
+                        echo "nb jours en ligne : " . $nbjoursenligne;
+                        ?><br><?php
+                        echo "abonnement ht : " . $abonnementht;
+                        ?><br><?php
+                        echo "abonnement ttc : " . $abonnementttc;
+                        ?><br><?php
+                        echo "option ht : " . $optionht;
+                        ?><br><?php
+                        echo "option ttc : " . $optionttc;
+                        ?><br><?php
+                        echo "total ht : " . $totalht;
+                        ?><br><?php
+                        echo "total ttc : " . $totalttc;
+                        ?><br><?php
+                        echo "abonnement : " . $abonnement;
+                        ?><br><?php
+                        echo "email : " . $email;
+                        ?><br><?php
+                        echo "num : " . $num;
+                        ?><br><?php
+                        echo "rue : " . $rue;
+                        ?><br><?php
+                        echo "denomination : " . $denomination;
+                        ?><br><?php
+                    }
+                        ?>
+    <form action="generate_pdf.php?idfacture=<?php echo $idfacture; ?>" method="POST">
         <button type="submit">Download PDF</button>
     </form>
 </body>
+
 </html>
