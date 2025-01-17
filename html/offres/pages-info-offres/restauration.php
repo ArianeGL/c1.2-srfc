@@ -1,5 +1,6 @@
 <!-- Main content -->
 <main id="top">
+    <section class="header">
     <div>
         <h1>
             <?php echo $categorie; ?> &#x2022; <?php echo $name; ?>
@@ -11,6 +12,7 @@
     <p>Prix: <?php echo $priceRange; ?></p>
 
     <p><?php echo $resume; ?></p>
+    </section>
 
     <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
 

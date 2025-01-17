@@ -1,5 +1,6 @@
 <!-- Main content -->
 <main id="top">
+    <section class="header">
     <div>
         <h1>
             <?php echo $categorie; ?> &#x2022; <?php echo $name; ?>
@@ -9,7 +10,7 @@
     <h3><?php echo $address; ?></h3>
 
     <p><?php echo $resume; ?></p>
-
+    </section>
     <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
 
     <section>

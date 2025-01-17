@@ -130,7 +130,7 @@ function afficher_avis($avis)
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
                 <h1 class="titre_avis"><?php echo $avis['titre']; ?></h1>
             </section>
-            <section class="avis-infos">
+            <section class="avis-infos" style="display: flex; flex-direction: column;">
                 <h3 class="date_visite"> <?php echo format_date($date_visite); ?> </h3>
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>

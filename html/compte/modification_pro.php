@@ -235,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php require_once HEADER; ?>
 
-    <section>
+    <section class="profile">
         <h1>Modification de votre Compte</h1>
         <form action="modification_pro.php" method="post" enctype="multipart/form-data">
             <div class="form-container">
@@ -271,8 +271,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label class="bouton" for="photo">Importer une image</label>
                 <input type="file" id="photo" name="photo" style="display:none;" />
                 </br>
-                <input class="bouton" id="bouton-modifier" type="submit" value="Valider" />
-                <button class="bouton" id="bouton-mdp" type="button" onclick="window.location.href='modification_mdp_pro.php'">Modifier mot de passe</button>
+                <input class="smallButton" id="bouton-modifier" type="submit" value="Valider" />
+                <button class="smallButton" id="bouton-mdp" type="button" onclick="window.location.href='modification_mdp_pro.php'">Modifier mot de passe</button>
                 </div>
             </div>
         </form>
