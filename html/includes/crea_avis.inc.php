@@ -149,7 +149,7 @@ function afficher_form_avis($idOffre)
             <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
             <br>
             <label for="note">Note *</label>
-            <input type="text" name="note" id="note" placeholder="Renseigner une note" required />
+            <input type="number" max="5" min="1" value="1" name="note" id="note" placeholder="Renseigner une note" required />
             <br>
             <script src="image_preview.js"></script>
             <div class="boutonimages">

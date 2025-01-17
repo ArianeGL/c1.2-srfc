@@ -38,13 +38,13 @@ if (isset($_GET['idoffre'])) {
         $dateLastUpdate = $offer['dernieremaj'];
 ?>
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="en" id="informations_offre">
 
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title><?php echo $name; ?></title>
-            <link rel="stylesheet" href="../styles/infos-offres.css">
+            <link rel="stylesheet" href="../includes/style.css">
             <link rel="icon" type="image/x-icon" href="favicon.ico">
 
             <script src="../includes/main.js"></script>
@@ -84,7 +84,7 @@ if (isset($_GET['idoffre'])) {
                     $brunch = $offreCategorisee['brunch'];
 
                     require_once './pages-info-offres/restauration.php';
-                    require_once '../includes/crea_avis_re.php';
+                    require_once '../includes/crea_avis_re.inc.php';
 
                     break;
 
@@ -125,14 +125,12 @@ if (isset($_GET['idoffre'])) {
                     $sthOffreCategorisee->bindParam(':offerId', $offerId, PDO::PARAM_STR);
                     $sthOffreCategorisee->execute();
                     $offreCategorisee = $sthOffreCategorisee->fetch(PDO::FETCH_ASSOC);
-    
+
                     $duration = $offreCategorisee['dureespectacle'];
                     $nbSeats = $offreCategorisee['placesspectacle'];
-    
+
                     require_once './pages-info-offres/spectacle.php';
                     require_once '../includes/crea_avis.inc.php';
-    
-                    break;
             }
             require_once "../includes/offre_appartient.php";
             require_once "../includes/afficher_avis.inc.php";

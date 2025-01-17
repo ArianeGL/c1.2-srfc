@@ -26,13 +26,14 @@ const VUE_FACTURE = "facture";
 const VUE_AVIS = "avis";
 const VUE_AVIS_RESTAURATION = "avisre";
 const VUE_REPONSE = "reponse";
+const VUE_AIME_AVIS = "aime";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";
 $user = "sae";
 $pass = "escapade-Venait-s1gner";
 try {
-    $dbh = new PDO('pgsql:host=' . $host . ';dbname=' . $dbname, $user, $pass);
+	$dbh = new PDO('pgsql:host=' . $host . ';dbname=' . $dbname, $user, $pass);
 } catch (PDOException $e) {
-    die("db connection failed : " . $e->getMessage());
+	die("db connection failed : " . $e->getMessage());
 }

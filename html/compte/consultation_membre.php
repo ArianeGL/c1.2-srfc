@@ -6,7 +6,8 @@ global $dbh;
 
 require_once "../includes/verif_connection.inc.php";
 
-function est_membre($email) {
+function est_membre($email)
+{
     $ret = false;
     global $dbh;
 
@@ -18,7 +19,8 @@ function est_membre($email) {
     return $ret;
 }
 
-function est_prive($email) {
+function est_prive($email)
+{
     $ret = false;
     global $dbh;
 
@@ -37,42 +39,42 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     //$idCompte = $requeteCompte['idcompte'];
     $idCompte = $requeteCompte->fetch(PDO::FETCH_ASSOC)["idcompte"];
 } else {
-?>  <script>
+?> <script>
         window.location = "./connection.php";
-    </script> 
+    </script>
 <?php }
 
-if (!est_membre($email)) {?> 
+if (!est_membre($email)) { ?>
     <script>
         window.location = "./consultation_pro.php";
-    </script> 
+    </script>
 <?php }
-            $schemaCompte = VUE_MEMBRE;
+$schemaCompte = VUE_MEMBRE;
 
-            $queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '.' . $schemaCompte . ' WHERE idcompte = :idcompte';
-            $sthCompte = $dbh->prepare($queryCompte);
-            $sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
-            $sthCompte->execute();
-            //$count = $sthCompte->fetchColumn();
-            $count = 5;
-            $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
+$queryCompte = 'SELECT * FROM ' . NOM_SCHEMA . '.' . $schemaCompte . ' WHERE idcompte = :idcompte';
+$sthCompte = $dbh->prepare($queryCompte);
+$sthCompte->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
+$sthCompte->execute();
+//$count = $sthCompte->fetchColumn();
+$count = 5;
+$compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
 
-            if ($compte) {
-                //$row = $rows[0];
-                $email = $compte["email"];
-                $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
-                $ville = $compte['villecompte'];
-                $codePostal = $compte['codepostalcompte'];
-                $telephone = $compte['telephone'];
-                $nom = $compte['nommembre'];
-                $prenom = $compte['prenommembre'];
-                $pseudo = $compte['pseudo'];
-                $image = $compte['urlimage'];
-            } else { ?> 
-                <script>
-                    window.location = <?php echo LSITE_OFFRES ?>;
-                </script>
-            <?php } ?>
+if ($compte) {
+    //$row = $rows[0];
+    $email = $compte["email"];
+    $adresse = $compte['numadressecompte'] . " " . $compte['ruecompte'];
+    $ville = $compte['villecompte'];
+    $codePostal = $compte['codepostalcompte'];
+    $telephone = $compte['telephone'];
+    $nom = $compte['nommembre'];
+    $prenom = $compte['prenommembre'];
+    $pseudo = $compte['pseudo'];
+    $image = $compte['urlimage'];
+} else { ?>
+    <script>
+        window.location = <?php echo LSITE_OFFRES ?>;
+    </script>
+<?php } ?>
 
 <!DOCTYPE html>
 <html lang="fr">
