@@ -25,6 +25,7 @@ require "../vendor/autoload.php";
 
 session_start();
 require_once "../db_connection.inc.php";
+require_once "../includes/repondre_avis.php";
 require_once "../includes/modifier_avis.inc.php";
 
 /*
@@ -72,7 +73,9 @@ function est_membre($email)
  */
 function afficher_avis($avis)
 {
+    global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
+    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
     ?>
     <div class="avis">
         <div class="avis-header">
@@ -85,8 +88,10 @@ function afficher_avis($avis)
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
         </div>
+        
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
+        
         <?php
         // Vérifier si l'utilisateur a déjà liké ou disliké cet avis
         global $dbh;
@@ -212,8 +217,45 @@ function afficher_avis($avis)
             }
         ?>
         </section>
+        <?php if ($avis['reponse']): ?>
+            <div class="reponse">
+                <h3>Réponse :</h3>
+                <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
+            </div>
+        <?php endif; 
+        $reponseExiste = reponse_existe($idAvis);
+        afficher_form_reponse($avis['idavis']); ?>
     </div>
 <?php
+}
+
+// Permet de savoir si une réponse existe pour un avis donné
+function reponse_existe($idAvis)
+{
+    global $dbh;
+
+    try {
+        // Requête pour vérifier si une réponse existe pour l'avis donné
+        $query = "SELECT reponse FROM sae._avis WHERE idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // Récupérer la réponse
+        $reponse = $stmt->fetchColumn();
+
+
+        // Vérifier si la réponse est NULL, vide ou égale à "[null]"
+        if ($reponse === null || $reponse === '' || $reponse === '[null]') {
+            return false; // Aucune réponse valide
+        } else {
+            return true; // Une réponse existe
+        }
+    } catch (PDOException $e) {
+        // En cas d'erreur, log l'erreur et retourne false
+        error_log("Erreur lors de la vérification de l'existence d'une réponse : " . $e->getMessage());
+        return false;
+    }
 }
 
 /*
@@ -314,6 +356,9 @@ function format_date($date): string
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
 }
 
+<<<<<<< HEAD
+
+=======
 /*
  * prend en parametre l'id d'un avis
  * retourne true si l'avis appartient au compte connecté
@@ -338,3 +383,4 @@ function avis_appartient($id_avis): bool
 
     return $ret;
 }
+>>>>>>> main
