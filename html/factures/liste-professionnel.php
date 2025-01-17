@@ -82,12 +82,14 @@ function getAnnee($idfacture){
     }
 }
 
-if (offre_appartient($_SESSION['identifiant'])) {
+if (isset($_SESSION['identifiant'])) {
     try{
     $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc,moisprestation FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
-                        WHERE idoffre = :id ORDER BY datefacture DESC;";
+                        inner join ". NOM_TABLE_OFFRE ." on ". NOM_TABLE_OFFRE .".idoffre = ". VUE_FACTURE .".idoffre
+                        inner join ". NOM_TABLE_COMPTE ." on ". NOM_TABLE_COMPTE .".idcompte = ". NOM_TABLE_OFFRE .".idcompte
+                        WHERE email = :id ORDER BY datefacture DESC;";
                         $stmt = $dbh->prepare($query_idfacture);
-                        $stmt->bindParam(":id",$idoffre);
+                        $stmt->bindParam(":id",$_SESSION['identifiant']);
                         $stmt->execute();
                         $res = $stmt->fetchall();
 
@@ -126,7 +128,7 @@ if (offre_appartient($_SESSION['identifiant'])) {
     </head>
     <body>
         <?php require_once HEADER; ?>
-        <h1> Liste des factures pour l'offre <?php echo $idoffre ?></h1>
+        <h1> Liste des factures pour le compte <?php echo $_SESSION['identifiant'] ?></h1>
         <div class=liste>
         <?php foreach($res as $line){ ?>
             <div class=facture>
