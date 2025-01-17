@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once("../db_connection.inc.php");
 require_once("../includes/consts.inc.php");
 session_start();
@@ -31,7 +31,8 @@ function offre_appartient($compte): bool
     return $appartient;
 }
 
-function getNomDuMois($numero_du_mois) {
+function getNomDuMois($numero_du_mois)
+{
     switch ($numero_du_mois) {
         case 1:
             return "Janvier";
@@ -60,58 +61,59 @@ function getNomDuMois($numero_du_mois) {
         default:
             return "Numéro de mois invalide"; // Gestion des cas hors 1-12
     }
-}    
+}
 /*
     prend en paramètre l'id d'une facture
     retourne l'année du mois de la facture
 */
-function getAnnee($idfacture){
+function getAnnee($idfacture)
+{
     global $dbh;
-    
-    try{
-    $query_annee = "SELECT extract(YEAR FROM datefacture - 31) FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
-                        WHERE idfacture = 'Fa-0001';";
-                        $stmt = $dbh->prepare($query_annee);
-                        //$stmt->bindParam(":id",$idfacture);
-                        $stmt->execute();
-                        $rep = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return $rep;
-    }catch(PDOException $e){
+    try {
+        $query_annee = "SELECT extract(YEAR FROM datefacture - 31) FROM " . NOM_SCHEMA . "." . VUE_FACTURE . "
+                        WHERE idfacture = 'Fa-0001';";
+        $stmt = $dbh->prepare($query_annee);
+        //$stmt->bindParam(":id",$idfacture);
+        $stmt->execute();
+        $rep = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $rep;
+    } catch (PDOException $e) {
         die($e);
     }
 }
 
 if (isset($_SESSION['identifiant'])) {
-    try{
-    $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc,moisprestation FROM ". NOM_SCHEMA .".". VUE_FACTURE ."
-                        inner join ". NOM_TABLE_OFFRE ." on ". NOM_TABLE_OFFRE .".idoffre = ". VUE_FACTURE .".idoffre
-                        inner join ". NOM_TABLE_COMPTE ." on ". NOM_TABLE_COMPTE .".idcompte = ". NOM_TABLE_OFFRE .".idcompte
+    try {
+        $query_idfacture = "SELECT idfacture,datefacture,echeancereglement,totalttc,moisprestation FROM " . NOM_SCHEMA . "." . VUE_FACTURE . "
+                        inner join " . NOM_TABLE_OFFRE . " on " . NOM_TABLE_OFFRE . ".idoffre = " . VUE_FACTURE . ".idoffre
+                        inner join " . NOM_TABLE_COMPTE . " on " . NOM_TABLE_COMPTE . ".idcompte = " . NOM_TABLE_OFFRE . ".idcompte
                         WHERE email = :id ORDER BY datefacture DESC;";
-                        $stmt = $dbh->prepare($query_idfacture);
-                        $stmt->bindParam(":id",$_SESSION['identifiant']);
-                        $stmt->execute();
-                        $res = $stmt->fetchall();
+        $stmt = $dbh->prepare($query_idfacture);
+        $stmt->bindParam(":id", $_SESSION['identifiant']);
+        $stmt->execute();
+        $res = $stmt->fetchall();
 
-    $query_nomoffre = "SELECT nomoffre FROM ". NOM_SCHEMA .".". NOM_TABLE_OFFRE ."
+        $query_nomoffre = "SELECT nomoffre FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . "
                         WHERE idoffre = :id;";
-                        $stmt = $dbh->prepare($query_idfacture);
-                        $stmt->bindParam(":id",$idoffre);
-                        $stmt->execute();
-                        $nomoffre = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    }catch(PDOException $e){
+        $stmt = $dbh->prepare($query_idfacture);
+        $stmt->bindParam(":id", $idoffre);
+        $stmt->execute();
+        $nomoffre = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
         print_r($e);
     }
 
-    if($_SESSION["identifiant"])
-    ?>
+    if ($_SESSION["identifiant"])
+?>
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" id="liste_facture">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../styles/listefacture.css">
+        <link rel="stylesheet" href="../includes/style.css">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -126,28 +128,31 @@ if (isset($_SESSION['identifiant'])) {
         <script src="../scripts/image_preview.js"></script>
         <title>PACT - liste des factures</title>
     </head>
+
     <body>
         <?php require_once HEADER; ?>
         <h1> Liste des factures pour le compte <?php echo $_SESSION['identifiant'] ?></h1>
         <div class=liste>
-        <?php foreach($res as $line){ ?>
-            <div class=facture>
-                <section >
-                    <h1> Facture du mois de <?php echo getNomDuMois($line["moisprestation"]); echo " ".getAnnee($line["idfacture"])["extract"] ?></h1>
-                    <p> Date de la facture : <?php echo $line["datefacture"]; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
-                </section>            
-                <section>
-                    <h3> Échéance du règlement : <?php echo $line["echeancereglement"]; ?> </h3>
-                    <p> Prix TTC : <?php echo $line["totalttc"]; ?> €</p>
-                </section>
-                <button class=smallButton onclick="window.location.href = 'generate_pdf.php?idfacture=<?php echo($line['idfacture']) ?>'";>Afficher la facture</button>
-            </div>
+            <?php foreach ($res as $line) { ?>
+                <div class=facture>
+                    <section>
+                        <h1> Facture du mois de <?php echo getNomDuMois($line["moisprestation"]);
+                                                echo " " . getAnnee($line["idfacture"])["extract"] ?></h1>
+                        <p> Date de la facture : <?php echo $line["datefacture"]; ?> </h2> <!-- a modifier avec le bon affichage de la note -->
+                    </section>
+                    <section>
+                        <h3> Échéance du règlement : <?php echo $line["echeancereglement"]; ?> </h3>
+                        <p> Prix TTC : <?php echo $line["totalttc"]; ?> €</p>
+                    </section>
+                    <button class=smallButton onclick="window.location.href = 'generate_pdf.php?idfacture=<?php echo ($line['idfacture']) ?>'" ;>Afficher la facture</button>
+                </div>
             <?php } ?>
         </div>
         <?php require_once FOOTER; ?>
     </body>
+
     </html>
-<?php }else{ ?>
+<?php } else { ?>
     <p> vous n'avez pas accès à cette page</p>
     <button onclick="window.location.href = '../index.html';"> retour à l'accueil</button>
-    <?php } ?>
+<?php } ?>
