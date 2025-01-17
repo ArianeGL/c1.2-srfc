@@ -1,4 +1,4 @@
-drop schema if exists sae cascade;
+3drop schema if exists sae cascade;
 create schema sae;
 set schema 'sae';
 
@@ -402,7 +402,7 @@ CREATE TABLE IF NOT EXISTS sae._notere
 CREATE TABLE IF NOT EXISTS sae._aime
 (
   idcompte  VARCHAR(7) NOT NULL REFERENCES sae._comptemembre(idcompte),
-  idavis  VARCHAR(7)  NOT NULL REFERENCES sae._avis(idavis),
+  idavis  VARCHAR(7)  NOT NULL REFERENCES sae._avis(idavis) ON DELETE CASCADE,
   aime  BOOLEAN NOT NULL,
   CONSTRAINT _aime_pk PRIMARY KEY(idcompte,idavis)
 );
@@ -1539,7 +1539,7 @@ BEGIN
   END IF;
   
   NEW.nbjoursenligne = (
-      SELECT SUM(datefin - datedebut)
+      SELECT SUM(datefin - datedebut + 1)
       FROM sae._historique
       WHERE  NEW.moisprestation = EXTRACT(MONTH FROM datedebut) and NEW.moisprestation = EXTRACT(MONTH FROM datefin)
         AND idoffre = NEW.idoffre
