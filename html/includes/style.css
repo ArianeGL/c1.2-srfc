@@ -740,8 +740,16 @@ nav {
         outline: none;
     }
     
-    
+
     margin-bottom: 50px;
+
+    #buttonContainer {
+        display: flex;
+    }
+
+    div > .smallButton {
+        margin-right: 1em;
+    }
 }
 
 section {

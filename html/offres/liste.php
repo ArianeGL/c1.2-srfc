@@ -34,12 +34,6 @@ try {
         function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
-
-        alert(articles[0].firstElementChild.children[1].innerHTML);
-
-        let clopButtonsRedirige = document.getElementsByClassName("clopButton");
-        clopButtonsRedirige[0].addEventListener("click", loadCreaOffre);
-        clopButtonsRedirige[1].addEventListener("click", loadSesOffresPro);
     </script>
 
     <title>PACT</title>
@@ -63,7 +57,7 @@ try {
                 <input type="text" id="rechercheOffre" placeholder="Rechercher une offre" onkeyup="rechercheOffreConsultation()"></input>
             </div>
 
-            <div>
+            <div id="buttonContainer">
                 <button id="filterButton" class="smallButton">Filtrer</button>
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
