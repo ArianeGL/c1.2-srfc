@@ -14,6 +14,31 @@ const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmln
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
 
+
+function can_repondre($idAvis)
+{
+    global $dbh;
+    $est_authorise = false;
+    if (isset($_SESSION['identifiant'])) {
+        $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_COMPTE . ' WHERE email = :email';
+        $sthCompte = $dbh->prepare($queryCompte);
+        $sthCompte->bindParam(':email', $_SESSION['identifiant'], PDO::PARAM_STR);
+        $sthCompte->execute();
+        $countProfessionnel = $sthCompte->fetchColumn();
+        // Vérifie si l'utilisateur est le propriétaire de l'offre associée à l'avis
+        $queryAvis = 'SELECT idoffre FROM ' . NOM_SCHEMA . '.' . VUE_AVIS . ' WHERE idavis = :idavis';
+        $sthAvis = $dbh->prepare($queryAvis);
+        $sthAvis->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
+        $sthAvis->execute();
+        $avis = $sthAvis->fetch(PDO::FETCH_ASSOC);
+        if ($countProfessionnel != 0 && offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
+            $est_authorise = true;
+        }
+    }
+    return $est_authorise;
+}
+
+
 function afficher_form_reponse($idAvis)
 {
     global $dbh;
