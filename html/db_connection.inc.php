@@ -9,6 +9,7 @@ const NOM_TABLE_COMPTE_PRO = "_compteprofessionnel";
 const NOM_TABLE_SOUSCRI_OPTION = "_souscriptionoption";
 const NOM_TABLE_AVIS = "_avis";
 const NOM_TABLE_TAGS = "_tag";
+const NOM_TABLE_TAG_POUR_OFFRE = "_tagpouroffre";
 const NOM_TABLE_TAGSRE = "_tagrestauration";
 const NOM_TABLE_IMGOF = "_imageoffre";
 const VUE_ACTIVITE = "activite";
@@ -25,13 +26,15 @@ const VUE_OPTION = "option";
 const VUE_FACTURE = "facture";
 const VUE_AVIS = "avis";
 const VUE_AVIS_RESTAURATION = "avisre";
+const VUE_REPONSE = "reponse";
+const VUE_AIME_AVIS = "aime";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";
 $user = "sae";
 $pass = "escapade-Venait-s1gner";
 try {
-    $dbh = new PDO('pgsql:host=' . $host . ';dbname=' . $dbname, $user, $pass);
+	$dbh = new PDO('pgsql:host=' . $host . ';dbname=' . $dbname, $user, $pass);
 } catch (PDOException $e) {
-    die("db connection failed : " . $e->getMessage());
+	die("db connection failed : " . $e->getMessage());
 }

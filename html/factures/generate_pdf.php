@@ -1,224 +1,332 @@
 <?php
-require_once("../includes/fpdf.php");
-require_once("db_connection.inc.php");
+require_once("../includes/fpdf/fpdf.php");
+require_once("../db_connection.inc.php");
 
 session_start();
 
-function generate_id()
-{
-    global $dbh;
-    $id_base = "Fa-";
-    $count_query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . VUE_FACTURE . ";";
-    try {
-        $count = $dbh->query($count_query)->fetchColumn(); // recupere le nombre d'offre deja existante
-    } catch (PDOException $e) {
-        die("SQL Query in generate_id() failed : " . $e->getMessage());
+class PDF extends FPDF {
+    function Header() {
+        $this->SetFont('Arial', 'B', 12);
+        $this->Cell(0, 10, 'Facture', 0, 1, 'C');
+        $this->Ln(10);
     }
-    $count++;
 
-    switch (strlen((string)$count)) {
-        case 1:
-            return $id_base . "000" . strval($count);
-            break;
-        case 2:
-            return $id_base . "00" . strval($count);
-            break;
-        case 3:
-            return $id_base . "0" . strval($count);
-            break;
-        case 4:
-            return $id_base . strval($count);
-            break;
-        default:
-            throw new FunctionException("Couldn't generate id");
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial', 'I', 8);
+        $this->Cell(0, 10, 'Page ' . $this->PageNo(), 0, 0, 'C');
     }
-}
 
-if (isset($_GET['idoffre'])) {
-    $idoffre = $_GET['idoffre'];
-    $queryOffer = 'SELECT nomoffre, idcompte, abonnement FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
-    $sthOffer = $dbh->prepare($queryOffer);
-    $sthOffer->bindParam(':offerId', $idoffre, PDO::PARAM_STR);
-    $sthOffer->execute();
-    $offer = $sthOffer->fetch(PDO::FETCH_ASSOC);
-
-    if ($offer) {
-        $nomoffre = $offer['nomoffre'];
-        $idcompte = $offer['idcompte'];
-        $abonnement = $offer['abonnement'];
-
-        $queryCompte = 'SELECT email, numadressecompte, ruecompte, villecompte, codepostalcompte, denomination FROM ' . NOM_SCHEMA . '.' . VUE_PRO_PRIVE . ' WHERE idcompte = :idcompte';
-        $sthCompte = $dbh->prepare($queryCompte);
-        $sthCompte->bindParam(':idcompte', $idcompte, PDO::PARAM_STR);
-        $sthCompte->execute();
-        $compte = $sthCompte->fetch(PDO::FETCH_ASSOC);
-        if($compte){
-            if($compte["email"]==$_SESSION["identifiant"]){
-                $email=$compte["email"];
-                $num=$compte["numadressecompte"];
-                $rue=$compte["ruecompte"];
-                $ville=$compte["villecompte"];
-                $cp=$compte["codepostalcompte"];
-                $denomination=$compte["denomination"];
-                $moisDavant=date('n')-1;
-                if ($moisDavant==0){
-                    $moisDavant=12;
-                }
-                $queryFacture = 'SELECT idfacture FROM ' . NOM_SCHEMA . '.'.VUE_FACTURE.' WHERE idoffre = :idoffre and moisprestation = :moisDavant';
-                $sthFacture = $dbh->prepare($queryFacture);
-                $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
-                $sthFacture->bindParam(':moisDavant', $moisDavant, PDO::PARAM_STR);
-                $sthFacture->execute();
-                $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
-                if($facture){  
-                    $idfacture=$facture["idfacture"];
-                }else{
-                    $idfacture=generate_id();
-                    $queryFacture = 'INSERT INTO ' . NOM_SCHEMA . '.'.VUE_FACTURE.' (idoffre,idfacture) 
-                    VALUES(:idoffre,:idfacture)';
-                    $sthFacture = $dbh->prepare($queryFacture);
-                    $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
-                    $sthFacture->bindParam(':idfacture', $idfacture, PDO::PARAM_STR);
-                    $sthFacture->execute();
-                    $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
+    function AddMonthTable($month, $year, $start_date, $end_date) {
+        $this->SetFont('Arial', '', 10);
+        $this->Ln(10);
+        $this->Cell(0, 10, "Calendrier des jours en ligne pour $month/$year", 0, 1, 'C');
+    
+        $table_width = 15 * 7;
+        $this->SetX((210 - $table_width) / 2);
+    
+        $days_in_month = (new DateTime("$year-$month-01"))->format('t');
+    
+        $day_count = 0;
+    
+        // Prepare JavaScript debug output
+        // echo "<script>";
+        for ($day = 1; $day <= $days_in_month; $day++) {
+            $status = 'Hors ligne';
+            if ($day <= 10) {
+                $current_date = strtotime("$year-$month-0$day");
+            }
+            else {
+                $current_date = strtotime("$year-$month-$day");
+            }
+            // echo "alert('$year-$month-$day $current_date');";
+    
+            // Add debugging information
+            // echo "alert('Processing day: $day (Current date: " . date('Y-m-d', $current_date) . ")');";
+    
+            foreach ($start_date as $index => $start) {
+                $start_ts = strtotime($start);
+                $end_ts = strtotime($end_date[$index]);
+                // echo "alert('start day: $start_ts Current date: $current_date end day: $end_ts');";
+    
+                if ($current_date >= $start_ts && $current_date <= $end_ts) {
+                    $status = 'En ligne';
+                    break;
                 }
             }
+    
+            $color = ($status == 'En ligne') ? [0, 255, 0] : [255, 0, 0];
+            // echo "alert('Day $day: Status: $status | Color: " . implode(',', $color) . "');";
+    
+            $this->SetFillColor($color[0], $color[1], $color[2]);
+            $this->Cell(15, 7, $day, 1, 0, 'C', true);
+    
+            $day_count++;
+    
+            if ($day_count % 7 == 0) {
+                $this->Ln();
+                $this->SetX((210 - $table_width) / 2);
+            }
         }
+    
+        if ($day_count % 7 != 0) {
+            $remaining_cells = 7 - ($day_count % 7);
+            for ($i = 0; $i < $remaining_cells; $i++) {
+                $this->Cell(15, 7, '', 1, 0, 'C');
+            }
+            $this->Ln();
+        }
+        // echo "</script>";
     }
 }
 
-?>
-    <?php
-    $queryFacture = 'SELECT * FROM ' . NOM_SCHEMA . '.'.VUE_FACTURE.' WHERE idoffre = :idoffre and moisprestation = :moisDavant';
+if (isset($_GET['idfacture'])) {
+    $queryFacture = 'SELECT * FROM ' . NOM_SCHEMA . '._historique 
+                    NATURAL JOIN ' . NOM_SCHEMA . '.facture 
+                    WHERE EXTRACT(MONTH FROM datedebut) = moisprestation 
+                    AND idfacture = :idfacture';
     $sthFacture = $dbh->prepare($queryFacture);
-    $sthFacture->bindParam(':idoffre', $idoffre, PDO::PARAM_STR);
-    $sthFacture->bindParam(':moisDavant', $moisDavant, PDO::PARAM_STR);
+    $sthFacture->bindParam(':idfacture', $_GET['idfacture'], PDO::PARAM_STR);
     $sthFacture->execute();
-    $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
-    if($facture){  
-        $datefacture=$facture["datefacture"];
-        $idoffre=$facture["idoffre"];
-        $moisprestation=$facture["moisprestation"];
-        $echeancereglement=$facture["echeancereglement"];
-        $nbjoursenligne=$facture["nbjoursenligne"];
-        $abonnementht=$facture["abonnementht"];
-        $abonnementttc=$facture["abonnementttc"];
-        $optionht=$facture["optionht"];
-        $optionttc=$facture["optionttc"];
-        $totalht=$facture["totalht"];
-        $totalttc=$facture["totalttc"];
+    $facture = $sthFacture->fetchAll(PDO::FETCH_ASSOC);
+    
+    $queryInfoCompl = 'SELECT * FROM ' . NOM_SCHEMA . '._offre 
+                    NATURAL JOIN ' . NOM_SCHEMA . '.compteprofessionnelprive 
+                    WHERE idoffre = :idoffre';
+    $sthInfoCompl = $dbh->prepare($queryInfoCompl);
+    $sthInfoCompl->bindParam(':idoffre', $facture[0]["idoffre"], PDO::PARAM_STR);
+    $sthInfoCompl->execute();
+    $infoCompl = $sthInfoCompl->fetch(PDO::FETCH_ASSOC);
 
-        $nomoffre = isset($nomoffre) ? (string) $nomoffre : '';
-        $idfacture = isset($idfacture) ? (string) $idfacture : '';
-        $datefacture = isset($datefacture) ? (string) $datefacture : '';
-        $idoffre = isset($idoffre) ? (string) $idoffre : '';
-        $moisprestation = isset($moisprestation) ? (string) $moisprestation : '';
-        $echeancereglement = isset($echeancereglement) ? (string) $echeancereglement : '';
-        $nbjoursenligne = isset($nbjoursenligne) ? (string) $nbjoursenligne : '0';
-        $abonnementht = isset($abonnementht) ? (string) $abonnementht : '0.00';
-        $abonnementttc = isset($abonnementttc) ? (string) $abonnementttc : '0.00';
-        $optionht = isset($optionht) ? (string) $optionht : '0.00';
-        $optionttc = isset($optionttc) ? (string) $optionttc : '0.00';
-        $totalht = isset($totalht) ? (string) $totalht : '0.00';
-        $totalttc = isset($totalttc) ? (string) $totalttc : '0.00';
-        $tva = isset($tva) ? (string) $tva : '20%'; // Default to 20% if not set
-        $email = isset($email) ? (string) $email : '';
-        $num = isset($num) ? (string) $num : '';
-        $rue = isset($rue) ? (string) $rue : '';
-        $ville = isset($ville) ? (string) $ville : '';
-        $cp = isset($cp) ? (string) $cp : '';
-        $denomination = isset($denomination) ? (string) $denomination : '';
+    $queryFactureYear = 'SELECT EXTRACT(YEAR FROM CURRENT_DATE - 31)';
+    $sthFactureYear = $dbh->prepare($queryFactureYear);
+    $sthFactureYear->execute();
+    $year = $sthFactureYear->fetch(PDO::FETCH_ASSOC);
 
+    $queryOption = 'SELECT DISTINCT option.*, _historiqueoption.prixoption FROM ' . NOM_SCHEMA . '.option NATURAL JOIN ' . NOM_SCHEMA . '._historiqueoption WHERE idoffre=:idoffre';
+    $sthOption = $dbh->prepare($queryOption);
+    $sthOption->bindParam(':idoffre', $facture[0]["idoffre"], PDO::PARAM_STR);
+    $sthOption->execute();
+    $option = $sthOption->fetchAll(PDO::FETCH_ASSOC);
+}
+else {
+    // echo "<script>alert('Aucune facture disponible.');</script>";
+    // echo "<script>window.location.href = 'consulter_facture.php?idoffre=$idoffre';</script>";
+}
 
-        $titre = "Facture de l'offre:\n" . $nomoffre;
-        $date = $datefacture;
-        $pact = "PACT\nvalerian.galle@etudiant.univ-rennes.fr\n3 Rue Edouard Branly\n22300 LANNION";
-        $type_abonnement = $abonnement;
-        $address_line1 = $num . $rue;
-        $address_line2 = $cp . $ville;
-        $client = "" . $denomination . "\n" . $email . "\n" . $address_line1 . "\n" . $address_line2;
-        $tva = "20%";
+if($facture != false){  
+    $idoffre=$facture[0]["idoffre"];
+    $idfacture=$facture[0]["idfacture"];
 
-        // Create PDF
-        $pdf = new FPDF();
-        $pdf->AddPage();
+    //gets every datedebut from facture
+    $date_debut=array_column($facture, "datedebut");
+    $date_fin=array_column($facture, "datefin");
+    
+    $date_facture=$facture[0]["datefacture"];
+    $moisprestation=$facture[0]["moisprestation"];
+    $echeancereglement=$facture[0]["echeancereglement"];
+    $nbjoursenligne=$facture[0]["nbjoursenligne"];
+    $abonnement_ht=$facture[0]["abonnementht"];
+    $abonnement_ttc=$facture[0]["abonnementttc"];
+    $option_ht=$facture[0]["optionht"];
+    $option_ttc=$facture[0]["optionttc"];
+    $total_ht=$facture[0]["totalht"];
+    $total_ttc=$facture[0]["totalttc"];
+    
+    $nomCompte=$infoCompl["denomination"];
+    $adresseCompte=$infoCompl["numadressecompte"] . " " . $infoCompl["ruecompte"] . ", " . $infoCompl["codepostalcompte"] . " " . $infoCompl["villecompte"];
+    
+    // Données de facturation
+    $facture_numero = $idfacture;
+    $date_emission = $date_facture;
+    $date_echeance = $echeancereglement;
+    
+    $nom_plateforme = "PACT";
+    $adresse_plateforme = "3 Rue Edouard Branly, 22300 Lannion";
+    
+    $nom_professionnel = $nomCompte;
+    $adresse_professionnel = $adresseCompte;
+    
+    $designation_offre = $infoCompl["nomoffre"];
+    $mois_concerne = $moisprestation;
+    
+    $abonnement_jours = $nbjoursenligne;
+    $abonnement_tarif_ht = $abonnement_ht;
+    
+    $option_a_la_une_semaines = 0;
+    $option_a_la_une_tarif_ht = 0;
+    $option_en_relief_semaines = 0;
+    $option_en_relief_tarif_ht = 0;
 
-        // LOGO
-        // $pdf->Image($logo, 10, 10, 30); // (file, x, y, width)
-        $pdf->SetFont('Arial', 'B', 16);
-
-        // TITLE
-        $pdf->SetXY(50, 10);
-        $pdf->MultiCell(110, 10, $titre, 'C'); // Title in the center
-        $pdf->SetXY(160, 10);
-        $pdf->SetFont('Arial', '', 12);
-        $pdf->Cell(30, 10, $datefacture, 0, 0, 'R'); // Date on the right
-
-        // PACT Details
-        $pdf->SetXY(10, 40);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->MultiCell(80, 5, $pact); // Multiline text
-
-        // Customer Details
-        $pdf->SetXY(120, 40);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Multicell(80, 5, $client, 'L');
-
-        // FACTURE HEADER TABLE
-        $pdf->SetXY(10, 70);
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(50, 10, 'FACTURE', 1, 0, 'C');
-        $pdf->Cell(90, 10, 'NOMBRE DE JOURS EN LIGNE', 1, 0, 'C');
-        $pdf->Cell(50, 10, 'TOTAL TTC', 1, 1, 'C'); // Last cell moves to a new line
-
-        // FACTURE DATA ROW
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(50, 10, $idfacture, 1, 0, 'C');
-        $pdf->Cell(90, 10, $nbjoursenligne, 1, 0, 'C');
-        $pdf->Cell(50, 10, $totalttc, 1, 1, 'C'); // Last cell moves to a new line
-
-        // DETAILS HEADER
-        $pdf->Ln(10); // Line break
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(0, 10, 'DETAILS', 0, 1, 'C');
-
-        // DETAILS TABLE
-        $pdf->SetFont('Arial', '', 10);
-
-        // First row
-        $pdf->Cell(90, 8, "Nombre de jours en ligne", 1);
-        $pdf->Cell(90, 8, $nbjoursenligne, 1, 1, 'C');
-
-        // Second row
-        $pdf->Cell(90, 8, "Abonnement HT", 1);
-        $pdf->Cell(90, 8, $abonnementht, 1, 1, 'C');
-
-        // Third row
-        $pdf->Cell(90, 8, "Abonnement TTC", 1);
-        $pdf->Cell(90, 8, $abonnementttc, 1, 1, 'C');
-
-        // Fourth row
-        $pdf->Cell(90, 8, "Option HT", 1);
-        $pdf->Cell(90, 8, $optionht, 1, 1, 'C');
-
-        // Fifth row
-        $pdf->Cell(90, 8, "Option TTC", 1);
-        $pdf->Cell(90, 8, $optionttc, 1, 1, 'C');
-
-        // Sixth row
-        $pdf->Cell(90, 8, "Total HT", 1);
-        $pdf->Cell(90, 8, $totalht, 1, 1, 'C');
-
-        // Seventh row
-        $pdf->Cell(90, 8, "TVA", 1);
-        $pdf->Cell(90, 8, $tva, 1, 1, 'C');
-
-        // Eighth row
-        $pdf->Cell(90, 8, "Total TTC", 1);
-        $pdf->Cell(90, 8, $totalttc, 1, 1, 'C');
-
-        // Output the PDF
-        $pdf->Output('D', 'facture.pdf');
+    foreach ($option as $key => $value) {
+        if ($value["option"] == "A la une") {
+            $option_a_la_une_semaines = $value["nbsemaine"];
+            $option_a_la_une_tarif_ht = $value["prixoption"];
+        }
+        else if ($value["option"] == "En relief") {
+            $option_en_relief_semaines = $value["nbsemaine"];
+            $option_en_relief_tarif_ht = $value["prixoption"];
+        }
     }
-    echo "<script>window.location.href = 'consulter_facture.php?idoffre=$idoffre';</script>";
-?>
+    
+    $abonnement_total_ht = $abonnement_ht;
+    $abonnement_total_ttc = $abonnement_ttc;
+    $option_a_la_une_total_ht = $option_a_la_une_semaines * $option_a_la_une_tarif_ht;
+    $option_a_la_une_total_ttc = $option_a_la_une_total_ht * 1.2;
+    $option_en_relief_total_ht = $option_en_relief_semaines * $option_en_relief_tarif_ht;
+    $option_en_relief_total_ttc = $option_en_relief_total_ht * 1.2;
+
+    
+    // Définir la période d'activité
+    $start_date = $date_debut;
+    $end_date = $date_fin;
+    $year = $year["extract"];
+    switch ($moisprestation) {
+        case 1:
+            $mois_concerne = "Janvier " . $year;
+            break;
+        case 2:
+            $mois_concerne = "Février " . $year;
+            break;
+        case 3:
+            $mois_concerne = "Mars " . $year;
+            break;
+        case 4:
+            $mois_concerne = "Avril " . $year;
+            break;
+        case 5:
+            $mois_concerne = "Mai " . $year;
+            break;
+        case 6:
+            $mois_concerne = "Juin " . $year;
+            break;
+        case 7:
+            $mois_concerne = "Juillet " . $year;
+            break;
+        case 8:
+            $mois_concerne = "Août " . $year;
+            break;
+        case 9:
+            $mois_concerne = "Septembre " . $year;
+            break;
+        case 10:
+            $mois_concerne = "Octobre " . $year;
+            break;
+        case 11:
+            $mois_concerne = "Novembre " . $year;
+            break;
+        case 12:
+            $mois_concerne = "Décembre " . $year;
+            break;
+        default:
+            $mois_concerne = "Mois inconnu";
+            break;
+    }
+    $month = $mois_concerne;
+}
+else {
+    // echo "<script>alert('Aucune facture disponible.');</script>";
+    // Données de facturation
+    $facture_numero = "20250108-001";
+    $date_emission = "2025-01-08";
+    $date_echeance = "2025-01-15";
+    $nom_plateforme = "Plateforme XYZ";
+    $adresse_plateforme = "123 Rue des Services, 75000 Paris";
+    $nom_professionnel = "Entreprise ABC";
+    $adresse_professionnel = "45 Avenue des Professionnels, 75001 Paris";
+    $designation_offre = "Abonnement Premium avec options";
+    $mois_concerne = "Janvier 2025";
+    
+    // Détails des services souscrits
+    $abonnement_jours = 30;
+    $abonnement_tarif_ht = 3.34;
+    $option_a_la_une_semaines = 2;
+    $option_a_la_une_tarif_ht = 16.68;
+    $option_en_relief_semaines = 4;
+    $option_en_relief_tarif_ht = 8.34;
+    
+    // Calculs
+    $abonnement_total_ht = $abonnement_jours * $abonnement_tarif_ht;
+    $abonnement_total_ttc = $abonnement_total_ht * 1.2;
+    $option_a_la_une_total_ht = $option_a_la_une_semaines * $option_a_la_une_tarif_ht;
+    $option_a_la_une_total_ttc = $option_a_la_une_total_ht * 1.2;
+    $option_en_relief_total_ht = $option_en_relief_semaines * $option_en_relief_tarif_ht;
+    $option_en_relief_total_ttc = $option_en_relief_total_ht * 1.2;
+    
+    $total_ht = $abonnement_total_ht + $option_a_la_une_total_ht + $option_en_relief_total_ht;
+    $total_ttc = $total_ht * 1.2;
+    
+    // Définir la période d'activité
+    $start_date = "2025-01-05";
+    $end_date = "2025-01-20";
+    $month = 1; // Janvier
+    $year = 2025;
+}
+
+
+// Création du PDF
+$pdf = new PDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial', '', 12);
+
+// Informations générales
+$pdf->Cell(0, 10, utf8_decode("Numéro de facture : $facture_numero"), 0, 1);
+$pdf->Cell(0, 10, utf8_decode("Date d'émission : $date_emission"), 0, 1);
+$pdf->Cell(0, 10, utf8_decode("Date d'échéance : $date_echeance"), 0, 1);
+$pdf->Ln(5);
+
+// Informations parties
+$pdf->Cell(0, 10, utf8_decode("Émetteur : $nom_plateforme"), 0, 1);
+$pdf->MultiCell(0, 10, utf8_decode("Adresse : $adresse_plateforme"), 0, 1);
+$pdf->Ln(5);
+$pdf->Cell(0, 10, utf8_decode("Client : $nom_professionnel"), 0, 1);
+$pdf->MultiCell(0, 10, utf8_decode("Adresse : $adresse_professionnel"), 0, 1);
+$pdf->Ln(10);
+
+// Désignation de l'offre
+$pdf->Cell(0, 10, utf8_decode("Désignation de l'offre : $designation_offre"), 0, 1);
+$pdf->Cell(0, 10, utf8_decode("Mois concerné : $mois_concerne"), 0, 1);
+$pdf->Ln(10);
+
+// Détails des services
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->Cell(100, 10, utf8_decode('Service'), 1);
+$pdf->Cell(30, 10, utf8_decode('Quantité'), 1);
+$pdf->Cell(30, 10, utf8_decode('HT'), 1);
+$pdf->Cell(30, 10, utf8_decode('TTC'), 1);
+$pdf->Ln();
+
+$pdf->SetFont('Arial', '', 12);
+$pdf->Cell(100, 10, utf8_decode('Abonnement Premium'), 1);
+$pdf->Cell(30, 10, utf8_decode($abonnement_jours . ' jours'), 1);
+$pdf->Cell(30, 10, number_format($abonnement_total_ht, 2), 1);
+$pdf->Cell(30, 10, number_format($abonnement_total_ttc, 2), 1);
+$pdf->Ln();
+
+$pdf->Cell(100, 10, utf8_decode('Option À la une'), 1);
+$pdf->Cell(30, 10, utf8_decode($option_a_la_une_semaines . ' semaines'), 1);
+$pdf->Cell(30, 10, number_format($option_a_la_une_total_ht, 2), 1);
+$pdf->Cell(30, 10, number_format($option_a_la_une_total_ttc, 2), 1);
+$pdf->Ln();
+
+$pdf->Cell(100, 10, utf8_decode('Option En relief'), 1);
+$pdf->Cell(30, 10, utf8_decode($option_en_relief_semaines . ' semaines'), 1);
+$pdf->Cell(30, 10, number_format($option_en_relief_total_ht, 2), 1);
+$pdf->Cell(30, 10, number_format($option_en_relief_total_ttc, 2), 1);
+$pdf->Ln();
+
+// Totaux
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->Cell(130, 10, utf8_decode('Total'), 1);
+$pdf->Cell(30, 10, number_format($total_ht, 2), 1);
+$pdf->Cell(30, 10, number_format($total_ttc, 2), 1);
+$pdf->Ln(10);
+
+$pdf->SetFont('Arial', 'I', 10);
+$pdf->MultiCell(0, 10, utf8_decode("*L'abonnement Premium de $abonnement_jours jours correspond à une offre en ligne pour professionnels privés durant cette période."), 0, 1);
+// Add the month table, ensuring it's centered
+$pdf->AddMonthTable($moisprestation, $year, $start_date, $end_date);
+
+
+// Sortie du PDF
+$pdf->Output('I', 'facture.pdf');

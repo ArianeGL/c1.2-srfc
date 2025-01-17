@@ -35,7 +35,7 @@ function est_pro(): bool
 
 ?>
 
-<?php require_once "../includes/consts.inc.php"?>
+<?php require_once "../includes/consts.inc.php" ?>
 
 <!DOCTYPE html>
 <html lang="fr" id="connection">
@@ -43,9 +43,7 @@ function est_pro(): bool
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="stylesheet" href="../includes/style.css">
-    
     <title>PACT - Se Connecter</title>
 </head>
 
@@ -106,21 +104,22 @@ function est_pro(): bool
             echo '<script>window.location.href ="' . LISTE_OFFRES . '" ;</script>';
         } else if ($attempt == 0) { ?>
             <form action=<?php echo CONNECTION_COMPTE; ?> method="post" enctype="multipart/form-data">
-                    <label>Identifiant</label>
-                    <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required>
-                    <br>
-                    <label>Mot de passe</label>
-                    <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required>
-                    <a href="inscription_pro.php">Mot de passe oubli&eacute; ?</a>
-                    <br>
-                    <input class="smallButton" type="submit" value="Se connecter" name="connexion">
-                    <div>
-                        <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-                        <button class="smallButton" onclick="window.location.href='./creation.html'">changer en txt avec <\a> pour creer compte</button>
-                    </div>
-                </form>
+                <label>Identifiant</label>
+                <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required>
+                <br>
+                <label>Mot de passe</label>
+                <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required>
+                <a href="inscription_pro.php">Mot de passe oubli&eacute; ?</a>
+                <br>
+                <input class="smallButton" type="submit" value="Se connecter" name="connexion">
+                <div>
+                    <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+                    <button class="smallButton" onclick="window.location.href='./creation.html'">changer en txt avec <\a> pour creer compte</button>
+                </div>
+            </form>
         <?php } ?>
     </main>
 </body>
 <script src="../includes/main.js"></script>
+
 </html>

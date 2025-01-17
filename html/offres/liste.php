@@ -29,7 +29,7 @@ try {
     <link rel="stylesheet" href="../includes/style.css">
 
     <script src="../includes/main.js"></script>
-	<script src="../scripts/recherche.js"></script>
+    <script src="../scripts/recherche.js"></script>
     <script>
         function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
@@ -68,54 +68,102 @@ try {
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
 
+                    <div id="filtre_cat">
+                        <div>
+                            <label for="activite">
+                                <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
+                        </div>
+                        <div>
+                            <label for="visite">
+                                <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
+                        </div>
+                        <div>
+                            <label for="parcAttraction">
+                                <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
+                        </div>
+                        <div>
+                            <label for="spectacle">
+                                <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
+                        </div>
+                        <div>
+                            <label for="restauration">
+                                <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
+                        </div>
+                        <button class="smallButton" id="retirerFiltreCat">Enlever le filtre</button>
+                    </div>
+
+                    <h3>Par Note minimale :</h3>
+
+                    <div id="filtre_note">
+                        <div>
+                            <input type="radio" id="sup_a_1" name="fil_note" value="1" />
+                            <label for="sup_a_1"><h1>&gt; 1</h1></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="sup_a_2" name="fil_note" value="2" />
+                            <label for="sup_a_2"><h1>&gt; 2</h1></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="sup_a_3" name="fil_note" value="3" />
+                            <label for="sup_a_3"><h1>&gt; 3</h1></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="sup_a_4" name="fil_note" value="4" />
+                            <label for="sup_a_4"><h1>&gt; 4</h1></label>
+                        </div>
+                        <button class="smallButton" id="retirerFiltreNote">Enlever le filtre</button>
+                    </div>
+                    
+                    <h3>Par Prix :</h3>
+
+                    <div id="filtre_prix">
+                        <div>
+                            <p>Minimal :</p>
+                            <input type="range" id="slider_min" min="0" max="100" value="0">
+                            <input type="number" id="number_min" min="0" max="100" value="0">
+                        </div>
+                        <div>
+                            <p>Maximal :</p>
+                            <input type="range" id="slider_max" min="0" max="100" value="100">
+                            <input type="number" id="number_max" min="0" max="100" value="100">
+                        </div>
+                    </div>
+                    <button class="smallButton" id="retirerFiltrePrix">Enlever le filtre</button>
+
+                    <button class="smallButton" id="retirerFiltres">Retirer tous les fitres</button>
+                </fieldset>
+                <div class="tri">
                     <?php
                     $triOption = isset($_GET['tri']) ? $_GET['tri'] : null;
                     $ListeTris = ['noteCroissante', 'noteDecroissante'];
                     switch ($triOption) {
                         case 'noteCroissante':
-                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note ASC'; 
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note ASC';
                             break;
                         case 'noteDecroissante':
-                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC'; 
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.note DESC';
+                            break;
+                        case 'prixCroissant':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.prixmin ASC';
+                            break;
+                        case 'prixDecroissant':
+                            $ordreTri = ' ORDER BY ' . NOM_TABLE_OFFRE . '.prixmin DESC';
                             break;
                         default:
                             $ordreTri = '';
                     }
-                    $query1 = '
-                    SELECT * FROM ' . NOM_SCHEMA . '._offre 
-                    NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
 
                     ?>
-                    <div>
-                        <label for="activite">
-                            <input type="checkbox" id="activite" name="activite" value="activite" />Activit&eacute;</label>
-                    </div>
-                    <div>
-                        <label for="visite">
-                            <input type="checkbox" id="visite" name="visite" value="visite" />Visite</label>
-                    </div>
-                    <div>
-                        <label for="parcAttraction">
-                            <input type="checkbox" id="parcAttraction" name="parcAttraction" value="parcAttraction" />Parc d'Attraction</label>
-                    </div>
-                    <div>
-                        <label for="spectacle">
-                            <input type="checkbox" id="spectacle" name="spectacle" value="spectacle" />Spectacle</label>
-                    </div>
-                    <div>
-                        <label for="restauration">
-                            <input type="checkbox" id="restauration" name="restauration" value="restauration" />Restauration</label>
-                    </div>
-                    <button class="smallButton" id="retirerFiltres">Enlever les fitres</button>
-		        </fieldset>
-                <div class="tri">
 
-                    <select id="SelectionTri" onchange="triOffre()" >
+                    <select id="SelectionTri" class="smallButton" onchange="triOffre()">
                         <option value="" disabled selected>Tris</option>
                         <option value="noteCroissante">Note Croissante</option>
-                        <option value="noteDecroissante">Note Décroissante</option>
+                        <option value="noteDecroissante">Note D&eacute;croissante</option>
+                        <option value="prixCroissant">Prix Croissant</option>
+                        <option value="prixDecroissant">Prix D&eacute;croissant</option>
+                        <option value="retireTri">Retirer Tri</option>
                     </select>
-	            </div>
+                </div>
                 <script>
                     function triOffre() {
                         const optionTri = document.getElementById('SelectionTri').value;
@@ -129,10 +177,15 @@ try {
 
         <section>
             <?php
+            $query1 = '
+            SELECT * FROM ' . NOM_SCHEMA . '._offre 
+            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel
+            INNER JOIN ' . NOM_SCHEMA . '.option ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre' . $ordreTri;
+
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
-                $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
+                $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN " . NOM_SCHEMA . ".option.option = 'A la une' THEN 1 ELSE 2 END, " . NOM_SCHEMA . "._offre.idoffre ASC;";
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
@@ -151,46 +204,48 @@ try {
                 $sth = $dbh->prepare($query);
                 $sth->bindParam(':idoffre', $offre['idoffre']);
                 $sth->execute();
-		        $result = $sth->fetchColumn();
+                $result = $sth->fetchColumn();
 
                 if ($result != 0) {
-                    ?>
-                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
-                    <?php
-		        } else {
-                    ?>
-                    <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie'] ?>">
-                    <?php
-                } 
-                ?>
-                    <div>
-                        <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
-                        <section class="art-header">
-                            <h3><?php echo $offre['categorie']; ?></h3>
-                            <div>
-                                <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                            </div>
-                            <p><?php echo $offre['prixmin']; ?> &#8364;</p>
-                        </section>
-                    </div>
-                    <div>
-                        <?php
-                        $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
-                        $images = $dbh->query($query_image)->fetch();?>
-                        <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
-
-                        <h4><?php echo $offre['villeoffre']; ?></h4>
-
-                        <div class="fade-out-container">
-                            <p><?php echo $offre['resume']; ?></p>
-                        </div>
-                        
-                        <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
-                    </div>
-                </article>
-            <?php
-            }
             ?>
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                    <?php
+                } else {
+                    ?>
+                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                        <?php
+                    }
+                        ?>
+                        <div>
+                            <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
+                            <h3><?php echo $offre['note'] . "/5" ?></h3>
+                            <section class="art-header">
+                                <h3 id="clopCategorie"><?php echo $offre['categorie']; ?></h3>
+                                <div>
+                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
+                                </div>
+                                <h3><?php echo $offre['categorie']; ?></h3>
+                                <p><?php echo $offre['prixmin']; ?> &#8364;</p>
+                            </section>
+                        </div>
+                        <div>
+                            <?php
+                            $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
+                            $images = $dbh->query($query_image)->fetch(); ?>
+                            <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
+
+                            <h4 id="clopVille"><?php echo $offre['villeoffre']; ?></h4>
+
+                            <div class="fade-out-container">
+                                <p><?php echo $offre['resume']; ?></p>
+                            </div>
+
+                            <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
+                        </div>
+                        </article>
+                    <?php
+                }
+                    ?>
         </section>
 
     </main>
@@ -214,11 +269,6 @@ try {
         champs_filtres.style.display = isVisible ? 'none' : 'flex';
     }
 
-    let retirerFiltres = document.querySelector("#retirerFiltres");
-    retirerFiltres.addEventListener('click', () => {
-        window.location.href = `liste.php`;
-    });
-
     var activite = document.querySelector("#activite");
     var visite = document.querySelector("#visite");
     var parc_attraction = document.querySelector("#parcAttraction");
@@ -238,16 +288,7 @@ try {
         let none_checked = (!spectacle.checked) && (!parc_attraction.checked) && (!visite.checked) && (!activite.checked) && (!restauration.checked);
 
         if (all_checked || none_checked) {
-            for (article of articles) {
-                article.classList.remove("cat_hidden");
-            }
-            if (all_checked) {
-                activite.checked = false;
-                visite.checked = false;
-                parc_attraction.checked = false;
-                spectacle.checked = false;
-                restauration.checked = false;
-            }
+            retire_fil_cat();
             return false;
         } else {
             return true;
@@ -255,13 +296,12 @@ try {
     }
 
     function fil_cat() {
-
-        if (fil_cat_verif()){
+        if (fil_cat_verif()) {
             //checkbox eventListener onchange
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
-            
+
             for (article of articles) {
                 let art_cat = article.getAttribute('data-categorie');
 
@@ -270,7 +310,9 @@ try {
                         if (!activite.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -278,15 +320,19 @@ try {
                         if (!visite.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
-                    
+
                     case 'Spectacle':
                         if (!spectacle.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -294,7 +340,9 @@ try {
                         if (!parc_attraction.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -302,7 +350,9 @@ try {
                         if (!restauration.checked) {
                             article.classList.add("cat_hidden");
                         } else {
-                            article.classList.remove("cat_hidden");
+                            if (article.classList.contains("cat_hidden")) {
+                                article.classList.remove("cat_hidden");
+                            }
                         }
                         break;
 
@@ -310,6 +360,272 @@ try {
                         console.log("Erreur de valeur pour le switch.\n");
                         break;
                 }
+            }
+        }
+
+        cachees_verif();
+    }
+
+    let retirerFiltreCat = document.querySelector("#retirerFiltreCat");
+    retirerFiltreCat.addEventListener('click', retire_fil_cat);
+
+    function retire_fil_cat() {
+        if (activite.checked) {
+            activite.checked = false;
+        }
+        if (visite.checked) {
+            visite.checked = false;
+        }
+        if (parc_attraction.checked) {
+            parc_attraction.checked = false;
+        }
+        if (spectacle.checked) {
+            spectacle.checked = false;
+        }
+        if (restauration.checked) {
+            restauration.checked = false;
+        }
+
+        for (article of articles) {
+            if (article.classList.contains("cat_hidden")) {
+                article.classList.remove("cat_hidden");
+            }
+        }
+
+        cachees_verif();
+    }
+
+    var sup_a_1 = document.querySelector("#sup_a_1");
+    var sup_a_2 = document.querySelector("#sup_a_2");
+    var sup_a_3 = document.querySelector("#sup_a_3");
+    var sup_a_4 = document.querySelector("#sup_a_4");
+
+    sup_a_1.addEventListener("click", fil_note);
+    sup_a_2.addEventListener("click", fil_note);
+    sup_a_3.addEventListener("click", fil_note);
+    sup_a_4.addEventListener("click", fil_note);
+
+    function fil_note_verif() {
+        if (sup_a_1.checked || sup_a_2.checked || sup_a_3.checked || sup_a_4.checked) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function fil_note() {
+        if (fil_note_verif()) {
+            //checkbox eventListener onchange
+            //classList.toggle("hidden")
+            //classList.contains("hidden")
+            //let articles = document.getElementsByClassName("art-offre");
+
+            let filtre_note;
+
+            if (sup_a_1.checked) {
+                filtre_note = 1;
+            } else if (sup_a_2.checked) {
+                filtre_note = 2;
+            } else if (sup_a_3.checked) {
+                filtre_note = 3;
+            } else if (sup_a_4.checked) {
+                filtre_note = 4;
+            }
+
+            for (article of articles) {
+                let art_note = article.getAttribute('data-note');
+
+                if (filtre_note > art_note) {
+                    article.classList.add("note_hidden");
+                } else {
+                    if (article.classList.contains("note_hidden")) {
+                        article.classList.remove("note_hidden");
+                    }
+                }
+            }
+        }
+
+        cachees_verif();
+    }
+
+    let retirerFiltreNote = document.querySelector("#retirerFiltreNote");
+    retirerFiltreNote.addEventListener('click', retire_fil_note);
+
+    function retire_fil_note() {
+        if (sup_a_1.checked) {
+            sup_a_1.checked = false;
+        } else if (sup_a_2.checked) {
+            sup_a_2.checked = false;
+        } else if (sup_a_3.checked) {
+            sup_a_3.checked = false;
+        } else if (sup_a_4.checked) {
+            sup_a_4.checked = false;
+        }
+
+        for (article of articles) {
+            if (article.classList.contains("note_hidden")) {
+                article.classList.remove("note_hidden");
+            }
+        }
+
+        cachees_verif();
+    }
+
+    var slid_min = document.getElementById('slider_min');
+    var slid_max = document.getElementById('slider_max');
+    var num_min = document.getElementById('number_min');
+    var num_max = document.getElementById('number_max');
+
+    slid_min.addEventListener('input', update_prix);
+    slid_max.addEventListener('input', update_prix);
+    num_min.addEventListener('input', update_prix);
+    num_max.addEventListener('input', update_prix);
+
+    function update_prix(event) 
+    {
+        let new_val = event.target.value;
+
+        if (new_val === '') {
+            new_val = 0;
+        }
+
+        switch(event.target.id) {
+            case 'slider_min':
+                num_min.value = new_val;
+                break;
+            case 'slider_max':
+                num_max.value = new_val;
+                break;
+            case 'number_min':
+                slid_min.value = new_val;
+                break;
+            case 'number_max':
+                slid_max.value = new_val;
+                break;
+        }
+    }
+    
+    slid_min.addEventListener('mouseup', fil_prix);
+    slid_max.addEventListener('mouseup', fil_prix);
+    num_min.addEventListener('blur', fil_prix);
+    num_max.addEventListener('blur', fil_prix);
+    num_min.addEventListener('click', fil_prix);
+    num_max.addEventListener('click', fil_prix);
+
+    function fil_prix(event) {
+        let new_val = event.target.value;
+
+        if (new_val === '') {
+            new_val = 0;
+        }
+
+        switch (event.target.id) {
+            case 'slider_min':
+                if (Number(new_val) > Number(slid_max.value)) {
+                    slid_min.value = slid_min.min;
+                    num_min.value = num_min.min;
+                } else {
+                    num_min.value = new_val;
+                }
+                break;
+            case 'slider_max':
+                if (Number(new_val) < Number(slid_min.value)) {
+                    slid_max.value = slid_max.max;
+                    num_max.value = num_max.max;
+                } else {
+                    num_max.value = new_val;
+                }
+                break;
+            case 'number_min':
+                if (Number(new_val) > Number(num_max.value)) {
+                    slid_min.value = slid_min.min;
+                    num_min.value = num_min.min;
+                } else {
+                    slid_min.value = new_val;
+                }
+                break;
+            case 'number_max':
+                if (Number(new_val) < Number(num_min.value)) {
+                    slid_max.value = slid_max.max;
+                    num_max.value = num_max.max;
+                } else {
+                    slid_max.value = new_val;
+                }
+                break;
+        }
+
+        for (article of articles) {
+            let art_prix = article.getAttribute('data-prix');
+
+            if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
+                article.classList.add("prix_hidden");
+            } else {
+                if (article.classList.contains("prix_hidden")) {
+                    article.classList.remove("prix_hidden");
+                }
+            }
+        }
+
+        cachees_verif();
+    }
+
+    let retirerFiltrePrix = document.querySelector("#retirerFiltrePrix");
+    retirerFiltrePrix.addEventListener('click', retire_fil_prix);
+
+    function retire_fil_prix() {
+        slid_min.value = slid_min.min;
+        slid_max.value = slid_max.max;
+        num_min.value = num_min.min;
+        num_max.value = num_max.max;
+
+        for (article of articles) {
+            if (article.classList.contains("prix_hidden")) {
+                article.classList.remove("prix_hidden");
+            }
+        }
+
+        cachees_verif();
+    }
+
+    let retirerFiltres = document.querySelector("#retirerFiltres");
+    retirerFiltres.addEventListener('click', retire_filtres);
+
+    function retire_filtres() {
+        if (fil_cat_verif()) {
+            retire_fil_cat();
+        }
+
+        if (fil_note_verif()) {
+            retire_fil_note();
+        }
+
+        retire_fil_prix();
+
+        cachees_verif();
+    }
+
+    function cachees_verif() {
+        let toutes_cachees = true;
+
+        for (article of articles) {
+            if (!(article.classList.contains("cat_hidden")) && !(article.classList.contains("note_hidden")) && !(article.classList.contains("prix_hidden"))) {
+                toutes_cachees = false;
+            }
+        }
+
+        let retirer = document.getElementById('ListeVide');
+
+        if (toutes_cachees) {
+            if (!retirer) {
+                let message_remplace = document.createElement('h1');
+                message_remplace.id = 'ListeVide';
+                message_remplace.textContent = 'On ne peut rien vous proposer avec votre sélection, désolé...';
+                navigateur = document.querySelector('nav');
+                navigateur.appendChild(message_remplace);
+            }
+        } else {
+            if (retirer) {
+                retirer.remove();
             }
         }
     }
