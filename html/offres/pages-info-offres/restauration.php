@@ -90,7 +90,7 @@
             }
             ?><button class="button" onclick="window.location='../offres/modifier.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button>
             <?php
-            ?><button class="button" onclick="window.location='../factures/consulter.php?idoffre=<?php echo $id ?>'">Facture</button>
+            ?><button class="button" onclick="window.location='../factures/liste.php?idoffre=<?php echo $id ?>'">Facture</button>
         <?php
         } ?>
     </section>
