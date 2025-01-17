@@ -1,8 +1,8 @@
 <?php
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 require_once "../db_connection.inc.php";
-require_once "offre_appartient.php";
-require_once "afficher_avis.inc.php";
+require_once "../includes/offre_appartient.php";
+require_once "../includes/afficher_avis.inc.php";
 
 
 const EDIT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,10 +55,10 @@ function afficher_form_reponse($idAvis)
     }
     if ($reponseExiste) {
         // Si une réponse existe, afficher le bouton "Modifier"
-        ?>
+?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
-    <?php echo EDIT; ?>
-</button>
+            <?php echo EDIT; ?>
+        </button>
         <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
@@ -68,39 +68,39 @@ function afficher_form_reponse($idAvis)
             <br>
             <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
         </form>
-        <?php
+    <?php
     } else {
         // Si aucune réponse n'existe, afficher le bouton "Répondre à cet avis"
-        ?>
+    ?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
-        <?php echo EDIT; ?>
-        <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
-            <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
-            <label for="reponse-<?php echo $idAvis; ?>">
-                <h1>Réponse</h1>
-            </label>
-            <textarea name="reponse" id="reponse-<?php echo $idAvis; ?>" placeholder="Votre réponse" required></textarea>
-            <br>
-            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
-        </form>
+            <?php echo EDIT; ?>
+            <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+                <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
+                <label for="reponse-<?php echo $idAvis; ?>">
+                    <h1>Réponse</h1>
+                </label>
+                <textarea name="reponse" id="reponse-<?php echo $idAvis; ?>" placeholder="Votre réponse" required></textarea>
+                <br>
+                <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
+            </form>
         <?php
     }
-    ?>
+        ?>
 
-    <script>
-        // Sélectionner tous les boutons avec la classe 'deroulerReponse'
-        document.querySelectorAll('.deroulerReponse').forEach(button => {
-            button.addEventListener('click', function() {
-                const idAvis = this.getAttribute('data-idavis');
-                const form = document.querySelector(`#formReponse-${idAvis}`);
-                if (form.style.display === 'none') {
-                    form.style.display = 'block';
-                } else {
-                    form.style.display = 'none';
-                }
+        <script>
+            // Sélectionner tous les boutons avec la classe 'deroulerReponse'
+            document.querySelectorAll('.deroulerReponse').forEach(button => {
+                button.addEventListener('click', function() {
+                    const idAvis = this.getAttribute('data-idavis');
+                    const form = document.querySelector(`#formReponse-${idAvis}`);
+                    if (form.style.display === 'none') {
+                        form.style.display = 'block';
+                    } else {
+                        form.style.display = 'none';
+                    }
+                });
             });
-        });
-    </script>
+        </script>
     <?php
 }
 
@@ -113,7 +113,7 @@ if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
         $queryInsert = 'UPDATE sae._avis SET reponse = :reponse, datereponse = CURRENT_DATE WHERE idavis = :idavis;';
         $sth = $dbh->prepare($queryInsert);
         $sth->bindParam(':reponse', $reponse, PDO::PARAM_STR);
-        $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR); 
+        $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
         $sth->execute();
         $sth = null;
         echo '<meta http-equiv="refresh" content="0">'; // Rafraîchit la page après la soumission
@@ -121,4 +121,4 @@ if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
         echo 'Vous n\'avez pas l\'autorisation de répondre à cet avis.';
     }
 }
-?>
+    ?>
