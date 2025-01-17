@@ -175,12 +175,13 @@ try {
             <?php
             $query1 = '
             SELECT * FROM ' . NOM_SCHEMA . '._offre 
-            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
+            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel
+            INNER JOIN ' . NOM_SCHEMA . '.option ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre' . $ordreTri;
 
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
-                $query1 = $query1 . 'ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN sae.option.option = 'A la une' THEN 1 ELSE 2 END, sae._offre.idoffre ASC";
+                $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN " . NOM_SCHEMA . ".option.option = 'A la une' THEN 1 ELSE 2 END, " . NOM_SCHEMA . "._offre.idoffre ASC;";
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
