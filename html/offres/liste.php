@@ -175,8 +175,7 @@ try {
             <?php
             $query1 = '
             SELECT * FROM ' . NOM_SCHEMA . '._offre 
-            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel
-            INNER JOIN ' . NOM_SCHEMA . '.option ON ' . NOM_SCHEMA . '._offre.idoffre = ' . NOM_SCHEMA . '.option.idoffre' . $ordreTri;
+            NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
 
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
