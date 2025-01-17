@@ -43,7 +43,7 @@ try {
     <?php require_once HEADER; ?>
     <!-- Main content -->
     <main style="margin-bottom: 700px;">
-        <?php if(isset($_SESSION['identifiant'])){ ?>
+        <?php if(isset($_SESSION['identifiant']) && est_pro($_SESSION['identifiant'])){ ?>
             <button style="margin-bottom:30px" class="button" onclick="window.location='creation.php'">Créer une offre</button>
         <?php } ?>
         <nav>   
