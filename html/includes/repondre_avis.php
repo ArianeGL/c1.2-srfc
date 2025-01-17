@@ -20,7 +20,7 @@ function can_repondre($idAvis)
     global $dbh;
     $est_authorise = false;
     if (isset($_SESSION['identifiant'])) {
-        $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . VUE_PROFESSIONNEL . ' WHERE email = :email';
+        $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_COMPTE . ' WHERE email = :email';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':email', $_SESSION['identifiant'], PDO::PARAM_STR);
         $sthCompte->execute();
