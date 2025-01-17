@@ -75,9 +75,10 @@ function afficher_avis($avis)
 {
     global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
-    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
     ?>
-    <div class="avis">
+    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
+    <div class="avis" id="modifier_avis">
+        ?>
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
@@ -88,10 +89,10 @@ function afficher_avis($avis)
                 <p class="contexte"> <?php echo $avis['contexte']; ?> </p>
             </section>
         </div>
-        
+
 
         <p class="commentaire"><?php echo $avis['commentaire'] ?></p>
-        
+
         <?php
         // Vérifier si l'utilisateur a déjà liké ou disliké cet avis
         global $dbh;
@@ -222,7 +223,7 @@ function afficher_avis($avis)
                 <h3>Réponse :</h3>
                 <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
             </div>
-        <?php endif; 
+        <?php endif;
         $reponseExiste = reponse_existe($idAvis);
         afficher_form_reponse($avis['idavis']); ?>
     </div>
@@ -356,9 +357,6 @@ function format_date($date): string
     return get_jour($date) . " " . $date['mday'] . " " . get_mois($date) . " " . $date['year'];
 }
 
-<<<<<<< HEAD
-
-=======
 /*
  * prend en parametre l'id d'un avis
  * retourne true si l'avis appartient au compte connecté
@@ -383,4 +381,3 @@ function avis_appartient($id_avis): bool
 
     return $ret;
 }
->>>>>>> main

@@ -147,12 +147,12 @@ try {
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="creation_compte">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/creation.css">
+    <link rel="stylesheet" href="./includes/style.css">
     <title>Création compte professionnel - PACT</title>
 </head>
 
@@ -160,6 +160,7 @@ try {
 
     <?php include HEADER; ?>
 
+    <main>
     <section>
         <h1>Création du compte professionnel</h1>
         <form action="creation_pro.php" method="post" enctype="multipart/form-data">
@@ -220,6 +221,7 @@ try {
             </div>
         </form>
     </section>
+    </main>
     <?php require_once FOOTER; ?>
 
 </body>

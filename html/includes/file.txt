@@ -6,3 +6,4 @@ require_once "../includes/consts.inc.php";
 - 1 fichier pour creer / consulter / modifier compte (pas 2 comme on a (pour creation, juste avoir un boutton en haut pour choisir le type de compte (qui change le form en js)))
 - Refaire liste offres
 
+"../includes/style.css"

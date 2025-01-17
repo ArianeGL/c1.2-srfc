@@ -21,12 +21,12 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="liste_offre">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/clop.css">
+    <link rel="stylesheet" href="../includes/style.css">
 
     <script src="../includes/main.js"></script>
     <script src="../scripts/recherche.js"></script>
@@ -97,22 +97,34 @@ try {
                     <div id="filtre_note">
                         <div>
                             <input type="radio" id="sup_a_1" name="fil_note" value="1" />
-                            <label for="sup_a_1">&gt; 1</label>
-
+                            <label for="sup_a_1">
+                                <h1>&gt; 1</h1>
+                            </label>
+                        </div>
+                        <div>
                             <input type="radio" id="sup_a_2" name="fil_note" value="2" />
-                            <label for="sup_a_2">&gt; 2</label>
-
+                            <label for="sup_a_2">
+                                <h1>&gt; 2</h1>
+                            </label>
+                        </div>
+                        <div>
                             <input type="radio" id="sup_a_3" name="fil_note" value="3" />
-                            <label for="sup_a_3">&gt; 3</label>
-
+                            <label for="sup_a_3">
+                                <h1>&gt; 3</h1>
+                            </label>
+                        </div>
+                        <div>
                             <input type="radio" id="sup_a_4" name="fil_note" value="4" />
-                            <label for="sup_a_4">&gt; 4</label>
+                            <label for="sup_a_4">
+                                <h1>&gt; 4</h1>
+                            </label>
                         </div>
                         <button class="smallButton" id="retirerFiltreNote">Enlever le filtre</button>
                     </div>
 
+                    <h3>Par Prix :</h3>
+
                     <div id="filtre_prix">
-                        <h3>Par Prix :</h3>
                         <div>
                             <p>Minimal :</p>
                             <input type="range" id="slider_min" min="0" max="100" value="0">
@@ -180,7 +192,7 @@ try {
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
-                $query1 = $query1 . ' ORDER BY ' . NOM_SCHEMA . "._offre.idoffre, CASE WHEN " . NOM_SCHEMA . ".option.option = 'A la une' THEN 1 ELSE 2 END, " . NOM_SCHEMA . "._offre.idoffre ASC;";
+                $query1 = $query1 . $ordreTri;
             }
 
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
@@ -470,6 +482,34 @@ try {
     var slid_max = document.getElementById('slider_max');
     var num_min = document.getElementById('number_min');
     var num_max = document.getElementById('number_max');
+
+    slid_min.addEventListener('input', update_prix);
+    slid_max.addEventListener('input', update_prix);
+    num_min.addEventListener('input', update_prix);
+    num_max.addEventListener('input', update_prix);
+
+    function update_prix(event) {
+        let new_val = event.target.value;
+
+        if (new_val === '') {
+            new_val = 0;
+        }
+
+        switch (event.target.id) {
+            case 'slider_min':
+                num_min.value = new_val;
+                break;
+            case 'slider_max':
+                num_max.value = new_val;
+                break;
+            case 'number_min':
+                slid_min.value = new_val;
+                break;
+            case 'number_max':
+                slid_max.value = new_val;
+                break;
+        }
+    }
 
     slid_min.addEventListener('mouseup', fil_prix);
     slid_max.addEventListener('mouseup', fil_prix);

@@ -58,7 +58,7 @@ function whereToGo(): string // retourne le nom du fichier à appeler pour les c
         <div id="homeButtonID" class="homeButton">
             <img src="../IMAGES/LOGO-SRFC.png" alt="HOME PAGE" height="80%" style="margin-left: 5%; margin-right: 5%;">
             <h2>PACT</h2>
-            <p id="slogan" class="">Des avis qui comptent, des voyages qui marquent.</p>
+            <p id="slogan" class="sloganHide">Des avis qui comptent, des voyages qui marquent.</p>
         </div>
         <div>
             <div class="container">
@@ -86,4 +86,17 @@ function whereToGo(): string // retourne le nom du fichier à appeler pour les c
         </div>
     </header>
 </body>
+<script>
+    var w = window.innerWidth;
+
+    if (w >= 1400) {
+        document.getElementById("slogan").classList.add("sloganShow");
+        document.getElementById("slogan").classList.remove("sloganHide");
+    }
+
+    if (w <= 1400) {
+        document.getElementById("slogan").classList.add("sloganHide");
+        document.getElementById("slogan").classList.remove("sloganShow");
+    }
+</script>
 </html>
