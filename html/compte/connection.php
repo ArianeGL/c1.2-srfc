@@ -105,16 +105,15 @@ function est_pro(): bool
         } else if ($attempt == 0) { ?>
             <form action=<?php echo CONNECTION_COMPTE; ?> method="post" enctype="multipart/form-data">
                 <label>Identifiant</label>
-                <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required>
+                <input class="champs" type="text" id="identifiant" name="identifiant" value="<?php echo $identifiant ?>" required  style="width: 200px;">
                 <br>
                 <label>Mot de passe</label>
-                <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required>
+                <input class="champs mdp" type="password" id="motdepasse" name="motdepasse" value="<?php echo $mdp ?>" required  style="width: 200px;>
                 <a href="inscription_pro.php">Mot de passe oubli&eacute; ?</a>
                 <br>
-                <input class="smallButton" type="submit" value="Se connecter" name="connexion">
-                <div>
-                    <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-                    <button class="smallButton" onclick="window.location.href='./creation.html'">changer en txt avec <\a> pour creer compte</button>
+                <input class="smallButton" type="submit" value="Se connecter" name="connexion" style="width: 200px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100px">
+                    <a href="./creation.html" style="text-wrap: nowrap;">Cr&eacute;er son compte</a>
                 </div>
             </form>
         <?php } ?>
