@@ -217,6 +217,12 @@ header {
     .sloganShow {
         display: block;
     }
+
+    @media (max-width: 1400px) {
+        .sloganShow {
+            display: none;
+        }
+    }
 }
 
 .homeButton {
@@ -1395,4 +1401,5 @@ form {
         font-size: 1.5em;
         margin-bottom: 10px;
         font-family: 'Exo 2', sans-serif;
+}
 }
