@@ -75,10 +75,8 @@ function afficher_avis($avis)
 {
     global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
-    ?>
-    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
+    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']); ?>
     <div class="avis" id="modifier_avis">
-        ?>
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
