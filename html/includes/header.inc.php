@@ -67,7 +67,7 @@ function whereToGo(): string // retourne le nom du fichier à appeler pour les c
                 </button>
 
                 <?php if (est_pro()) { ?>
-                <button onclick="window.location.href='../factures/liste.php'" class="buttons header-button2" >
+                <button onclick="window.location.href='../factures/liste-professionnel.php'" class="buttons header-button2" >
                     <h4>Factures</h4>
                 </button>
                 <?php } ?>

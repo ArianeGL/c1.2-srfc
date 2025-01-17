@@ -386,7 +386,7 @@ main {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	margin-top: 15%;
+	margin-top: 10%;
 	width: 27.5%;
 	height: 30%;
 	background-color: rgba(255, 255, 255, 0.8);
@@ -740,8 +740,16 @@ nav {
         outline: none;
     }
     
-    
+
     margin-bottom: 50px;
+
+    #buttonContainer {
+        display: flex;
+    }
+
+    div > .smallButton {
+        margin-right: 1em;
+    }
 }
 
 section {
@@ -1403,3 +1411,25 @@ form {
         font-family: 'Exo 2', sans-serif;
 }
 }
+
+#liste_facture {
+    h1{
+        text-align: center;
+    }
+    
+    .liste{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        
+    }
+    
+    .facture{
+        width: 45%;
+        border: 2px var(--navy-blue) solid;
+        padding-left: 1em;
+        padding-bottom: 1em;
+        border-radius: var(--round-corners);
+    }
+}
+

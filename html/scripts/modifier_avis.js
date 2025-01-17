@@ -16,6 +16,7 @@ function create_update_form(avis, idavis, idoffre) {
 	let oldComment = avis.querySelector(".commentaire").innerHTML;
 
 	let form = document.createElement("form");
+	form.setAttribute("id", "form-modifier");
 	form.setAttribute("method", "post");
 	form.setAttribute("enctype", "multipart/form-date");
 	form.setAttribute("action", "../includes/modifier_avis.inc.php");

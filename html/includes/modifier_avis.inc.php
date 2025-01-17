@@ -39,7 +39,7 @@ function modifier_titre_avis($id_avis, $titre)
         $stmt->execute();
         $stmt = null;
     } catch (PDOException $e) {
-        die("Couldn't update review comment : " . $e->getMessage());
+        die("Couldn't update review title : " . $e->getMessage());
     }
 }
 
@@ -59,7 +59,7 @@ function modifier_note_avis($id_avis, $note)
         $stmt->execute();
         $stmt = null;
     } catch (PDOException $e) {
-        die("Couldn't update review comment : " . $e->getMessage());
+        die("Couldn't update review note : " . $e->getMessage());
     }
 }
 
@@ -79,11 +79,11 @@ function modifier_contexte_avis($id_avis, $contexte)
         $stmt->execute();
         $stmt = null;
     } catch (PDOException $e) {
-        die("Couldn't update review comment : " . $e->getMessage());
+        die("Couldn't update review context : " . $e->getMessage());
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['note'])) {
     $id_avis = $_POST['idavis'];
     $id_offre = $_POST['idoffre'];
     $note = $_POST['note'];

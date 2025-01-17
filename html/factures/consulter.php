@@ -71,7 +71,7 @@ if (isset($_GET['idoffre'])) {
                 $sthFacture->execute();
                 $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
                 if ($facture) {
-                    $idfacture = $GET["idfacture"];
+                    $idfacture = $facture["idfacture"];
                 } else {
                     $idfacture = $_GET["idfacture"];
                     $queryFacture = 'INSERT INTO ' . NOM_SCHEMA . '.' . VUE_FACTURE . ' (idoffre,idfacture) 
@@ -110,7 +110,6 @@ if (isset($_GET['idoffre'])) {
     $sthFacture->execute();
     $facture = $sthFacture->fetch(PDO::FETCH_ASSOC);
     if ($facture) {
-        $idfacture = $_GET["idfacture"];
         $datefacture = $facture["datefacture"];
         $idoffre = $facture["idoffre"];
         $date_debut = $facture["datedebut"];
@@ -162,6 +161,10 @@ if (isset($_GET['idoffre'])) {
                         ?><br><?php
                     }
                         ?>
+
+    <?php
+    echo '<script>window.location.href="generate_pdf.php?idfacture=' . "$idfacture" . '"</script>';
+    ?>
     <form action="generate_pdf.php?idfacture=<?php echo $idfacture; ?>" method="POST">
         <button type="submit">Download PDF</button>
     </form>

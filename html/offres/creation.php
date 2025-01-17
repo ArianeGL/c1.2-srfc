@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./styles/form_offre.css">
+    <link rel="stylesheet" href="../includes/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +22,7 @@
 
 <body>
     <?php
-    require_once "verif_connection.inc.php";
+    require_once "../includes/verif_connection.inc.php";
     require_once "../includes/consts.inc.php";
 
     require_once HEADER;

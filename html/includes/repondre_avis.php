@@ -3,8 +3,8 @@ error_log("Script PHP démarré.");
 
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 require_once "../db_connection.inc.php";
-require_once "offre_appartient.php";
-require_once "afficher_avis.inc.php";
+require_once "../includes/offre_appartient.php";
+require_once "../includes/afficher_avis.inc.php";
 
 // Récupérer l'ID de l'offre depuis l'URL
 $idOffre = $_GET['idoffre'];
@@ -58,7 +58,7 @@ function afficher_form_reponse($idAvis) {
 
     if ($reponseExiste) {
         // Si une réponse existe, afficher le bouton "Modifier"
-        ?>
+?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
             <?php echo EDIT; ?>
         </button>
@@ -71,10 +71,10 @@ function afficher_form_reponse($idAvis) {
             <br>
             <input class="bigButton" type="submit" name="valider" value="Valider" id="valider-<?php echo $idAvis; ?>">
         </form>
-        <?php
+    <?php
     } else {
         // Si aucune réponse n'existe, afficher le bouton "Répondre à cet avis"
-        ?>
+    ?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
             <?php echo EDIT; ?>
         </button>
@@ -89,7 +89,7 @@ function afficher_form_reponse($idAvis) {
         </form>
         <?php
     }
-    ?>
+        ?>
 
     <script>
         console.log("Script JavaScript démarré.");
@@ -109,8 +109,7 @@ function afficher_form_reponse($idAvis) {
                     console.log("Formulaire masqué pour l'avis ID : " + idAvis);
                 }
             });
-        });
-    </script>
+        </script>
     <?php
 }
 
@@ -125,7 +124,7 @@ if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
         $queryInsert = 'UPDATE sae._avis SET reponse = :reponse, datereponse = CURRENT_DATE WHERE idavis = :idavis;';
         $sth = $dbh->prepare($queryInsert);
         $sth->bindParam(':reponse', $reponse, PDO::PARAM_STR);
-        $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR); 
+        $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
         $sth->execute();
         $sth = null;
 

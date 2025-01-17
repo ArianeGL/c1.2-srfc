@@ -34,12 +34,6 @@ try {
         function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
-
-        alert(articles[0].firstElementChild.children[1].innerHTML);
-
-        let clopButtonsRedirige = document.getElementsByClassName("clopButton");
-        clopButtonsRedirige[0].addEventListener("click", loadCreaOffre);
-        clopButtonsRedirige[1].addEventListener("click", loadSesOffresPro);
     </script>
 
     <title>PACT</title>
@@ -49,7 +43,10 @@ try {
     <?php require_once HEADER; ?>
     <!-- Main content -->
     <main style="margin-bottom: 700px;">
-        <nav>
+        <?php if(isset($_SESSION['identifiant'])){ ?>
+            <button style="margin-bottom:30px" class="button" onclick="window.location='creation.php'">Créer une offre</button>
+        <?php } ?>
+        <nav>   
             <div>
                 <svg height="30px" fill="#254766" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 385.00 385.00" xml:space="preserve" stroke="#000000" stroke-width="0.00385" transform="rotate(0)">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -63,7 +60,7 @@ try {
                 <input type="text" id="rechercheOffre" placeholder="Rechercher une offre" onkeyup="rechercheOffreConsultation()"></input>
             </div>
 
-            <div>
+            <div id="buttonContainer">
                 <button id="filterButton" class="smallButton">Filtrer</button>
                 <fieldset id="filterOptions">
                     <h3>Par Catégorie :</h3>
@@ -227,10 +224,6 @@ try {
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
                             <section class="art-header">
-                                <h3 id="clopCategorie"><?php echo $offre['categorie']; ?></h3>
-                                <div>
-                                    <!-- <p>5/5<?php echo $requeteCompteAvis['nbavis'] ?></p> -->
-                                </div>
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>
                             </section>
