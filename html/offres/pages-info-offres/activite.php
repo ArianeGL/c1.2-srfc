@@ -45,11 +45,12 @@
 
         if ($compte == $_SESSION['identifiant']) {
             if ($isOnline) {
-        ?><button class="redButton" onclick="window.location='mettre_hors_ligne.php?idoffre=<?php echo $id ?>'">Mettre hors-ligne</button><?php
-                                                                                                                                                } else {
-                                                                                                                                                    ?><button class="redButton" onclick="window.location='mettre_en_ligne.php?idoffre=<?php echo $id ?>'">Mettre en ligne</button><?php
-                                                                                                                                                }
-                                                                                                                                                ?><button class="button" onclick="window.location='modifier.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
-                                                                                                                                    ?><button class="button" onclick="window.location='../factures/consulter.php?idoffre=<?php echo $id ?>'">Facture</button><?php
-                                                                                                                                    } ?>
+        ?><button class="redButton" onclick="window.location='mettre_hors_ligne.php?idoffre=<?php echo $id ?>'">Mettre hors-ligne</button>
+        <?php
+        } else {
+            ?><button class="redButton" onclick="window.location='mettre_en_ligne.php?idoffre=<?php echo $id ?>'">Mettre en ligne</button><?php
+        }
+        ?><button class="button" onclick="window.location='modifier.php?idoffre=<?php echo $id ?>'">Modifier l'offre</button><?php
+        ?><button class="button" onclick="window.location='../factures/liste.php?idoffre=<?php echo $id ?>'">Facture</button><?php
+        } ?>
     </section>
