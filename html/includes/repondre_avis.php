@@ -1,25 +1,20 @@
 <?php
+error_log("Script PHP démarré.");
+
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 require_once "../db_connection.inc.php";
 require_once "offre_appartient.php";
 require_once "afficher_avis.inc.php";
 
+// Récupérer l'ID de l'offre depuis l'URL
+$idOffre = $_GET['idoffre'];
+error_log("ID Offre récupéré : " . $idOffre);
 
-const EDIT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4 4L33 11L36 26L26 36L11 33L4 4ZM4 4L19.172 19.172M24 38L38 24L44 30L30 44L24 38ZM26 22C26 24.2091 24.2091 26 22 26C19.7909 26 18 24.2091 18 22C18 19.7909 19.7909 18 22 18C24.2091 18 26 19.7909 26 22Z" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>';
-
-const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>';
-
-
-function can_repondre($idAvis)
-{
+function can_repondre($idAvis) {
     global $dbh;
     $est_authorise = false;
     if (isset($_SESSION['identifiant'])) {
+        error_log("Vérification des autorisations pour répondre à l'avis.");
         $queryCompte = 'SELECT COUNT(*) FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_COMPTE . ' WHERE email = :email';
         $sthCompte = $dbh->prepare($queryCompte);
         $sthCompte->bindParam(':email', $_SESSION['identifiant'], PDO::PARAM_STR);
@@ -33,17 +28,23 @@ function can_repondre($idAvis)
         $avis = $sthAvis->fetch(PDO::FETCH_ASSOC);
         if ($countProfessionnel != 0 && offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
             $est_authorise = true;
+            error_log("L'utilisateur est autorisé à répondre à l'avis.");
+        } else {
+            error_log("L'utilisateur n'est pas autorisé à répondre à l'avis.");
         }
     }
     return $est_authorise;
 }
 
+function afficher_form_reponse($idAvis) {
+    global $idOffre;
+    error_log("Affichage du formulaire de réponse pour l'avis ID: $idAvis, Offre ID: $idOffre");
 
-function afficher_form_reponse($idAvis)
-{
     global $dbh;
     // Vérifier si une réponse existe
     $reponseExiste = reponse_existe($idAvis);
+    error_log("Réponse existante pour l'avis ID $idAvis : " . ($reponseExiste ? "Oui" : "Non"));
+
     // Récupérer la réponse existante si elle existe
     $reponseExistante = '';
     if ($reponseExiste) {
@@ -52,14 +53,16 @@ function afficher_form_reponse($idAvis)
         $stmt->bindParam(':idavis', $idAvis, PDO::PARAM_STR);
         $stmt->execute();
         $reponseExistante = $stmt->fetchColumn();
+        error_log("Réponse existante récupérée : " . $reponseExistante);
     }
+
     if ($reponseExiste) {
         // Si une réponse existe, afficher le bouton "Modifier"
         ?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
-    <?php echo EDIT; ?>
-</button>
-        <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+            <?php echo EDIT; ?>
+        </button>
+        <form method="post" action="informations.php?idoffre=<?php echo htmlspecialchars($idOffre); ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
                 <h1>Réponse</h1>
@@ -73,8 +76,9 @@ function afficher_form_reponse($idAvis)
         // Si aucune réponse n'existe, afficher le bouton "Répondre à cet avis"
         ?>
         <button class="deroulerReponse" data-idavis="<?php echo $idAvis; ?>" style="display: flex; align-items: center;">
-        <?php echo EDIT; ?>
-        <form method="post" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
+            <?php echo EDIT; ?>
+        </button>
+        <form method="post" action="informations.php?idoffre=<?php echo htmlspecialchars($idOffre); ?>" enctype="multipart/form-data" class="formReponse" id="formReponse-<?php echo $idAvis; ?>" style="display: none;">
             <input type="hidden" name="idAvis" value="<?php echo $idAvis; ?>">
             <label for="reponse-<?php echo $idAvis; ?>">
                 <h1>Réponse</h1>
@@ -88,15 +92,21 @@ function afficher_form_reponse($idAvis)
     ?>
 
     <script>
+        console.log("Script JavaScript démarré.");
+
         // Sélectionner tous les boutons avec la classe 'deroulerReponse'
         document.querySelectorAll('.deroulerReponse').forEach(button => {
             button.addEventListener('click', function() {
                 const idAvis = this.getAttribute('data-idavis');
+                console.log("Bouton cliqué pour l'avis ID : " + idAvis);
+
                 const form = document.querySelector(`#formReponse-${idAvis}`);
                 if (form.style.display === 'none') {
                     form.style.display = 'block';
+                    console.log("Formulaire affiché pour l'avis ID : " + idAvis);
                 } else {
                     form.style.display = 'none';
+                    console.log("Formulaire masqué pour l'avis ID : " + idAvis);
                 }
             });
         });
@@ -105,10 +115,12 @@ function afficher_form_reponse($idAvis)
 }
 
 if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
+    error_log("Formulaire de réponse soumis.");
     $idAvis = $_POST['idAvis'];
     $reponse = trim($_POST['reponse']);
 
     if (can_repondre($idAvis)) {
+        error_log("Tentative de mise à jour de la réponse pour l'avis ID : $idAvis");
         // Insère ou met à jour la réponse dans la table
         $queryInsert = 'UPDATE sae._avis SET reponse = :reponse, datereponse = CURRENT_DATE WHERE idavis = :idavis;';
         $sth = $dbh->prepare($queryInsert);
@@ -116,8 +128,11 @@ if (isset($_POST['valider']) && isset($_POST['idAvis'])) {
         $sth->bindParam(':idavis', $idAvis, PDO::PARAM_STR); 
         $sth->execute();
         $sth = null;
-        echo '<meta http-equiv="refresh" content="0">'; // Rafraîchit la page après la soumission
+
+        error_log("Réponse mise à jour avec succès pour l'avis ID : $idAvis");
+        exit();
     } else {
+        error_log("L'utilisateur n'est pas autorisé à répondre à l'avis ID : $idAvis");
         echo 'Vous n\'avez pas l\'autorisation de répondre à cet avis.';
     }
 }

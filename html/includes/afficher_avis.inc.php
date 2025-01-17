@@ -223,7 +223,7 @@ function afficher_avis($avis)
             </div>
         <?php endif;
         $reponseExiste = reponse_existe($idAvis);
-        afficher_form_reponse($avis['idavis']); ?>
+        afficher_form_reponse($avis['idavis'], $avis['idoffre']); ?>
     </div>
 <?php
 }
