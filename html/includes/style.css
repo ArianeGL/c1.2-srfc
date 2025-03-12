@@ -1509,7 +1509,7 @@ form textarea {
         padding-bottom: 1em;
         border-radius: var(--round-corners);
     }
-<<<<<<< HEAD
+
 }
 
 .formReponse {
@@ -1570,6 +1570,8 @@ form textarea {
         margin-bottom: 10px;
         font-family: 'Exo 2', sans-serif;
 }
-=======
->>>>>>> 017e9d2ad7cfe8ef62472a3e7eaa828ecbd231c4
+}
+#map {
+    height : 35em;
+    width : 50em;
 }

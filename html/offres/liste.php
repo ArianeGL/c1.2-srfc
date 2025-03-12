@@ -27,7 +27,14 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../includes/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
 
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
     <script src="../includes/main.js"></script>
     <script src="../scripts/recherche.js"></script>
     <script>
@@ -179,19 +186,20 @@ try {
                 </script>
             </div>
         </nav>
-
+        
+        <div id="map"></div>
         <section>
             <?php
             $query1 = '
             SELECT * FROM ' . NOM_SCHEMA . '._offre 
             NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
-
+            
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-
+            
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -200,26 +208,26 @@ try {
                     $sth3 = $dbh->prepare($query3);
                     $sth3->execute();
                     $requeteCompteAvis = $sth3->fetchAll();
-                } catch (PDOException $e) {
-                    die("SQL Query failed : " . $e->getMessage());
-                }
-                */
-                $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
-                $sth = $dbh->prepare($query);
-                $sth->bindParam(':idoffre', $offre['idoffre']);
-                $sth->execute();
-                $result = $sth->fetchColumn();
-
-                if ($result != 0) {
-            ?>
+                    } catch (PDOException $e) {
+                        die("SQL Query failed : " . $e->getMessage());
+                        }
+                        */
+                        $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
+                        $sth = $dbh->prepare($query);
+                        $sth->bindParam(':idoffre', $offre['idoffre']);
+                        $sth->execute();
+                        $result = $sth->fetchColumn();
+                        
+                        if ($result != 0) {
+                            ?>
                     <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
-                    <?php
+                        <?php
                 } else {
                     ?>
                         <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                     }
-                        ?>
+                    ?>
                         <div>
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
@@ -233,26 +241,54 @@ try {
                             $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
                             $images = $dbh->query($query_image)->fetch(); ?>
                             <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
-
+                            
                             <h4 id="clopVille"><?php echo $offre['villeoffre']; ?></h4>
-
+                            
                             <div class="fade-out-container">
                                 <p><?php echo $offre['resume']; ?></p>
                             </div>
-
+                            
                             <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                         </div>
-                        </article>
+                    </article>
+                    <script>
+                        var markers=[]
+                        /*
+                        var myMarker = L.marker([startlat, startlon], {title: "Coordinates", alt: "Coordinates", draggable: true}).addTo(map).on('dragend', function() {
+                            var lat = myMarker.getLatLng().lat.toFixed(48.2);
+                            var lon = myMarker.getLatLng().lng.toFixed(-3.0);
+                        
+                        });
+                            markers.push(L.marker([48.2, -3.0]));
+
+                        */
+                    </script>
                     <?php
+
                 }
-                    ?>
+                ?>
         </section>
-
+        
     </main>
-
+    
     <?php require_once FOOTER; ?>
-
+    
 </body>
+    <script>
+        markers.push(L.marker([48.2, -3.0]));
+
+        var map = L.map('map').setView([48.2, -3.0], 8);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let i = 0;
+        while (i < markers.length) {
+            markers[i].addTo(map);
+            i++;
+        }
+    </script>
 <script>
     let bouton_filtre = document.querySelector("#filterButton");
     let champs_filtres = document.querySelector("#filterOptions");
