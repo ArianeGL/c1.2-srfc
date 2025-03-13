@@ -29,10 +29,10 @@ const VUE_AVIS_RESTAURATION = "avisre";
 const VUE_REPONSE = "reponse";
 const VUE_AIME_AVIS = "aime";
 
-$host = "srfc.ventsdouest.dev";
+$host = "localhost";
 $dbname = "sae";
-$user = "sae";
-$pass = "escapade-Venait-s1gner";
+$user = "postgres";
+$pass = "marcheSTP";
 try {
 	$dbh = new PDO('pgsql:host=' . $host . ';dbname=' . $dbname, $user, $pass);
 } catch (PDOException $e) {

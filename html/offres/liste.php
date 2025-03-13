@@ -199,7 +199,7 @@ try {
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-            
+            ?><script>var markers=[];</script><?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -252,7 +252,8 @@ try {
                         </div>
                     </article>
                     <script>
-                        var markers=[]
+                        //markers["<?php echo $offre["idoffre"] ?>"]=L.marker([<?php echo $offre["latitude"], $offre["longitude"] ?>]);
+                        markers.push(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>]));
                         /*
                         var myMarker = L.marker([startlat, startlon], {title: "Coordinates", alt: "Coordinates", draggable: true}).addTo(map).on('dragend', function() {
                             var lat = myMarker.getLatLng().lat.toFixed(48.2);
@@ -274,8 +275,34 @@ try {
     <?php require_once FOOTER; ?>
     
 </body>
+        <?php
+        //SI NUM RUE = 0 NE PAS PRENDRE
+        //SI RUE = 0 PRENDRE NOM OFFRE
+        //SI PAS DE RESULTAT ENLEVER VILLE ? OU METTRE LE NOM DE LOFFRE ET METTRE LA VILLE
+        $adresse = "9 la tégrie, Saint hilaire de loulay";
+        $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
+        
+        // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
+        $options = [
+            "http" => [
+                "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+        
+        // Faire la requête
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response, true);
+        
+        if (!empty($data)) {
+            $latitude = $data[0]['lat'];
+            $longitude = $data[0]['lon'];
+        }
+        
+        ?>
     <script>
-        markers.push(L.marker([48.2, -3.0]));
+
+        //markers.push(L.marker([<?php echo "$latitude, $longitude" ?>]));
 
         var map = L.map('map').setView([48.2, -3.0], 8);
         
@@ -283,11 +310,18 @@ try {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        
         let i = 0;
         while (i < markers.length) {
+            console.log(markers[i]["_latlng"]);
             markers[i].addTo(map);
             i++;
         }
+            
+
+        //markers.forEach(element) => element.addTo(map);
+
+
     </script>
 <script>
     let bouton_filtre = document.querySelector("#filterButton");

@@ -1,4 +1,4 @@
-3drop schema if exists sae cascade;
+drop schema if exists sae cascade;
 create schema sae;
 set schema 'sae';
 
@@ -91,7 +91,9 @@ CREATE TABLE IF NOT EXISTS sae._offre
    idcompte         varchar(7)    NOT NULL,
    resume           varchar(9999) NOT NULL,
    description      varchar(9999) default(0),
-   accesibilite     varchar(999)  default('non adapte pour personne a mobilite reduite')
+   accesibilite     varchar(999)  default('non adapte pour personne a mobilite reduite'),
+   latitude         real          default(0) not null,
+   longitude        real          default(0) not null
 );
 
 ALTER TABLE sae._offre
@@ -632,11 +634,13 @@ BEGIN
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,blacklistdispo,idcompte,abonnement,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication
+                              ,dernieremaj,datedebut,datefin,latitude,longitude)
     values(NEW.idoffre,'Spectacle',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,
+            NEW.datedebut,NEW.datefin,NEW.latitude,NEW.longitude);
   
     insert into sae._spectacle(idoffre,dureespectacle,placesspectacle)
     values(NEW.idoffre,NEW.dureespectacle,NEW.placesspectacle);
@@ -665,7 +669,9 @@ BEGIN
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume,
                               description = NEW.description,
-                              accesibilite = NEW.accesibilite
+                              accesibilite = NEW.accesibilite,
+                              latitude = NEW.latitude,
+                              longitude = NEW.longitude
     WHERE NEW.idoffre = idoffre;
     
     UPDATE sae._spectacle SET dureespectacle = NEW.dureespectacle,
@@ -720,11 +726,13 @@ BEGIN
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,blacklistdispo,idcompte,abonnement,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication,
+                              dernieremaj,datedebut,datefin,latitude,longitude)
     values(NEW.idoffre,'Parc attraction',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,
+            NEW.datedebut,NEW.datefin,NEW.latitude,NEW.longitude);
   
   if (NEW.ageminparc is null) THEN
     NEW.ageminparc = 0;
@@ -756,7 +764,9 @@ BEGIN
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume,
                               description = NEW.description,
-                              accesibilite = NEW.accesibilite
+                              accesibilite = NEW.accesibilite,
+                              latitude = NEW.latitude,
+                              longitude = NEW.longitude
     WHERE NEW.idoffre = idoffre;
     
     UPDATE sae._parcattraction SET urlversplan = NEW.urlversplan,
@@ -833,11 +843,13 @@ BEGIN
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,blacklistdispo,idcompte,abonnement,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication,
+                              dernieremaj,datedebut,datefin,latitude,longitude)
     values(NEW.idoffre,'Visite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,
+            NEW.datedebut,NEW.datefin,NEW.latitude,NEW.longitude);
   
   if (NEW.estguidee is null) THEN
     NEW.estguidee = false;
@@ -869,7 +881,9 @@ BEGIN
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume,
                               description = NEW.description,
-                              accesibilite = NEW.accesibilite                    
+                              accesibilite = NEW.accesibilite,
+                              latitude = NEW.latitude,
+                              longitude = NEW.longitude                    
     WHERE NEW.idoffre = idoffre;
     
     UPDATE sae._visite SET dureevisite = NEW.dureevisite,
@@ -924,11 +938,13 @@ BEGIN
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,blacklistdispo,idcompte,abonnement,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication,
+                              dernieremaj,datedebut,datefin,latitude,longitude)
     values(NEW.idoffre,'Activite',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,
+            NEW.datedebut,NEW.datefin,NEW.latitude,NEW.longitude);
   
   if (NEW.agerequis is null) THEN
     NEW.agerequis = 0;
@@ -960,7 +976,9 @@ BEGIN
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume,
                               description = NEW.description,
-                              accesibilite = NEW.accesibilite
+                              accesibilite = NEW.accesibilite,
+                              latitude = NEW.latitude,
+                              longitude = NEW.longitude
     WHERE NEW.idoffre = idoffre;
     
     UPDATE sae._activite SET agerequis = NEW.agerequis,
@@ -1015,11 +1033,13 @@ BEGIN
     insert into sae._offre(idoffre,categorie,nomoffre,numadresse,
                               rueoffre,villeoffre,codepostaloffre,nbavis,note,
                               prixmin,enligne,blacklistdispo,idcompte,abonnement,
-                              resume,description,accesibilite,datepublication,dernieremaj,datedebut,datefin)
+                              resume,description,accesibilite,datepublication,
+                              dernieremaj,datedebut,datefin,latitude,longitude)
     values(NEW.idoffre,'Restauration',NEW.nomoffre,NEW.numadresse,
             NEW.rueoffre,NEW.villeoffre,NEW.codepostaloffre,NEW.nbavis,NEW.note,
             NEW.prixmin,NEW.enligne,NEW.blacklistdispo,NEW.idcompte,NEW.abonnement,
-            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,NEW.datedebut,NEW.datefin);
+            NEW.resume,NEW.description,NEW.accesibilite,CURRENT_DATE,CURRENT_DATE,
+            NEW.datedebut,NEW.datefin,NEW.latitude,NEW.longitude);
   
 
   if (NEW.petitdejeuner is null) THEN
@@ -1067,7 +1087,9 @@ BEGIN
                               dernieremaj = CURRENT_DATE,
                               resume = NEW.resume,
                               description = NEW.description,
-                              accesibilite = NEW.accesibilite                    
+                              accesibilite = NEW.accesibilite,
+                              latitude = NEW.latitude,
+                              longitude = NEW.longitude                    
     WHERE NEW.idoffre = idoffre;
     
     UPDATE sae._restauration SET urlverscarte = NEW.urlverscarte,
@@ -1139,12 +1161,12 @@ VALUES('Co-0001','agnes.pinson@gmail.com','motdepasse','3B','Hent Penn ar Pave',
 --------------------------------------------------------------------------------------------------------
 
 INSERT INTO activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,description,dureeactivite)
+prixmin,idcompte,resume,description,dureeactivite,latitude,longitude)
 VALUES('Of-0001','Archipel de Brehat en kayak','3B','Hent Penn ar Pave',
 'Le Vieux-Marche',22420,0,'Co-0001',
 'Des îles et paysages qui évoluent sous vos yeux au fil de la marée',
 'Venez jouer à cache-cache avec les couleurs et les lumières dans les labyrinthes d’îlots et de blocs de granit colorés et découvrir les trésors que Bréhat réserve aux kayakistes curieux !',
-'Prennez votre temps');
+'Prennez votre temps',48.603646649102224,-3.4480530127061138);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.nomade-aventure.com/Content/Images/ImgProduits/FRA/7902/458261_QuatreTiers.ori.jpg','Of-0001');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.randokayak.com/wp-content/uploads/2017/06/manipulation-des-kayaks-sur-le-recif-photo-Jean-Marc-Terrade.jpg?v=1615314431','Of-0001');
@@ -1158,13 +1180,13 @@ VALUES('Co-0002','tregor,bicyclette@gmail.com','motdepasse','3','Allee des soupi
 'Lannion',22300,0712345678,'Tregor Bicyclette','https://www.tregorbicyclette.fr/images/Logo2024/trebi_couleur_fond_transparent_pour_fond_blanc.png');
 
 INSERT INTO activite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,description,accesibilite,agerequis,dureeactivite,enligne)
+prixmin,idcompte,resume,description,accesibilite,agerequis,dureeactivite,enligne,latitude,longitude)
 VALUES('Of-0002','Qui m''aime me suive','3','Allee des soupirs',
 'Lannion',22300,0,'Co-0002',
 'Montrer que l''on peut réaliser localement de belles balades à vélo, en empruntant de petites routes tranquilles et sans trop de montées.',
 'Les sorties sont volontairement limitées entre 15 km et 20 km pour permettre à un large public familial de se joindre à nous. A partir de 6 ou 7 ans, un enfant à l''aise sur son vélo, peut en général parcourir une telle distance sans problème : le rythme est suffisamment lent (adapté aux plus faibles), avec des pauses, et le fait d''être en groupe est en général un bon stimulant pour les enfants ... et les plus grands ! Les plus jeunes peuvent aussi participer en charrette, sur un siège vélo ou bien avec une barre de traction.',
 'Le public en situation de handicap est le bienvenu, ne pas hésiter à nous appeler pour préparer la balade',
-12,'6h',false);
+12,'6h',false,48.7284413,-3.4589695);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe9oPRAczCLSqErot_8570iR1ZDq-SEejBYg&s','Of-0002');
 
@@ -1210,11 +1232,11 @@ VALUES('Co-0003','mairiedelannion@gmail.com','motdepasse','0','Pl. du General Le
 'Lannion',22300,0296466422,'Mairie de Lannion');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,dureevisite)
+prixmin,idcompte,resume,dureevisite,latitude,longitude)
 VALUES('Of-0003','Decouverte du centre-ville historique de Lannion','0','Pl. du General Leclerc',
 'Lannion',22300,0,'Co-0003',
 'Decouverte du centre-ville historique de Lannion',
-'A votre rythme');
+'A votre rythme',48.732060269978206,-3.458521061903191);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.bretagne-cotedegranitrose.com/app/uploads/lannion-tourisme/2020/03/thumbs/lannion-1-640x640.jpg','Of-0003');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://cdt22.media.tourinsoft.eu/upload/-RY8NEE5.jpg','Of-0003');
@@ -1227,11 +1249,11 @@ VALUES('Co-0004','cotedarmor@gmail.com','motdepasse','0','0',
 '0',22000,0296626222,'Departement des cotes d''Armor');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,dureevisite,enligne)
+prixmin,idcompte,resume,dureevisite,enligne,latitude,longitude)
 VALUES('Of-0004','Parc et Château de la Roche Jagu','0','0',
 'Ploezal',22260,0,'Co-0004',
 'Le parc est en accès libre et gratuit 7j/7 toute l''année ! Tarifs. Entrée château/expo (automne-hiver 2024) Plein tarif : 4,50 €',
-'A votre rythme',false);
+'A votre rythme',false,48.73320076961851, -3.151034759791902);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/bf/77/2d/domaine-departemental.jpg?w=1200&h=-1&s=1','Of-0004');
 
@@ -1243,11 +1265,11 @@ VALUES('Co-0005','leradome.cdt@gmail.com','motdepasse','0','Parc du Radome',
 'Pleumeur-Bodou',22560,0296466380,' Fondation d''Entreprise Cité des Télécoms ',493290506,'FR7630001007941234567890182');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,dureevisite,enligne)
+prixmin,idcompte,resume,dureevisite,enligne,latitude,longitude)
 VALUES('Of-0005','Cité des Télécoms','0','Parc du Radome',
 'Pleumeur-Bodou',22560,0,'Co-0005',
 'La Cité des télécoms est un parc français consacré aux télécommunications, des débuts à nos jours. Elle est située sur la commune de Pleumeur-Bodou en Bretagne.',
-'A votre rythme',false);
+'A votre rythme',false,48.782029,-3.524793);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.cite-telecoms.com/voy_content/uploads/2023/06/chimair_cite-des-telecoms-82-scaled.jpg','Of-0005');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.cite-telecoms.com/voy_content/uploads/2019/02/terre_connectee-chimair-14md-scaled.jpg','Of-0005');
@@ -1260,13 +1282,13 @@ VALUES('Co-0006','armor.navigation@gmail.com','motdepasse','0','Bd Joseph le Bih
 'Perros-Guirec',22700,0296911000,' Fondation d’Entreprise Cité des Télécoms ',398414698,'FR7630001007941234567890186');
 
 INSERT INTO visite(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,description,accesibilite,dureevisite,estguidee)
+prixmin,idcompte,resume,description,accesibilite,dureevisite,estguidee,latitude,longitude)
 VALUES('Of-0006','Excursion vers les 7 Iles','0','Bd Joseph le Bihan',
 'Perros-Guirec',22700,0,'Co-0006',
 'Découvrez l’archipel des Sept-Îles, la plus grande réserve ornithologique de France, à bord d’une vedette ou d’un bateau de la Ligue de Protection des Oiseaux.',
 'Les Vedettes des 7 Iles proposent des excursions et des visites commentées vers l''archipel des Sept-Iles, au départ de Perros-Guirec. Le site est protégé et l''accès aux îles réglementé, mais vous pourrez néanmoins fouler le sol de l''Île-aux-Moines et admirer les autres îles depuis le bateau. Les 7 îles sont un véritable sanctuaire pour les oiseaux marins, notamment les goélands, les fous de Bassan et les macareux',
 'accueil du public en situation de handicap avec fauteuil roulant manuel',
-'3h',true);
+'3h',true,48.8163256039127,-3.4594912437186736);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-635625325660958262-2.jpg?dummy=0&h=800','Of-0006');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-638136995194307876-2.jpg?dummy=0&h=800','Of-0006');
@@ -1291,12 +1313,12 @@ VALUES('Famille','Of-0006');
 -- Spectacles
 
 INSERT INTO spectacle(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,description,dureespectacle,placesspectacle)
+prixmin,idcompte,resume,description,dureespectacle,placesspectacle,latitude,longitude)
 VALUES('Of-0007','La Magie des arbres','0','plage de Tourony',
 'Perros-Guirec',22700,5.00,'Co-0004',
 'Sur le site exceptionnel de la plage de Tourony, au cœur de la côte de Granit rose, ce festival concert son et lumière se déroule dans les arbres les 26 et 27 août.',
 'Venez découvrir la Magie des arbres dans ce site exceptionnel de la côte de Granit rose : première partie musicale autour du Bagad de Perros-Guirec, puis, à la nuit tombée, assistez au son et  lumière avec la projection sur des voiles de grands mâts tendues dans les arbres. Ce spectacle mêlant  effets pyrotechniques, lumières et musique, vous entraînera dans un univers exceptionnel.',
-'1h30',300);
+'1h30',300,48.82880315,-3.495851192941339);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://static.actu.fr/uploads/2022/12/da632068fba36fe632068fba311732v-960x640.jpg','Of-0007');
 
@@ -1323,11 +1345,11 @@ VALUES('Co-0007','village.gaulois@gmail.com','motdepasse','0','Parc du Radome',
 'Pleumeur-Bodou',22560,0296918395,'Un Village Gaulois pour l’Afrique');
 
 INSERT INTO parcAttraction(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
-prixmin,idcompte,resume,urlversplan)
+prixmin,idcompte,resume,urlversplan,latitude,longitude)
 VALUES('Of-0008','Le Village Gaulois','0','Parc du Radome',
 'Pleumeur-Bodou',22560,5.00,'Co-0007',
 'Petit parc de loisirs pour enfants sur le thème du village avec jeux, activités et lieu de restauration.',
-'https://parcduradome.com/wp-content/uploads/2023/02/illustration_parc-768x453.jpg');
+'https://parcduradome.com/wp-content/uploads/2023/02/illustration_parc-768x453.jpg',48.782029,-3.524793);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://www.stereden.com/usermedia/photo-634978455280391258-2.jpg?dummy=0&h=800','Of-0008');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj6LcJM7sGXnG_iuzTgtKLT49YGe_At-cUSQ&s','Of-0008');
@@ -1351,17 +1373,17 @@ INSERT INTO compteProfessionnelPrive(idcompte,email,motdepasse,
 numadressecompte,ruecompte,villecompte,codepostalcompte,telephone,
 denomination,siren,iban)
 VALUES('Co-0008','contact@la-ville-blanche.com','motdepasse','29','Route de Tréguier',
-'Rospez-Lannion',22300,0296370428,' SARL La Ville Blanche ',384552014,'FR7630001007941234567890188');
+'Rospez',22300,0296370428,' SARL La Ville Blanche ',384552014,'FR7630001007941234567890188');
 
 INSERT INTO restauration(idoffre,nomoffre,numadresse,rueoffre,villeoffre,codepostaloffre,
 prixmin,nbavis,note,idcompte,resume,description,urlverscarte,gammeprix,dejeuner,diner,boisson,
-moycuisine,moyservice,moyambiance,moyqp)
+moycuisine,moyservice,moyambiance,moyqp,latitude,longitude)
 VALUES('Of-0009','La Ville Blanche','29','route de Tréguier',
-'Rospez-Lannion',22300,26,753,4.5,'Co-0008',
+'Rospez',22300,26,753,4.5,'Co-0008',
 'La Ville Blanche, en plein cœur du Trégor, non loin de la côte de Granit Rose vous accueille pour le plaisir des papilles.',
 'Ce petit corps de ferme repris par la famille Jaguin est devenu au fil du temps une Maison de renom. D’aventures en aventures, la passion de cette cuisine s’est maintenant transmise, des souvenirs et des moments se sont déroulés dans cette Maison symbolique de Bretagne. Gorgé d’histoire, venez continuer de l’écrire avec Maud et Yvan Guglielmetti.',
 'https://cdn.eat-list.fr/establishment/menu/gallery_menu/22300-rospez/la-ville-blanche_77330_b8c.jpg','€€€',true,true,true,
-4.8,4.5,4.3,4.5);
+4.8,4.5,4.3,4.5,48.7442748,-3.4001234);
 
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeHGJOow1oZyvT_l03EpnFCaU1WiIUIQjIVw&s','Of-0009');
 INSERT INTO sae._imageoffre(urlimage,idoffre) VALUES('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnK0mNLtiaE7zl_kFk2Zvpk0WLNlygY_-L0Q&s','Of-0009');
@@ -1798,6 +1820,6 @@ CREATE OR REPLACE TRIGGER tg_aimeavis
   EXECUTE PROCEDURE sae.aimeavis();
 
 ----------------------------------------------------------
-INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0001","Fa-0001");
-INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0009","Fa-0002");
+--INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0001","Fa-0001");
+--INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0009","Fa-0002");
 
