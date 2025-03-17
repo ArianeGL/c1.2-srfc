@@ -30,15 +30,19 @@ try {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
-
-     <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+        crossorigin="">
+    </script>
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+    <link rel="stylesheet" href="leaflet.awesome-markers.css">
+    <script src="leaflet.awesome-markers.js"></script>
+    
     <script src="../includes/main.js"></script>
     <script src="../scripts/recherche.js"></script>
     <script>
-        function loadInfoOffre(idoffre) {
+            function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
     </script>
@@ -199,7 +203,23 @@ try {
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-            ?><script>var markers=[];</script><?php
+            ?><script>var markers=[];
+            var greenIcon = L.icon({
+                iconUrl: '../IMAGES/pinMap.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [7, 22], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+            var awesomeMarker = L.AwesomeMarkers.icon({
+                icon: 'coffee', // Icône FontAwesome
+                markerColor: 'red', // Couleur du marqueur : 'red', 'green', 'blue', etc.
+            });
+
+            L.marker([48.8566, 2.3522], { icon: awesomeMarkers }).addTo(map);
+        </script><?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -252,17 +272,7 @@ try {
                         </div>
                     </article>
                     <script>
-                        //markers["<?php echo $offre["idoffre"] ?>"]=L.marker([<?php echo $offre["latitude"], $offre["longitude"] ?>]);
-                        markers.push(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>]));
-                        /*
-                        var myMarker = L.marker([startlat, startlon], {title: "Coordinates", alt: "Coordinates", draggable: true}).addTo(map).on('dragend', function() {
-                            var lat = myMarker.getLatLng().lat.toFixed(48.2);
-                            var lon = myMarker.getLatLng().lng.toFixed(-3.0);
-                        
-                        });
-                            markers.push(L.marker([48.2, -3.0]));
-
-                        */
+                        markers.push(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>],{icon: greenIcon}));
                     </script>
                     <?php
 
