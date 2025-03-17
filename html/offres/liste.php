@@ -1,7 +1,6 @@
 <?php
-require_once "../includes/consts.inc.php";
-
 session_start();
+require_once "../includes/consts.inc.php";
 include('../db_connection.inc.php');
 
 function get_account_id()
