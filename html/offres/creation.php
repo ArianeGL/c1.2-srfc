@@ -62,8 +62,8 @@
     if (isset($_SESSION['identifiant']) && valid_account()) {
     ?>
         <main id="creation_offre">
-            <h1>Cr&eacute;ation d'une offre</h1>
             <form method="post" action="../includes/form_offre_handler.inc.php" enctype="multipart/form-data" id="creation_offre">
+                <h1>Cr&eacute;ation d'une offre</h1>
                 <div id="titre_cate">
                     <input type="text" id="titre" name="titre" placeholder="Titre *" required>
                     <?php if (est_prive($_SESSION['identifiant'])) { ?>
