@@ -5,7 +5,7 @@ session_start();
 
 require_once "../db_connection.inc.php";
 
-const IMAGE_DIR = "./images_importees/";
+const IMAGE_DIR = "../includes/images_importees/";
 const DAY_TO_SEC = 86400;
 const NB_SEM_OPTION = 4;
 
@@ -116,7 +116,7 @@ function upload_plan($id)
 /*
  * prend en parametre l'url de l'image et l'id de l'offre associé
  * ajoute cet url dans la table imageoffre de la bdd
- */ 
+ */
 function upload_images_offre($url, $id)
 {
     global $dbh;
@@ -276,6 +276,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
     } catch (FunctionException $e) {
         die("ID generation failed : " . $e->getMessage());
     }
+
+    echo $id;
 
     try {
         global $dbh;
@@ -447,11 +449,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
 
         //rediriger vers consultation avec les infos
-        echo "<script>location.href='./informations_offre-1.php?idoffre=" . $id . "'</script>";
+        echo "<script>location.href='../offres/informations.php?idoffre=" . $id . "'</script>";
     } catch (PDOException $e) {
         die("SQL Query failed : " . $e->getMessage());
     }
 } else {
-    echo "<script> location.href='./connection_pro-3.php'</script>";
+    echo "<script> location.href='../compte/connection.php'</script>";
     die();
 }

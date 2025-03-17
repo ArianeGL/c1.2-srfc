@@ -102,7 +102,7 @@
 
                 <input type="text" name="resume" id="resume" placeholder="R&eacute;sum&eacute; *" required>
 
-                <textarea name="description" id="description" placeholder="Description *" required form="creation_offre"></textarea>
+                <textarea name="description" id="description" placeholder="Description *" required></textarea>
 
                 <?php if (est_prive($_SESSION['identifiant'])) { ?>
                     <select name="opt" id="opt">
@@ -123,16 +123,15 @@
                 <script src="image_preview.js"></script>
                 <img id="image_preview" src="" alt="">
                 <div class="boutonimages">
-                    <p>Importer vos images</p>
-                    <label for="images_offre" class="smallButton">Importer</label>
+                    <label for="images_offre" class="smallButton">Importer vos images</label>
                     <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)" required>
-
-                    <input type="submit" name="valider" value="Valider" class="bigButton" id="valider">
                 </div>
+
+                <input type="submit" name="valider" value="Valider" class="bigButton" id="valider">
             </form>
         </main>
     <?php
-    } else echo "<script> window.location.href='./connection_pro.php'</script>";
+    } else echo "<script> window.location.href='../compte/connection.php'</script>";
     ?>
     <?php require_once FOOTER; ?>
 </body>
