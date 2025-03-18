@@ -15,6 +15,33 @@ if (isset($_GET['idoffre'])) {
     $offer = $sthOffer->fetch(PDO::FETCH_ASSOC);
 
     if ($offer) {
+
+        // deblacklister les avis dont le delai de blacklist est passé
+        $query = "SELECT idavis, timeunblacklist FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE blacklist = true;";
+        try {
+            $rows = $dbh->query($query)->fetchAll();
+        } catch (PDOException $e) {
+            die("Couldn't fetch blacklisted comments : " . $e->getMessage());
+        }
+
+        if (!empty($rows)) {
+            foreach ($rows as $row) {
+                $unblocktime = strtotime($row['timeunblacklist']);
+                if ($unblocktime <= time()) {
+                    $unblock_query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " SET blacklist = false, timeunblacklist = null WHERE idavis = :id;";
+                    try {
+                        $stmt = $dbh->prepare($unblock_query);
+                        $stmt->bindParam(":id", $row['idavis']);
+                        $stmt->execute();
+                    } catch (PDOException $e) {
+                        die("Couldn't unblacklist comment " . $row['idavis'] . " : " . $e->getMessage());
+                    }
+                }
+            }
+        }
+
+
+
         $id = $offer['idoffre'];
         $categorie = $offer['categorie'];
 
