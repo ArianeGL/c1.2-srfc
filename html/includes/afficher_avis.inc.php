@@ -276,10 +276,13 @@ function afficher_avis($avis)
             <div class="reponse">
                 <h3>Réponse :</h3>
                 <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
+                <script>console.log("La reponse: <?php echo $avis['reponse']; ?>");</script>
             </div>
         <?php endif;
-        $reponseExiste = reponse_existe($idAvis);
-        afficher_form_reponse($avis['idavis'], $avis['idoffre']); ?>
+        if (can_repondre($idAvis)){
+            afficher_form_reponse($avis['idavis'], $avis['idoffre']);
+        } 
+        ?>
     </div>
 <?php
 }
