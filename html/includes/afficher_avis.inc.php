@@ -17,6 +17,20 @@ const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmln
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
 
+const DISABLED_BLACKLIST = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 30.5L12 37.5L22.5 42L10.5 40.5L4 31.5L3 22L5.5 13.5L11.5 7L19 3.5L28 3L37.5 7.5L43.5 15.5L45 24L43.5 32L39 39L35 42L31 44L24 45L17.5 44L11.5 40.68L27.5 41.5L35.5 37.5L41 30L41.5 22.5L39 14.5L33 9L24.5 6L15.5 8.5L10 13L6.5 22L7.5 30.5Z" fill="#254766"/>
+<rect x="12" y="21" width="24" height="6" fill="#254766"/>
+<path d="M35.9999 26.8999H36.4999V26.3999V21.5999V21.0999H35.9999H11.9999H11.4999V21.5999V26.3999V26.8999H11.9999H35.9999ZM12.2774 6.45589C15.7473 4.1374 19.8267 2.8999 23.9999 2.8999C29.596 2.8999 34.9628 5.12293 38.9199 9.07995C42.8769 13.037 45.0999 18.4038 45.0999 23.9999C45.0999 28.1731 43.8624 32.2526 41.5439 35.7224C39.2254 39.1923 35.9301 41.8968 32.0745 43.4938C28.219 45.0908 23.9765 45.5086 19.8835 44.6945C15.7905 43.8803 12.0308 41.8707 9.07996 38.9198C6.12907 35.969 4.11949 32.2093 3.30534 28.1163C2.49119 24.0233 2.90904 19.7808 4.50605 15.9253C6.10306 12.0698 8.8075 8.77439 12.2774 6.45589Z" stroke="#254766"/>
+<path d="M36 27H36.5V26.5V21.5V21H36H12H11.5V21.5V26.5V27H12H36ZM14.2775 9.44928C17.1554 7.52636 20.5388 6.5 24 6.5C28.6413 6.5 33.0925 8.34374 36.3744 11.6256C39.6562 14.9075 41.5 19.3587 41.5 24C41.5 27.4612 40.4736 30.8446 38.5507 33.7225C36.6278 36.6003 33.8947 38.8433 30.697 40.1679C27.4993 41.4924 23.9806 41.839 20.5859 41.1637C17.1913 40.4885 14.0731 38.8218 11.6256 36.3744C9.17822 33.9269 7.51151 30.8087 6.83627 27.4141C6.16102 24.0194 6.50758 20.5007 7.83212 17.303C9.15665 14.1053 11.3997 11.3722 14.2775 9.44928Z" stroke="#254766"/>
+</svg>';
+
+const ENABLED_BLACKLIST = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 30.5L12 37.5L22.5 42L10.5 40.5L4 31.5L3 22L5.5 13.5L11.5 7L19 3.5L28 3L37.5 7.5L43.5 15.5L45 24L43.5 32L39 39L35 42L31 44L24 45L17.5 44L11.5 40.68L27.5 41.5L35.5 37.5L41 30L41.5 22.5L39 14.5L33 9L24.5 6L15.5 8.5L10 13L6.5 22L7.5 30.5Z" fill="#254766"/>
+<rect x="12" y="21" width="24" height="6" fill="#254766"/>
+<path d="M35.9999 26.8999H36.4999V26.3999V21.5999V21.0999H35.9999H11.9999H11.4999V21.5999V26.3999V26.8999H11.9999H35.9999ZM12.2774 6.45589C15.7473 4.1374 19.8267 2.8999 23.9999 2.8999C29.596 2.8999 34.9628 5.12293 38.9199 9.07995C42.8769 13.037 45.0999 18.4038 45.0999 23.9999C45.0999 28.1731 43.8624 32.2526 41.5439 35.7224C39.2254 39.1923 35.9301 41.8968 32.0745 43.4938C28.219 45.0908 23.9765 45.5086 19.8835 44.6945C15.7905 43.8803 12.0308 41.8707 9.07996 38.9198C6.12907 35.969 4.11949 32.2093 3.30534 28.1163C2.49119 24.0233 2.90904 19.7808 4.50605 15.9253C6.10306 12.0698 8.8075 8.77439 12.2774 6.45589Z" stroke="#254766"/>
+<path d="M36 27H36.5V26.5V21.5V21H36H12H11.5V21.5V26.5V27H12H36ZM14.2775 9.44928C17.1554 7.52636 20.5388 6.5 24 6.5C28.6413 6.5 33.0925 8.34374 36.3744 11.6256C39.6562 14.9075 41.5 19.3587 41.5 24C41.5 27.4612 40.4736 30.8446 38.5507 33.7225C36.6278 36.6003 33.8947 38.8433 30.697 40.1679C27.4993 41.4924 23.9806 41.839 20.5859 41.1637C17.1913 40.4885 14.0731 38.8218 11.6256 36.3744C9.17822 33.9269 7.51151 30.8087 6.83627 27.4141C6.16102 24.0194 6.50758 20.5007 7.83212 17.303C9.15665 14.1053 11.3997 11.3722 14.2775 9.44928Z" stroke="#254766"/>
+</svg>';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -178,11 +192,26 @@ function afficher_avis($avis)
                 font: inherit;
                 cursor: pointer;
                 outline: inherit;
-            " type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="modifier">
+            " type="button" onclick="modifier_avis(this, <?php echo '\'' . $avis['idavis'] . '\', \'' . $avis['idoffre'] . '\''; ?>)" class="modifier">
                     <?php echo EDIT;  ?>
                 </button>
             </div>
-            <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;"
+            <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">
+                <?php
+            }
+            if (offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
+                // variable isblacklisted a définir
+                // comprendre fonctionnement du form et raison des input display none
+                ?>
+                <form id="form-blacklister" method="post" enctype="multipart/form-data">
+                    <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                    <label>
+                        <input style="display: none;" type="submit" class="smallButton" value="Blacklister">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
+                        </svg>
+                    </label>
+                </form>
                 <?php
             }
             if (est_membre($_SESSION["identifiant"])) {
