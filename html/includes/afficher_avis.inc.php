@@ -11,7 +11,6 @@ const DISABLED_DISLIKE = '<path d="M14 26L22 44C23.5913 44 25.1174 43.3679 26.24
 const EDIT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4 4L33 11L36 26L26 36L11 33L4 4ZM4 4L19.172 19.172M24 38L38 24L44 30L30 44L24 38ZM26 22C26 24.2091 24.2091 26 22 26C19.7909 26 18 24.2091 18 22C18 19.7909 19.7909 18 22 18C24.2091 18 26 19.7909 26 22Z" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
-
 const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -55,12 +54,19 @@ function afficher_liste_avis($id_offre)
         <script src="../scripts/modifier_avis.js"></script>
         <?php
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
-        $liste_avis = $dbh->query($query)->fetchAll();
+        $liste_avis = $dbh->query($query)->fetchAll(PDO::FETCH_ASSOC);
         foreach ($liste_avis as $avis) {
-            afficher_avis($avis);
+            if (!$avis['blacklist']) {
+                afficher_avis($avis);
         ?>
-            <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+                <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+            <?php
+            } else if ($avis['blacklist'] && offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
+                afficher_avis($avis);
+            ?>
+                <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
     <?php
+            }
         }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
@@ -136,9 +142,11 @@ function afficher_avis($avis)
 {
     global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
-    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
     ?>
     <div class="avis">
+        <?php if ($avis['blacklist']) { ?>
+            <h2>BLACKLIST</h2>
+        <?php } ?>
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>
@@ -455,6 +463,51 @@ function avis_appartient($id_avis): bool
         $ret = $stmt->rowCount() == 1;
     } catch (PDOException $e) {
         die("Couldn't check review belonging : " . $e->getMessage());
+    }
+
+    return $ret;
+}
+
+/*
+ * prend en parametre l'id de l'avis a blacklist et la date a laquelle l'avis sera de-blacklist (format : "AAAA-MM-JJ hh:mm:ss")
+ * set l'attribut blacklist de l'avis a true
+ * set la date de deblacklist a $timeunblacklist
+ */
+function blacklist_avis($idavis, $timeunblacklist)
+{
+    global $dbh;
+    $query = "UPDATE " . NOM_SCHEMA . "." . VUE_AVIS . " SET blacklist = true, timeunblacklist = :timeunblacklist WHERE idavis = :idavis;";
+    $timeunblacklist = gmdate("Y-m-d H:i:s", strtotime($timeunblacklist));
+
+    try {
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":timeunblacklist", $timeunblacklist);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "<script>alert('L'avis n'a pas pu etre blacklist)</script>";
+        echo "<script>Console.log('" . $e->getMessage() . "')</script>";
+    }
+}
+
+
+/*
+ * prend en parametre l'id de l'offre sur lequel on souhaite connaitre le nombre de jeton de blacklist
+ * retourne le nombre de jeton de blacklist disponible
+ * retourne false si il n'y en a pas
+ */
+function count_blacklist($idoffre): bool|int
+{
+    global $dbh;
+
+    $query = "SELECT blacklistdispo FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = :idoffre";
+    try {
+        $stmt = $dbh->prepare($query);
+        $stmt->execute(['idoffre' => $idoffre]);
+        $ret = $stmt->fetchColumn();
+        if ($ret = 0) $ret = false;
+    } catch (PDOException $e) {
+        die("Couldn't fetch blacklist tokens : " . $e->getMessage());
     }
 
     return $ret;

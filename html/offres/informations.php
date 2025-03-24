@@ -6,6 +6,11 @@ session_start();
 
 global $dbh;
 
+function alert($msg)
+{
+    echo "<script>alert('" . $msg . "')</script>";
+}
+
 if (isset($_GET['idoffre'])) {
     $offerId = $_GET['idoffre'];
     $queryOffer = 'SELECT * FROM ' . NOM_SCHEMA . '._offre WHERE idoffre = :offerId';
@@ -17,9 +22,9 @@ if (isset($_GET['idoffre'])) {
     if ($offer) {
 
         // deblacklister les avis dont le delai de blacklist est passé
-        $query = "SELECT idavis, timeunblacklist FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE blacklist = true;";
+        $query = "SELECT idavis, timeunblacklist FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE blacklist = true;";
         try {
-            $rows = $dbh->query($query)->fetchAll();
+            $rows = $dbh->query($query)->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             die("Couldn't fetch blacklisted comments : " . $e->getMessage());
         }
