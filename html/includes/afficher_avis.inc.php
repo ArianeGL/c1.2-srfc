@@ -86,6 +86,24 @@ function est_membre($email)
     return $ret;
 }
 
+function est_premium($idoffre)
+{
+    $ret = false;
+    global $dbh;
+
+    // Requête pour vérifier si l'offre est premium
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = '" . $idoffre . "' AND abonnement = 'Premium';";
+    $stmt = $dbh->prepare($query);
+    $stmt->execute();
+
+    // Récupérer la réponse
+    $reponse = $stmt->fetchColumn();
+
+    if ($reponse != 0) $ret = true;
+
+    return $ret;
+}
+
 function mail_signalement($idavis)
 {
     $mail = new PHPMailer(true);
@@ -128,9 +146,58 @@ function signalerAvis($idavis)
     }
 }
 
-if (isset($_POST['idavis'])) {
-    signalerAvis($_POST['idavis']);
+if (isset($_POST['idavis_signaler'])) {
+    signalerAvis($_POST['idavis_signaler']);
     echo "<script>alert('signalement envoyé')</script>";
+}
+
+/*
+ * prend en parametre l'id de l'avis a blacklist et la date a laquelle l'avis sera de-blacklist (format : "AAAA-MM-JJ hh:mm:ss")
+ * set l'attribut blacklist de l'avis a true
+ * set la date de deblacklist a $timeunblacklist
+ */
+function blacklist_avis($idavis, $timeunblacklist)
+{
+    global $dbh;
+    $query = "UPDATE " . NOM_SCHEMA . "." . VUE_AVIS . " SET blacklist = true, timeunblacklist = :timeunblacklist WHERE idavis = :idavis;";
+    $timeunblacklist = gmdate("Y-m-d H:i:s", strtotime($timeunblacklist));
+
+    try {
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":timeunblacklist", $timeunblacklist);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "<script>alert('L'avis n'a pas pu etre blacklist)</script>";
+        echo "<script>Console.log('" . $e->getMessage() . "')</script>";
+    }
+}
+
+
+/*
+ * prend en parametre l'id de l'offre sur lequel on souhaite connaitre le nombre de jeton de blacklist
+ * retourne le nombre de jeton de blacklist disponible
+ * retourne false si il n'y en a pas
+ */
+function count_blacklist($idoffre)
+{
+    global $dbh;
+
+    $query = "SELECT blacklistdispo FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = :idoffre";
+    try {
+        $stmt = $dbh->prepare($query);
+        $ret = $stmt->execute([':idoffre' => $idoffre]);
+    } catch (PDOException $e) {
+        die("Couldn't fetch blacklist tokens : " . $e->getMessage());
+    }
+
+    return $ret;
+}
+
+if (isset($_POST['idavis_blacklister'])) {
+    $selected_date = $_POST['date'] . " " . $_POST['time'];
+    blacklist_avis($_POST['idavis_blacklister'], $selected_date);
+    echo "<script>alert('avis blacklisté')</script>";
 }
 
 
@@ -174,12 +241,19 @@ function afficher_avis($avis)
 
         $isLiked = $vote && $vote['aime'];
         $isDisliked = $vote && !$vote['aime'];
+        
+        $query = "SELECT blacklist FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->execute([':idavis' => $idAvis]);
+        $blacklist = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $isBlacklisted = $blacklist;
         ?>
         <?php
         if (isset($_SESSION['identifiant']) && !$avis['signale'] && !avis_appartient($avis['idavis'])) {
         ?>
             <form id="form-signaler" method="post" enctype="multipart/form-data">
-                <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                <input type="text" style="display: none" name="idavis_signaler" value="<?php echo $avis['idavis'] ?>">
                 <label>
                     <input style="display: none;" type="submit" class="smallButton" value="Signaler">
                     <?php echo REPORT; ?>
@@ -207,18 +281,21 @@ function afficher_avis($avis)
             <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">
                 <?php
             }
-            if (offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
-                // variable isblacklisted a définir
-                // comprendre fonctionnement du form et raison des input display none
+            print_r("offre_appartient: " . offre_appartient($_SESSION['identifiant'], $avis['idoffre']));
+            print_r("est_premium: " . est_premium($avis['idoffre']));
+            print_r("count_blacklist: " . count_blacklist($avis['idoffre']));
+            if (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) && est_premium($avis['idoffre']) && count_blacklist($avis['idoffre'])) {
                 ?>
                 <form id="form-blacklister" method="post" enctype="multipart/form-data">
-                    <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                    <input type="text" style="display: none" name="idavis_blacklister" value="<?php echo $avis['idavis'] ?>">
                     <label>
                         <input style="display: none;" type="submit" class="smallButton" value="Blacklister">
                         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
                         </svg>
                     </label>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" step="30" required>
                 </form>
                 <?php
             }
@@ -454,7 +531,7 @@ function avis_appartient($id_avis): bool
     $ret = false;
 
     try {
-        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
+        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
         $stmt = $dbh->prepare($query);
         $stmt->bindParam(":id_avis", $id_avis);
         $id_compte = get_account_id();
@@ -463,51 +540,6 @@ function avis_appartient($id_avis): bool
         $ret = $stmt->rowCount() == 1;
     } catch (PDOException $e) {
         die("Couldn't check review belonging : " . $e->getMessage());
-    }
-
-    return $ret;
-}
-
-/*
- * prend en parametre l'id de l'avis a blacklist et la date a laquelle l'avis sera de-blacklist (format : "AAAA-MM-JJ hh:mm:ss")
- * set l'attribut blacklist de l'avis a true
- * set la date de deblacklist a $timeunblacklist
- */
-function blacklist_avis($idavis, $timeunblacklist)
-{
-    global $dbh;
-    $query = "UPDATE " . NOM_SCHEMA . "." . VUE_AVIS . " SET blacklist = true, timeunblacklist = :timeunblacklist WHERE idavis = :idavis;";
-    $timeunblacklist = gmdate("Y-m-d H:i:s", strtotime($timeunblacklist));
-
-    try {
-        $stmt = $dbh->prepare($query);
-        $stmt->bindParam(":timeunblacklist", $timeunblacklist);
-        $stmt->bindParam(":idavis", $idavis);
-        $stmt->execute();
-    } catch (PDOException $e) {
-        echo "<script>alert('L'avis n'a pas pu etre blacklist)</script>";
-        echo "<script>Console.log('" . $e->getMessage() . "')</script>";
-    }
-}
-
-
-/*
- * prend en parametre l'id de l'offre sur lequel on souhaite connaitre le nombre de jeton de blacklist
- * retourne le nombre de jeton de blacklist disponible
- * retourne false si il n'y en a pas
- */
-function count_blacklist($idoffre): bool|int
-{
-    global $dbh;
-
-    $query = "SELECT blacklistdispo FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = :idoffre";
-    try {
-        $stmt = $dbh->prepare($query);
-        $stmt->execute(['idoffre' => $idoffre]);
-        $ret = $stmt->fetchColumn();
-        if ($ret = 0) $ret = false;
-    } catch (PDOException $e) {
-        die("Couldn't fetch blacklist tokens : " . $e->getMessage());
     }
 
     return $ret;
