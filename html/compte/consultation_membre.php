@@ -72,7 +72,7 @@ if ($compte) {
     $image = $compte['urlimage'];
 } else { ?>
     <script>
-        window.location = <?php echo LSITE_OFFRES ?>;
+        window.location = <?php echo LISTE_OFFRES ?>;
     </script>
 <?php } ?>
 

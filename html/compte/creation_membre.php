@@ -5,8 +5,13 @@ require_once "../includes/verif_connection.inc.php";
 
 require_once "../includes/consts.inc.php";
 
+
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./consultation_membre.php'</script>";
+    if($_POST['otp'] = "on"){
+        echo "<script>window.location.href='creation_otp.php'</script>";
+    }else{
+        echo "<script>window.location.href='./consultation_membre.php'</script>";
+    }
 }
 
 class FunctionException extends Exception
@@ -116,7 +121,13 @@ try {
         $_SESSION['identifiant'] = $email;
         ?> 
         <script>
-            window.location = "./consultation_membre.php";
+        <?php
+        if($_POST['otp'] = "on"){
+            echo "<script>window.location.href='creation_otp.php'</script>";
+        }else{
+            echo "<script>window.location.href='./consultation_membre.php'</script>";
+        }
+    ?> 
         </script> 
         <?php
         exit();
@@ -143,7 +154,7 @@ try {
     <main>
     <section>
     <h1>Création du compte membre</h1>
-        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
             <div class="form-container">
                 <div id="groupeInput" class="form-left">
                     <div class="form-row">
@@ -168,6 +179,10 @@ try {
                     <div class="form-row">
                         <input type="text" class="input-creation" id="ville" name="ville" placeholder="Ville *" required />
                         <input type="text" class="input-creation" id="code" name="code" placeholder="Code postal *" required />
+                    </div>
+                    <div class="form-row">
+                        <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
+                        <input type="checkbox" class="input-creation" id="otp" name="otp" />
                     </div>
                 </div>
 

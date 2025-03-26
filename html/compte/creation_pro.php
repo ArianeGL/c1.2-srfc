@@ -6,7 +6,11 @@ require_once "../includes/verif_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./consultation_pro.php'</script>";
+    if($_POST["otp"]){
+        echo "<script>window.location.href='creation_otp.php'</script>";
+    }else{
+        echo "<script>window.location.href='./consultation_pro.php'</script>";
+    }
 }
 
 class FunctionException extends Exception
