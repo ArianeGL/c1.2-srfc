@@ -729,6 +729,8 @@ form textarea {
     }
 }
 
+
+
 /**********/
 /**********/
 /**********/
@@ -1572,6 +1574,33 @@ form textarea {
 }
 }
 #map {
-    height : 35em;
-    width : 50em;
+    height : 30em;
+    width : 100em;
+    z-index: 0;
+    margin: 1em;
+}
+
+.info.legend {
+    padding: 8px 10px;
+    background: white;
+    border-radius: 5px;
+    line-height: 24px; 
+}
+
+.legend-icon {
+    width: 1em; 
+    height: 1em; 
+    margin-right: 2em;
+    vertical-align: middle; 
+}
+
+
+
+.info.legend img{
+    max-width: 2.73em; 
+    max-height: 3.45em; 
+    min-width: 2.73em; 
+    min-height: 3.45em; 
+    margin-right: 2em;
+    vertical-align: middle; 
 }

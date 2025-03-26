@@ -30,15 +30,17 @@ try {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+
         <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin="">
     </script>
-    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
-    <link rel="stylesheet" href="leaflet.awesome-markers.css">
-    <script src="leaflet.awesome-markers.js"></script>
-    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
     <script src="../includes/main.js"></script>
     <script src="../scripts/recherche.js"></script>
     <script>
@@ -203,9 +205,10 @@ try {
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-            ?><script>var markers=[];
-            var greenIcon = L.icon({
-                iconUrl: '../IMAGES/pinMap.png',
+            ?><script>
+            var markers = new L.markerClusterGroup();
+            var redIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapRouge.png',
 
                 iconSize:     [45, 55], // size of the icon
                 shadowSize:   [50, 64], // size of the shadow
@@ -213,12 +216,46 @@ try {
                 shadowAnchor: [4, 62],  // the same for the shadow
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
-            var awesomeMarker = L.AwesomeMarkers.icon({
-                icon: 'coffee', // Icône FontAwesome
-                markerColor: 'red', // Couleur du marqueur : 'red', 'green', 'blue', etc.
+
+            var blackIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapNoir.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
 
-            L.marker([48.8566, 2.3522], { icon: awesomeMarkers }).addTo(map);
+            var greenIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapVert.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var purpleIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapViolet.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var blueIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapBleu.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
         </script><?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
@@ -271,12 +308,37 @@ try {
                             <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                         </div>
                     </article>
+                    <?php
+                        // Dans votre boucle foreach pour les offres
+                        $iconType = "greenIcon"; // Par défaut
+
+                        // Déterminez l'icône en fonction de la catégorie
+                        switch($offre['categorie']) {
+                            case 'Spectacle':
+                                $iconType = "blueIcon";
+                                break;
+                            case 'Restauration':
+                                $iconType = "redIcon";
+                                break;
+                            case 'Activite':
+                                $iconType = "purpleIcon";
+                                break;
+                            case 'Parc attraction':
+                                $iconType = "blackIcon";
+                                break;
+                            case 'Visite':
+                                $iconType = "greenIcon";
+                                break;
+                        }
+            
+                        ?>
                     <script>
-                        markers.push(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>],{icon: greenIcon}));
+                        markers.addLayer(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>}));
                     </script>
                     <?php
 
                 }
+                
                 ?>
         </section>
         
@@ -285,10 +347,7 @@ try {
     <?php require_once FOOTER; ?>
     
 </body>
-        <?php
-        //SI NUM RUE = 0 NE PAS PRENDRE
-        //SI RUE = 0 PRENDRE NOM OFFRE
-        //SI PAS DE RESULTAT ENLEVER VILLE ? OU METTRE LE NOM DE LOFFRE ET METTRE LA VILLE
+<?php
         $adresse = "9 la tégrie, Saint hilaire de loulay";
         $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
         
@@ -314,19 +373,45 @@ try {
 
         //markers.push(L.marker([<?php echo "$latitude, $longitude" ?>]));
 
-        var map = L.map('map').setView([48.2, -3.0], 8);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        var map = L.map('map').setView([48.6, -3.0], 8.5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
         
-        let i = 0;
-        while (i < markers.length) {
-            console.log(markers[i]["_latlng"]);
-            markers[i].addTo(map);
-            i++;
-        }
+        map.addLayer(markers);
+
+        var legend = L.control({ position: 'bottomright' });
+
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend'); 
+            var categories = ['Spectacle', 'Restauration', 'Activite', 'Parc attraction', 'Visite'];
+            var labels = ['<strong>Catégories</strong>']; 
+            function getIconUrl(category) {
+                switch(category) {
+                    case 'Spectacle':       return '../IMAGES/pinMapBleu.png';
+                    case 'Restauration':    return '../IMAGES/pinMapRouge.png';
+                    case 'Activite':        return '../IMAGES/pinMapViolet.png';
+                    case 'Parc attraction': return '../IMAGES/pinMapNoir.png'; 
+                    case 'Visite':          return '../IMAGES/pinMapVert.png';
+                    default:                return '../IMAGES/pinMapVert.png'; 
+                }
+            }
+
+            // Loop through categories and generate legend items
+            for (var i = 0; i < categories.length; i++) {
+                var categoryName = categories[i];
+                var iconUrl = getIconUrl(categoryName);
+                labels.push(
+                    '<img src="' + iconUrl + '" class="legend-icon"> ' + categoryName
+                );
+            }
+
+            div.innerHTML = labels.join('<br>');
+            return div;
+        };
+
+        legend.addTo(map);
             
 
         //markers.forEach(element) => element.addTo(map);
@@ -370,7 +455,7 @@ try {
         if (all_checked || none_checked) {
             retire_fil_cat();
             return false;
-        } else {
+        } else { 
             return true;
         }
     }
