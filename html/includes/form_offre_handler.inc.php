@@ -281,24 +281,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
     //LATITUDE LONGITUDE
     $adresse = "$num_addresse $rue_addresse, $ville";
-        $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
-        
-        // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
-        $options = [
-            "http" => [
-                "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
-            ]
-        ];
-        $context = stream_context_create($options);
-        
-        // Faire la requête
-        $response = file_get_contents($url, false, $context);
-        $data = json_decode($response, true);
-        
-        if (!empty($data)) {
-            $lat = $data[0]['lat'];
-            $lng = $data[0]['lon'];
-        }
+    $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
+
+    // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
+    $options = [
+        "http" => [
+            "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
+        ]
+    ];
+    $context = stream_context_create($options);
+
+    // Faire la requête
+    $response = file_get_contents($url, false, $context);
+    $data = json_decode($response, true);
+
+    if (!empty($data)) {
+        $lat = $data[0]['lat'];
+        $lng = $data[0]['lon'];
+    }
 
     try {
         global $dbh;
@@ -325,7 +325,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":age", $age);
                 $stmt->bindParam(":duree", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -355,7 +355,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":url_carte", $url_carte);
                 $stmt->bindParam(":gammeprix", $gammeprix);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -386,7 +386,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":guidee", $guidee, PDO::PARAM_BOOL);
                 $stmt->bindParam(":dureevisite", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -417,7 +417,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":nb_attrac", $nb_attrac);
                 $stmt->bindParam(":url_plan", $url_plan);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -448,7 +448,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":nb_places", $nb_places);
                 $stmt->bindParam(":duree", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
