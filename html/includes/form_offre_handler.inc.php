@@ -325,7 +325,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":age", $age);
                 $stmt->bindParam(":duree", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -355,7 +355,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":url_carte", $url_carte);
                 $stmt->bindParam(":gammeprix", $gammeprix);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -386,7 +386,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":guidee", $guidee, PDO::PARAM_BOOL);
                 $stmt->bindParam(":dureevisite", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -417,7 +417,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":nb_attrac", $nb_attrac);
                 $stmt->bindParam(":url_plan", $url_plan);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
@@ -448,7 +448,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
                 $stmt->bindParam(":nb_places", $nb_places);
                 $stmt->bindParam(":duree", $duree);
                 $stmt->bindParam(":lat", $lat);
-                $stmt->bindParam(":lat", $lng);
+                $stmt->bindParam(":lng", $lng);
 
                 $stmt->execute();
                 bind_option($id);
