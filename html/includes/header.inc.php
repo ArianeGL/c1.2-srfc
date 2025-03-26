@@ -8,7 +8,7 @@ function est_pro(): bool
     global $dbh;
 
     try {
-        $query = "SELECT COUNT(*) FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE_PRO . " NATURAL JOIN " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = :email;";
+        $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE_PRO . " NATURAL JOIN " . NOM_SCHEMA . "." . NOM_TABLE_COMPTE . " WHERE email = :email;";
         $stmt = $dbh->prepare($query);
         $stmt->bindParam(":email", $_SESSION['identifiant']);
         $stmt->execute();
@@ -19,7 +19,6 @@ function est_pro(): bool
     } catch (PDOException $e) {
         die("PDO Query error : " . $e->getMessage());
     }
-
     return $pro;
 }
 

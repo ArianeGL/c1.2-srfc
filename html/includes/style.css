@@ -981,11 +981,14 @@ form textarea {
 }
 
 #creation_offre {
-    main {
+    form {
         background: white;
-        /* CSS FOR THE MAIN GOES HERE */
         text-align: center;
         font-size: 1.5em;
+        padding: 20px;
+        width: 60%;
+        border-radius: var(--round-corners);
+        border: 1px solid var(--dark-grey);
     }
 
     input::placeholder {
@@ -1016,24 +1019,25 @@ form textarea {
     }
 
     #creation_offre>div>select {
-        width: 45%;
+        width: 60%;
         height: 3em;
         border-radius: 5px;
     }
 
     #creation_offre>select {
-        width: 45%;
+        width: 57.5%;
         height: 3em;
         border-radius: 5px;
     }
 
     #titre_cate {
         display: flex;
-        width: 47.5%;
+        width: 60%;
     }
 
     #titre {
         width: 100%;
+        align-self: end;
     }
 
     #type {
@@ -1055,7 +1059,7 @@ form textarea {
 
     #addresse {
         display: flex;
-        width: 47.5%;
+        width: 60%;
         padding: 0;
     }
 
@@ -1066,7 +1070,7 @@ form textarea {
     #ville_code {
         display: flex;
         flex-direction: row;
-        width: 47.5%;
+        width: 60%;
     }
 
     #ville {
@@ -1075,7 +1079,7 @@ form textarea {
 
     #tel_site {
         display: flex;
-        width: 47.5%;
+        width: 60%;
     }
 
     #telephone {
@@ -1087,12 +1091,12 @@ form textarea {
     }
 
     #resume {
-        width: 45%;
+        width: 55%;
     }
 
     #description {
         height: 20em;
-        width: 45%;
+        width: 55%;
         resize: none;
         border-radius: 5px;
         padding-left: 10px;
@@ -1130,16 +1134,11 @@ form textarea {
     }
 
     #depends_select {
-        width: 47.5%;
+        width: 60%;
     }
 
     #depends_select>input {
         width: 100%;
-    }
-
-    label {
-        font-size: 1em;
-        color: var(--dark-grey);
     }
 
     legend {
@@ -1148,7 +1147,7 @@ form textarea {
     }
 
     #opt {
-        width: 11%;
+        width: 100%;
     }
 
     #tagre {
@@ -1604,3 +1603,4 @@ form textarea {
     margin-right: 2em;
     vertical-align: middle; 
 }
+

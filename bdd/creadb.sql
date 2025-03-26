@@ -379,6 +379,7 @@ CREATE TABLE IF NOT EXISTS sae._avis
   nblike integer not null,
   nbdislike integer not null,
   blacklist boolean not null,
+  timeunblacklist timestamp,
   signale boolean not null,
   reponse varchar(9999),
   datereponse DATE,
