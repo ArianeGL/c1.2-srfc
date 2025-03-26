@@ -1467,8 +1467,8 @@ VALUES ('Co-0009', 'john.doe@gmail.com', 'motdepasse', '54', 'Imp. Covenant Pasq
 
 --- AVIS 
 create or replace view sae.avis AS
-  select * from sae._avis 
-  where idoffre <> (select idoffre from sae._offre where categorie = 'Restauration');
+	select * from sae._avis 
+	where idoffre not in (select idoffre from sae._offre where categorie = 'Restauration');
 
 create or replace function sae.posteravis()
   RETURNS trigger
