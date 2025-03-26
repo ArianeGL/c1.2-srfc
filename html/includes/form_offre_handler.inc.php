@@ -281,24 +281,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['identifiant'])) {
 
     //LATITUDE LONGITUDE
     $adresse = "$num_addresse $rue_addresse, $ville";
-        $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
-        
-        // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
-        $options = [
-            "http" => [
-                "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
-            ]
-        ];
-        $context = stream_context_create($options);
-        
-        // Faire la requête
-        $response = file_get_contents($url, false, $context);
-        $data = json_decode($response, true);
-        
-        if (!empty($data)) {
-            $lat = $data[0]['lat'];
-            $lng = $data[0]['lon'];
-        }
+    $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
+
+    // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
+    $options = [
+        "http" => [
+            "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
+        ]
+    ];
+    $context = stream_context_create($options);
+
+    // Faire la requête
+    $response = file_get_contents($url, false, $context);
+    $data = json_decode($response, true);
+
+    if (!empty($data)) {
+        $lat = $data[0]['lat'];
+        $lng = $data[0]['lon'];
+    }
 
     try {
         global $dbh;
