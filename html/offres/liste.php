@@ -26,11 +26,24 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../includes/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="">
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <script src="../includes/main.js"></script>
     <script src="../scripts/recherche.js"></script>
     <script>
-        function loadInfoOffre(idoffre) {
+            function loadInfoOffre(idoffre) {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
     </script>
@@ -178,19 +191,71 @@ try {
                 </script>
             </div>
         </nav>
-
+        
+        <div id="map"></div>
         <section>
             <?php
             $query1 = '
             SELECT * FROM ' . NOM_SCHEMA . '._offre 
             NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
-
+            
             if (est_pro(get_account_id())) {
                 $filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
+            ?><script>
+            var markers = new L.markerClusterGroup();
+            var redIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapRouge.png',
 
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var blackIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapNoir.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var greenIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapVert.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var purpleIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapViolet.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var blueIcon = L.icon({ 
+                iconUrl: '../IMAGES/pinMapBleu.png',
+
+                iconSize:     [45, 55], // size of the icon
+                shadowSize:   [50, 64], // size of the shadow
+                iconAnchor:   [23, 20], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+        </script><?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
                 /*
@@ -199,26 +264,26 @@ try {
                     $sth3 = $dbh->prepare($query3);
                     $sth3->execute();
                     $requeteCompteAvis = $sth3->fetchAll();
-                } catch (PDOException $e) {
-                    die("SQL Query failed : " . $e->getMessage());
-                }
-                */
-                $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
-                $sth = $dbh->prepare($query);
-                $sth->bindParam(':idoffre', $offre['idoffre']);
-                $sth->execute();
-                $result = $sth->fetchColumn();
-
-                if ($result != 0) {
-            ?>
+                    } catch (PDOException $e) {
+                        die("SQL Query failed : " . $e->getMessage());
+                        }
+                        */
+                        $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
+                        $sth = $dbh->prepare($query);
+                        $sth->bindParam(':idoffre', $offre['idoffre']);
+                        $sth->execute();
+                        $result = $sth->fetchColumn();
+                        
+                        if ($result != 0) {
+                            ?>
                     <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
-                    <?php
+                        <?php
                 } else {
                     ?>
                         <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                     }
-                        ?>
+                    ?>
                         <div>
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
                             <h3><?php echo $offre['note'] . "/5" ?></h3>
@@ -232,26 +297,126 @@ try {
                             $query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' WHERE idoffre=\'' . $offre['idoffre'] . '\'';
                             $images = $dbh->query($query_image)->fetch(); ?>
                             <img src="<?php echo $images[0]; ?>" alt="Nom_image" class="clopArtImg">
-
+                            
                             <h4 id="clopVille"><?php echo $offre['villeoffre']; ?></h4>
-
+                            
                             <div class="fade-out-container">
                                 <p><?php echo $offre['resume']; ?></p>
                             </div>
-
+                            
                             <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                         </div>
-                        </article>
+                    </article>
                     <?php
+                        // Dans votre boucle foreach pour les offres
+                        $iconType = "greenIcon"; // Par défaut
+
+                        // Déterminez l'icône en fonction de la catégorie
+                        switch($offre['categorie']) {
+                            case 'Spectacle':
+                                $iconType = "blueIcon";
+                                break;
+                            case 'Restauration':
+                                $iconType = "redIcon";
+                                break;
+                            case 'Activite':
+                                $iconType = "purpleIcon";
+                                break;
+                            case 'Parc attraction':
+                                $iconType = "blackIcon";
+                                break;
+                            case 'Visite':
+                                $iconType = "greenIcon";
+                                break;
+                        }
+            
+                        ?>
+                    <script>
+                        markers.addLayer(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>}));
+                    </script>
+                    <?php
+
                 }
-                    ?>
+                
+                ?>
         </section>
-
+        
     </main>
-
+    
     <?php require_once FOOTER; ?>
-
+    
 </body>
+<?php
+        $adresse = "9 la tégrie, Saint hilaire de loulay";
+        $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
+        
+        // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim
+        $options = [
+            "http" => [
+                "header" => "User-Agent: MonApp/1.0 (contact@exemple.com)\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+        
+        // Faire la requête
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response, true);
+        
+        if (!empty($data)) {
+            $latitude = $data[0]['lat'];
+            $longitude = $data[0]['lon'];
+        }
+        
+        ?>
+    <script>
+
+        //markers.push(L.marker([<?php echo "$latitude, $longitude" ?>]));
+
+        var map = L.map('map').setView([48.6, -3.0], 8.5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+        
+        map.addLayer(markers);
+
+        var legend = L.control({ position: 'bottomright' });
+
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend'); 
+            var categories = ['Spectacle', 'Restauration', 'Activite', 'Parc attraction', 'Visite'];
+            var labels = ['<strong>Catégories</strong>']; 
+            function getIconUrl(category) {
+                switch(category) {
+                    case 'Spectacle':       return '../IMAGES/pinMapBleu.png';
+                    case 'Restauration':    return '../IMAGES/pinMapRouge.png';
+                    case 'Activite':        return '../IMAGES/pinMapViolet.png';
+                    case 'Parc attraction': return '../IMAGES/pinMapNoir.png'; 
+                    case 'Visite':          return '../IMAGES/pinMapVert.png';
+                    default:                return '../IMAGES/pinMapVert.png'; 
+                }
+            }
+
+            // Loop through categories and generate legend items
+            for (var i = 0; i < categories.length; i++) {
+                var categoryName = categories[i];
+                var iconUrl = getIconUrl(categoryName);
+                labels.push(
+                    '<img src="' + iconUrl + '" class="legend-icon"> ' + categoryName
+                );
+            }
+
+            div.innerHTML = labels.join('<br>');
+            return div;
+        };
+
+        legend.addTo(map);
+            
+
+        //markers.forEach(element) => element.addTo(map);
+
+
+    </script>
 <script>
     let bouton_filtre = document.querySelector("#filterButton");
     let champs_filtres = document.querySelector("#filterOptions");
@@ -289,7 +454,7 @@ try {
         if (all_checked || none_checked) {
             retire_fil_cat();
             return false;
-        } else {
+        } else { 
             return true;
         }
     }
