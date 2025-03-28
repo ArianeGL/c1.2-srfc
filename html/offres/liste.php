@@ -335,6 +335,9 @@ try {
                         marqueur["data-categorie"]="<?php echo $offre['categorie']?>";
                         marqueur["data-note"]="<?php echo $offre['note']?>";
                         marqueur["data-prix"]="<?php echo $offre['prixmin']?>";
+                        marqueur["cat_hidden"]=false;
+                        marqueur["note_hidden"]=false;
+                        marqueur["prix_hidden"]=false;
                         markers.addLayer(marqueur);
                     </script>
                     <?php
@@ -383,7 +386,6 @@ try {
         
         map.addLayer(markers);
         var lstMarkers = markers.getLayers();
-        var marqueursFiltre = markers.getLayers();
 
         var legend = L.control({ position: 'bottomright' });
 
@@ -471,63 +473,56 @@ try {
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
-            markers.clearLayers();
-            var position=-1;
             for(marqueur of lstMarkers){
                 let art_cat = marqueur['data-categorie'];
                 let present = true;
                 switch (art_cat) {
                     case 'Activite':
                         if (!activite.checked) {
-                            position = marqueursFiltre.indexOf(marqueur);
-                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                            marqueur["cat_hidden"]=true;
                         }else{
-                            if(!marqueursFiltre.includes(marqueur)){
-                                marqueursFiltre.push(marqueur);
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
                             }
                         }
                         break;
 
                     case 'Visite':
                         if (!visite.checked) {
-                            position = marqueursFiltre.indexOf(marqueur);
-                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                            marqueur["cat_hidden"]=true;
                         }else{
-                            if(!marqueursFiltre.includes(marqueur)){
-                                marqueursFiltre.push(marqueur);
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
                             }
                         }
                         break;
 
                     case 'Spectacle':
                         if (!spectacle.checked) {
-                            position = marqueursFiltre.indexOf(marqueur);
-                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                            marqueur["cat_hidden"]=true;
                         }else{
-                            if(!marqueursFiltre.includes(marqueur)){
-                                marqueursFiltre.push(marqueur);
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
                             }
                         }
                         break;
 
                     case 'Parc attraction':
                         if (!parc_attraction.checked) {
-                            position = marqueursFiltre.indexOf(marqueur);
-                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                            marqueur["cat_hidden"]=true;
                         }else{
-                            if(!marqueursFiltre.includes(marqueur)){
-                                marqueursFiltre.push(marqueur);
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
                             }
                         }
                         break;
 
                     case 'Restauration':
                         if (!restauration.checked) {
-                            position = marqueursFiltre.indexOf(marqueur);
-                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                            marqueur["cat_hidden"]=true;
                         }else{
-                            if(!marqueursFiltre.includes(marqueur)){
-                                marqueursFiltre.push(marqueur);
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
                             }
                         }
                         break;
@@ -598,12 +593,7 @@ try {
                 }
             }
         }
-
-        if(marqueursFiltre==null){
-            markers.addLayers(lstMarkers)
-        }else{
-            markers.addLayers(marqueursFiltre);
-        }
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -630,10 +620,16 @@ try {
         for (article of articles) {
             if (article.classList.contains("cat_hidden")) {
                 article.classList.remove("cat_hidden");
-                markers.addLayers(lstMarkers)
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["cat_hidden"]){
+                marqueur["cat_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -678,11 +674,10 @@ try {
                 let art_note = marqueur['data-note'];
 
                 if (filtre_note > art_note) {
-                    position = marqueursFiltre.indexOf(marqueur);
-                    if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                    marqueur["note_hidden"]=true;
                 } else {
-                    if(!marqueursFiltre.includes(marqueur)){
-                        marqueursFiltre.push(marqueur);
+                    if(marqueur["note_hidden"]){
+                        marqueur["note_hidden"]=false;
                     }
                 }
             }
@@ -700,11 +695,7 @@ try {
             }
         }
 
-        if(marqueursFiltre==null){
-            markers.addLayers(lstMarkers)
-        }else{
-            markers.addLayers(marqueursFiltre);
-        }
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -722,18 +713,19 @@ try {
             sup_a_4.checked = false;
         }
 
-        for (marqueur of lstMarkers) {
-            if(!marqueursFiltre.includes(marqueur)){
-                marqueursFiltre.push(marqueur);
-            }
-        }
-
         for (article of articles) {
             if (article.classList.contains("note_hidden")) {
                 article.classList.remove("note_hidden");
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["note_hidden"]){
+                marqueur["note_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -819,6 +811,18 @@ try {
                 break;
         }
 
+        for (marqueur of lstMarkers) {
+            let art_prix = marqueur['data-prix'];
+
+            if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
+                marqueur["prix_hidden"]=true;
+            } else {
+                if(marqueur["prix_hidden"]){
+                    marqueur["prix_hidden"]=false;
+                }
+            }
+        }
+
         for (article of articles) {
             let art_prix = article.getAttribute('data-prix');
 
@@ -831,6 +835,7 @@ try {
             }
         }
 
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -849,6 +854,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["prix_hidden"]){
+                marqueur["prix_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -893,6 +905,17 @@ try {
                 retirer.remove();
             }
         }
+    }
+
+    function change_filtre_marqueur(){
+        markers.clearLayers();
+        var marqueurs_filtre=[]
+        for(marqueur of lstMarkers){
+            if(!marqueur["cat_hidden"] && !marqueur["note_hidden"] && !marqueur["prix_hidden"]){
+                marqueurs_filtre.push(marqueur);
+            }
+        }
+        markers.addLayers(marqueurs_filtre);
     }
 </script>
 
