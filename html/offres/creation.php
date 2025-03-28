@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!doctype html>
 <html lang="en" id="creation_offre">
 
@@ -26,8 +30,6 @@
     require_once "../includes/consts.inc.php";
 
     require_once HEADER;
-
-    session_start();
 
     /*
      * prend en parametre 'email d'un compte
