@@ -674,6 +674,19 @@ try {
                 filtre_note = 4;
             }
 
+            for (marqueur of lstMarkers) {
+                let art_note = marqueur['data-note'];
+
+                if (filtre_note > art_note) {
+                    position = marqueursFiltre.indexOf(marqueur);
+                    if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                } else {
+                    if(!marqueursFiltre.includes(marqueur)){
+                        marqueursFiltre.push(marqueur);
+                    }
+                }
+            }
+
             for (article of articles) {
                 let art_note = article.getAttribute('data-note');
 
@@ -687,6 +700,11 @@ try {
             }
         }
 
+        if(marqueursFiltre==null){
+            markers.addLayers(lstMarkers)
+        }else{
+            markers.addLayers(marqueursFiltre);
+        }
         cachees_verif();
     }
 
@@ -702,6 +720,12 @@ try {
             sup_a_3.checked = false;
         } else if (sup_a_4.checked) {
             sup_a_4.checked = false;
+        }
+
+        for (marqueur of lstMarkers) {
+            if(!marqueursFiltre.includes(marqueur)){
+                marqueursFiltre.push(marqueur);
+            }
         }
 
         for (article of articles) {
