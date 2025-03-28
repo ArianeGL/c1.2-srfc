@@ -35,6 +35,7 @@ function est_pro(): bool
     return $pro;
 }
 
+
 ?>
 
 <!DOCTYPE html>
@@ -104,11 +105,15 @@ function est_pro(): bool
                 </script>
             <?php
             } else {
-                //if(!$isotp){
+                if(!$isotp){
                     echo "Connexion réussie";
                     $_SESSION["identifiant"] = $identificateur;
                     $_SESSION["mdp"] = $mdp;
-                //}
+                }else{
+                    $_SESSION["identifiant_otp"] =$identificateur;
+                    $_SESSION["mdp_otp"]=$mdp;
+                    echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
+                }
             }
         }
 
@@ -117,7 +122,9 @@ function est_pro(): bool
                 echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
             }
             else{
-                echo '<script>window.location.href ="' . LISTE_OFFRES . '" ;</script>';
+                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '" ;
+                    console.log("'. $_SESSION['identifiant'] .'");
+                </script>';
             }
         } else if ($attempt == 0) { ?>
             <form action=<?php echo CONNECTION_COMPTE; ?> method="post" enctype="multipart/form-data">
