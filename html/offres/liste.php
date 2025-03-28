@@ -29,7 +29,6 @@ try {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 
         <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -205,7 +204,7 @@ try {
                 $query1 = $query1 . $ordreTri;
             }
             ?><script>
-            var markers = new L.markerClusterGroup();
+            var markers = L.markerClusterGroup();
             var redIcon = L.icon({ 
                 iconUrl: '../IMAGES/pinMapRouge.png',
 
@@ -332,7 +331,11 @@ try {
             
                         ?>
                     <script>
-                        markers.addLayer(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>}));
+                        marqueur=L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>})
+                        marqueur["data-categorie"]="<?php echo $offre['categorie']?>";
+                        marqueur["data-note"]="<?php echo $offre['note']?>";
+                        marqueur["data-prix"]="<?php echo $offre['prixmin']?>";
+                        markers.addLayer(marqueur);
                     </script>
                     <?php
 
@@ -379,6 +382,8 @@ try {
 
         
         map.addLayer(markers);
+        var lstMarkers = markers.getLayers();
+        var marqueursFiltre = markers.getLayers();
 
         var legend = L.control({ position: 'bottomright' });
 
@@ -440,6 +445,7 @@ try {
     var restauration = document.querySelector("#restauration");
 
     var articles = document.getElementsByClassName("art-offre");
+    
 
     activite.addEventListener("click", fil_cat);
     visite.addEventListener("click", fil_cat);
@@ -465,6 +471,72 @@ try {
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
+            markers.clearLayers();
+            var position=-1;
+            for(marqueur of lstMarkers){
+                let art_cat = marqueur['data-categorie'];
+                let present = true;
+                switch (art_cat) {
+                    case 'Activite':
+                        if (!activite.checked) {
+                            position = marqueursFiltre.indexOf(marqueur);
+                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                        }else{
+                            if(!marqueursFiltre.includes(marqueur)){
+                                marqueursFiltre.push(marqueur);
+                            }
+                        }
+                        break;
+
+                    case 'Visite':
+                        if (!visite.checked) {
+                            position = marqueursFiltre.indexOf(marqueur);
+                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                        }else{
+                            if(!marqueursFiltre.includes(marqueur)){
+                                marqueursFiltre.push(marqueur);
+                            }
+                        }
+                        break;
+
+                    case 'Spectacle':
+                        if (!spectacle.checked) {
+                            position = marqueursFiltre.indexOf(marqueur);
+                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                        }else{
+                            if(!marqueursFiltre.includes(marqueur)){
+                                marqueursFiltre.push(marqueur);
+                            }
+                        }
+                        break;
+
+                    case 'Parc attraction':
+                        if (!parc_attraction.checked) {
+                            position = marqueursFiltre.indexOf(marqueur);
+                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                        }else{
+                            if(!marqueursFiltre.includes(marqueur)){
+                                marqueursFiltre.push(marqueur);
+                            }
+                        }
+                        break;
+
+                    case 'Restauration':
+                        if (!restauration.checked) {
+                            position = marqueursFiltre.indexOf(marqueur);
+                            if ( position!=-1 ) marqueursFiltre.splice(position, 1);
+                        }else{
+                            if(!marqueursFiltre.includes(marqueur)){
+                                marqueursFiltre.push(marqueur);
+                            }
+                        }
+                        break;
+
+                    default:
+                        console.log("Erreur de valeur pour le switch.\n");
+                        break;
+                }
+            }
 
             for (article of articles) {
                 let art_cat = article.getAttribute('data-categorie');
@@ -527,6 +599,11 @@ try {
             }
         }
 
+        if(marqueursFiltre==null){
+            markers.addLayers(lstMarkers)
+        }else{
+            markers.addLayers(marqueursFiltre);
+        }
         cachees_verif();
     }
 
@@ -553,6 +630,7 @@ try {
         for (article of articles) {
             if (article.classList.contains("cat_hidden")) {
                 article.classList.remove("cat_hidden");
+                markers.addLayers(lstMarkers)
             }
         }
 
