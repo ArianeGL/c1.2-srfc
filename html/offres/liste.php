@@ -306,8 +306,16 @@ try {
                             <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                         </div>
                     </article>
+                    
                     <?php
-                        // Dans votre boucle foreach pour les offres
+                        $popupContent = '<div>';
+                        $popupContent .= '<h3>' . htmlspecialchars($offre['nomoffre']) . '</h3>';
+                        $popupContent .= '<p>Prix: ' . htmlspecialchars($offre['prixmin']) . ' €</p>';
+                        $popupContent .= '<p>Note: ' . htmlspecialchars($offre['note']) . '/5</p>';
+                        $popupContent .= '<p>Résumé: ' . htmlspecialchars($offre['resume']) . '</p>';
+                        $popupContent .= '<a href="informations.php?idoffre=' . $offre['idoffre'] . '">Voir les détails</a>';
+                        $popupContent .= '</div>';
+                        
                         $iconType = "greenIcon"; // Par défaut
 
                         // Déterminez l'icône en fonction de la catégorie
@@ -332,6 +340,8 @@ try {
                         ?>
                     <script>
                         marqueur=L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>})
+                                .bindPopup(`<?php echo addslashes($popupContent);
+                                ?>`);
                         marqueur["data-categorie"]="<?php echo $offre['categorie']?>";
                         marqueur["data-note"]="<?php echo $offre['note']?>";
                         marqueur["data-prix"]="<?php echo $offre['prixmin']?>";
