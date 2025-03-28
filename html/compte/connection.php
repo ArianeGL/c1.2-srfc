@@ -73,7 +73,7 @@ function est_pro(): bool
                 $connexion = true;
             }
 
-            $querry_otp = "SELECT otp FROM ". NOM_SCHEMA .".". NOM_TABLE_COMPTE ." 
+            $querry_otp = "SELECT urlotp,otp FROM ". NOM_SCHEMA .".". NOM_TABLE_COMPTE ." 
                             WHERE email = :email AND motdepasse = :mdp";
             $sthotp = $dbh->prepare($querry_otp);
             $sthotp->bindParam(':email', $identificateur);
@@ -81,7 +81,7 @@ function est_pro(): bool
             $sthotp->execute();
 
             $isotp = $sthotp->fetch(PDO::FETCH_ASSOC)["otp"];
-            print_r($isotp);
+            //print_r($isotp);
 
             if (!$connexion) {
                 $attempt++; ?>
@@ -104,9 +104,11 @@ function est_pro(): bool
                 </script>
             <?php
             } else {
-                echo "Connexion réussie";
-                $_SESSION["identifiant"] = $identificateur;
-                $_SESSION["mdp"] = $mdp;
+                //if(!$isotp){
+                    echo "Connexion réussie";
+                    $_SESSION["identifiant"] = $identificateur;
+                    $_SESSION["mdp"] = $mdp;
+                //}
             }
         }
 
