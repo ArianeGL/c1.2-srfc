@@ -46,6 +46,7 @@ try {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
     </script>
+	<script src="../scripts/recent.js"></script>
 
     <title>PACT</title>
 </head>
@@ -53,7 +54,7 @@ try {
 <body>
     <?php require_once HEADER; ?>
     <!-- Main content -->
-    <main style="margin-bottom: 700px;">
+    <main style="margin-bottom: 700px;">`
         <?php if(isset($_SESSION['identifiant']) && est_pro($_SESSION['identifiant'])){ ?>
             <button style="margin-bottom:30px" class="button" onclick="window.location='creation.php'">Créer une offre</button>
         <?php } ?>
@@ -190,8 +191,99 @@ try {
                 </script>
             </div>
         </nav>
-        
         <div id="map"></div>
+
+		<section style="width: 50%; padding: 10px; margin: 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; ">
+			<h1>Offres Consultées Récement</h1>
+		</section>
+
+		<section id="offer-list">
+			<?php
+			$query1 = '
+			SELECT * FROM ' . NOM_SCHEMA . '._offre 
+			NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
+
+			if (est_pro(get_account_id())) {
+				$filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
+				$query1 = $query1 . $filtre_cat;
+				$query1 = $query1 . $ordreTri;
+			}
+
+			// Fetch all offers from the database into a PHP array
+			$offers = [];
+			foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
+				// Fetch image
+				$query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' 
+								NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' 
+								WHERE idoffre=\'' . $offre['idoffre'] . '\'';
+				$images = $dbh->query($query_image)->fetch();
+
+				// Store offer details in an array
+				$offers[] = [
+					'idoffre' => (string) $offre['idoffre'],
+					'nomoffre' => $offre['nomoffre'],
+					'note' => $offre['note'],
+					'categorie' => $offre['categorie'],
+					'prixmin' => $offre['prixmin'],
+					'villeoffre' => $offre['villeoffre'],
+					'resume' => $offre['resume'],
+					'denomination' => $offre['denomination'],
+					'image' => $images[0] ?? '',
+				];
+			}
+			?>
+
+			<script>
+				// Get recent offers order
+				let recentOffers = Array.from(getStoredOfferIds());
+
+				// Get all offers from PHP
+				let offers = <?php echo json_encode($offers); ?>;
+
+				// Filter offers to only include those in recentOffers
+				let sortedOffers = recentOffers
+					.map(id => offers.find(offer => offer.idoffre === id)) // Map offers in correct order
+					.filter(offer => offer); // Remove undefined values
+
+				// Generate HTML
+				let offerSection = document.getElementById("offer-list");
+				let offerHTML = sortedOffers.map(offer => `
+					<article class="art-offre" onclick="loadInfoOffre('${offer.idoffre}')" 
+						data-categorie="${offer.categorie}" 
+						data-note="${offer.note}" 
+						data-prix="${offer.prixmin}">
+						<div>
+							<h3 class="clopTitre">${offer.nomoffre}</h3>
+							<h3>${offer.note}/5</h3>
+							<section class="art-header">
+								<h3>${offer.categorie}</h3>
+								<p>${offer.prixmin} &#8364;</p>
+							</section>
+						</div>
+						<div>
+							<img src="${offer.image}" alt="Nom_image" class="clopArtImg">
+							<h4 id="clopVille">${offer.villeoffre}</h4>
+							<div class="fade-out-container">
+								<p>${offer.resume}</p>
+							</div>
+							<p class="clopDeno">${offer.denomination}</p>
+						</div>
+					</article>
+				`).join("");
+
+				offerSection.innerHTML = offerHTML;
+				// if there are no recent offers, display a message
+				if (sortedOffers.length === 0) {
+					offerSection.innerHTML = '<h1 style="color: white;text-shadow:-1px -1px 0 black,1px -1px 0 black,-1px  1px 0 black,1px  1px 0 black;-webkit-text-stroke: 1px black;">Aucune offre consultée récemment</h1>';
+				}
+			</script>
+		</section>
+
+
+		<section style="width: 50%; padding: 10px; margin: 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; margin-top: 100px;">
+			<h1>Liste des Offres</h1>
+		</section>
+
         <section>
             <?php
             $query1 = '
@@ -203,7 +295,8 @@ try {
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-            ?><script>
+            ?>
+			<script>
             var markers = L.markerClusterGroup();
             var redIcon = L.icon({ 
                 iconUrl: '../IMAGES/pinMapRouge.png',
@@ -254,29 +347,20 @@ try {
                 shadowAnchor: [4, 62],  // the same for the shadow
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
-        </script><?php
+        </script>
+		<?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
-                /*
-                try {
-                    $query3 = "SELECT COUNT(*) AS nbavis FROM ".NOM_SCHEMA."._offre o INNER JOIN ".NOM_SCHEMA."._avis a ON o.idoffre = a.idoffre WHERE idoffre=".$offre['idoffre'];
-                    $sth3 = $dbh->prepare($query3);
-                    $sth3->execute();
-                    $requeteCompteAvis = $sth3->fetchAll();
-                } catch (PDOException $e) {
-                    die("SQL Query failed : " . $e->getMessage());
-                }
-                */
-                $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
-                $sth = $dbh->prepare($query);
-                $sth->bindParam(':idoffre', $offre['idoffre']);
-                $sth->execute();
-                $result = $sth->fetchColumn();
-
-                if ($result != 0) {
-            ?>
-                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo round($offre['note'], 2); ?>" data-prix="<?php echo $offre['prixmin']; ?>">
-                    <?php
+				$query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
+				$sth = $dbh->prepare($query);
+				$sth->bindParam(':idoffre', $offre['idoffre']);
+				$sth->execute();
+				$result = $sth->fetchColumn();
+				
+				if ($result != 0) {
+					?>
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                        <?php
                 } else {
                     ?>
                         <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo round($offre['note'], 2); ?>" data-prix="<?php echo $offre['prixmin']; ?>">
@@ -358,7 +442,7 @@ try {
                 
                 ?>
         </section>
-        
+
     </main>
     
     <?php require_once FOOTER; ?>

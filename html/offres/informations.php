@@ -48,6 +48,7 @@ if (isset($_GET['idoffre'])) {
             <link rel="icon" type="image/x-icon" href="favicon.ico">
 
             <script src="../includes/main.js"></script>
+			<script src="../scripts/recent.js" defer></script>
         </head>
 
         <body>
@@ -149,6 +150,12 @@ if (isset($_GET['idoffre'])) {
         </body>
 
         </html>
+	<script>
+		console.log("test");
+		document.addEventListener("DOMContentLoaded", function () {
+			getOfferId();
+		});
+	</script>
 <?php
     } else {
         echo "No offer found with the specified ID.";
