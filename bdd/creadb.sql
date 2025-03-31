@@ -384,8 +384,7 @@ CREATE TABLE IF NOT EXISTS sae._avis
   timeunblacklist timestamp,
   signale boolean not null,
   reponse varchar(9999),
-  datereponse DATE,
-  CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
+  datereponse DATE
 );
 
 CREATE TABLE IF NOT EXISTS sae._imageavis

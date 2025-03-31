@@ -1604,3 +1604,28 @@ form textarea {
     vertical-align: middle; 
 }
 
+#delete_acc_confirm {
+    text-align: center;
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em;
+    width: fit-content;
+    align-self: center;
+    
+    #buttons {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .acc_del_buttons {
+        width: 200px;
+        height: 60px;
+        font-size: 1em;
+        font-family: "Concert One", sans-serif;
+    }
+}
+
+#supprimer_compte {
+    display: flex;
+    justify-content: center;
+}

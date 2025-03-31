@@ -72,7 +72,7 @@ if ($compte) {
     $image = $compte['urlimage'];
 } else { ?>
     <script>
-        window.location = <?php echo LSITE_OFFRES ?>;
+        window.location = <?php echo LISTE_OFFRES ?>;
     </script>
 <?php } ?>
 
@@ -134,7 +134,9 @@ if ($compte) {
                 <div class="actions-profil">
                     <img src="<?php echo htmlspecialchars($image) ?>" alt="Photo de profil" class="photo-profil">
                     <button id="bouton-modifier" type="button" onclick="window.location.href='./modification_membre.php'">Modifier vos informations</button>
-                    <!-- <button id="bouton-supprimer" type="button">Supprimer le compte</button> -->
+                    <form action="../includes/supprimer_compte.inc.php" method="post" enctype="multipart/form-data">
+                        <input id="bouton-supprimer" type="submit" value="Supprimer le compte">
+                    </form>
                     <form action="../includes/deconnection.inc.php" method="post" enctype="multipart/form-data">
                         <input id="bouton-supprimer" type="submit" value="Se déconnecter">
                     </form>
