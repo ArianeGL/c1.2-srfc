@@ -1,5 +1,5 @@
 # CakePHP 3
-
+/.vscode
 /vendor/*
 /config/app.php
 

@@ -61,42 +61,53 @@ print_r("step 2");
 try {
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $prenom = substr(trim($_POST['prenom']), 0, 20); 
-    $nom = substr(trim($_POST['nom']), 0, 20); 
-    $pseudo = substr(trim($_POST['pseudo']), 0, 40); 
-    $tel = $_POST['tel']; 
-    $mdp = substr(trim($_POST['mdp']), 0, 20); 
-    $email = substr(trim($_POST['email']), 0, 50); 
-    $num = substr(trim($_POST['num']), 0, 4);
-    $rue = substr(trim($_POST['rue']), 0, 50);
-    $ville = substr(trim($_POST['ville']), 0, 30); 
-    $code = substr(trim($_POST['code']), 0, 5); 
+        $prenom = substr(trim($_POST['prenom']), 0, 20);
+        $nom = substr(trim($_POST['nom']), 0, 20);
+        $pseudo = substr(trim($_POST['pseudo']), 0, 40);
+        $tel = $_POST['tel'];
+        $mdp = substr(trim($_POST['mdp']), 0, 20);
+        $email = substr(trim($_POST['email']), 0, 50);
+        $num = substr(trim($_POST['num']), 0, 4);
+        $rue = substr(trim($_POST['rue']), 0, 50);
+        $ville = substr(trim($_POST['ville']), 0, 30);
+        $code = substr(trim($_POST['code']), 0, 5);
 
-print_r("step 2.1");
-    if (strlen($tel) > 10) {
-        echo "Le numéro de téléphone doit contenir 10 chiffres.";
-        exit;
-    }
 
-    if (strlen($code) !== 5) {
-        echo "Le code postal doit contenir 5 chiffres.";
-        exit;
-    }
+        if (strlen($tel) > 10) {
+            echo "Le numéro de téléphone doit contenir 10 chiffres.";
+            exit;
+        }
 
-    try {
-        $idcompte = generate_id();
-    } catch (FunctionException $e) {
-        die("ID generation failed : " . $e->getMessage());
-    }    
+        if (strlen($code) !== 5) {
+            echo "Le code postal doit contenir 5 chiffres.";
+            exit;
+        }
 
-        $sql = "INSERT INTO ".NOM_SCHEMA.".".VUE_MEMBRE." (idcompte, prenommembre, nommembre, pseudo, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage) 
+        try {
+            $idcompte = generate_id();
+        } catch (FunctionException $e) {
+            die("ID generation failed : " . $e->getMessage());
+        }
+
+        $sql = "INSERT INTO " . NOM_SCHEMA . "." . VUE_MEMBRE . " (idcompte, prenommembre, nommembre, pseudo, telephone, motdepasse, email, numadressecompte, ruecompte, villecompte, codepostalcompte, urlimage) 
         VALUES (:idcompte, :prenom, :nom, :pseudo, :tel, :mdp, :email, :num, :rue, :ville, :code, :urlimage
         )";
 
         $stmt = $dbh->prepare($sql);
 
-        $stmt->execute([':idcompte' => $idcompte,':prenom' => $prenom, ':nom' => $nom,':pseudo' => $pseudo,':tel' => $tel,':mdp' => $mdp,':email' => $email,
-        ':num' => $num, ':rue' => $rue,':ville' => $ville,':code' => $code,':urlimage' => PHOTO_PROFILE_DEFAULT
+        $stmt->execute([
+            ':idcompte' => $idcompte,
+            ':prenom' => $prenom,
+            ':nom' => $nom,
+            ':pseudo' => $pseudo,
+            ':tel' => $tel,
+            ':mdp' => $mdp,
+            ':email' => $email,
+            ':num' => $num,
+            ':rue' => $rue,
+            ':ville' => $ville,
+            ':code' => $code,
+            ':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
 print_r("step 2.2");
         if (isset($_FILES['photo'])) {
@@ -124,41 +135,39 @@ print_r("step 2.2");
         print_r("step 3");
 
         $_SESSION['identifiant'] = $email;
-        ?> 
-        <?php
-        if($_POST['otp'] == "on"){
-            echo "<script>window.location.href='creation_otp.php'</script>";
-        }else{
-            echo "<script>window.location.href='./consultation_membre.php'</script>";
-        }
+?>
+        <script>
+            window.location = "./consultation_membre.php";
+        </script>
+<?php
         exit();
     }
-
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
 
 ?>
-        
-    
+
 <!DOCTYPE html>
 <html lang="fr" id="creation_compte">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../includes/style.css"> 
+    <link rel="stylesheet" href="../includes/style.css">
     <title>Création compte membre - PACT</title>
 </head>
+
 <body>
 
     <?php require_once HEADER; ?>
 
     <main>
     <section>
-    <h1>Création du compte membre</h1>
-        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
-            <div class="form-container">
+        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+			<h1>Création du compte membre</h1>
+			<div class="form-container">
                 <div id="groupeInput" class="form-left">
                     <div class="form-row">
                         <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
@@ -179,49 +188,46 @@ print_r("step 2.2");
                             <input type="text" class="input-creation" id="num" name="num" placeholder="Num *" required />
                             <input type="text" class="input-creation" id="rue" name="rue" placeholder="Rue *" required />
                         </div>
-                    <div class="form-row">
-                        <input type="text" class="input-creation" id="ville" name="ville" placeholder="Ville *" required />
-                        <input type="text" class="input-creation" id="code" name="code" placeholder="Code postal *" required />
+                        <div class="form-row">
+                            <input type="text" class="input-creation" id="ville" name="ville" placeholder="Ville *" required />
+                            <input type="text" class="input-creation" id="code" name="code" placeholder="Code postal *" required />
+                        </div>
                     </div>
-                    <div class="form-row">
-                        <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
-                        <input type="checkbox" class="input-creation" id="otp" name="otp" />
-                    </div>
-                </div>
 
-                <div id="form-photo">
-                    <div id="photo-profil" class="form-right">
-                        <?php if (isset($_SESSION['photo'])) { ?>
-                            <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
-                        <?php } else { ?>
-                            <img src=<?php echo PHOTO_PROFILE_DEFAULT?> alt="Photo de profil" id="photo-profil" />
-                        <?php } ?>
-                    </div>
+                    <div id="form-photo">
+                        <div id="photo-profil" class="form-right">
+                            <?php if (isset($_SESSION['photo'])) { ?>
+                                <img src="<?php echo htmlspecialchars($_SESSION['photo']); ?>" alt="Photo de profil" />
+                            <?php } else { ?>
+                                <img src=<?php echo PHOTO_PROFILE_DEFAULT ?> alt="Photo de profil" id="photo-profil" />
+                            <?php } ?>
+                        </div>
                         <label class="smallButton" for="photo">Importer une image</label>
                         <input type="file" id="photo" name="photo" style="display:none;" />
                     </div>
-                
+
                 </div>
-            <div id="form-footer">
-                <p id="obligation">* Obligatoire</p>
-                <input class="button" id="bouton-modifier" type="submit" value="Valider" />
-                <div id="accepte">
-                    <div class="position-checkbox">
-                        <input type="checkbox" value="communication" id="communication">
-                        <label class="bouton-info" for="communication">J'accepte de recevoir des communications commerciales</label>
-                    </div>
-                    <br />
-                    <div class="position-checkbox">
-                        <input type="checkbox" value="condition" id="condition" required>
-                        <label class="bouton-info" for="condition">J'accepte les conditions générales d’utilisation</label>
+                <div id="form-footer">
+                    <p id="obligation">* Obligatoire</p>
+                    <input class="button" id="bouton-modifier" type="submit" value="Valider" />
+                    <div id="accepte">
+                        <div class="position-checkbox">
+                            <input type="checkbox" value="communication" id="communication">
+                            <label class="bouton-info" for="communication">J'accepte de recevoir des communications commerciales</label>
+                        </div>
+                        <br />
+                        <div class="position-checkbox">
+                            <input type="checkbox" value="condition" id="condition" required>
+                            <label class="bouton-info" for="condition">J'accepte les conditions générales d’utilisation</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-    </section>
+            </form>
+        </section>
     </main>
     <?php require_once FOOTER; ?>
 
 </body>
 <script src="../includes/main.js"></script>
+
 </html>

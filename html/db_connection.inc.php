@@ -28,6 +28,7 @@ const VUE_AVIS = "avis";
 const VUE_AVIS_RESTAURATION = "avisre";
 const VUE_REPONSE = "reponse";
 const VUE_AIME_AVIS = "aime";
+const NOM_TABLE_COMPTE_MEMBRE = "_comptemembre";
 
 $host = "srfc.ventsdouest.dev";
 $dbname = "sae";
