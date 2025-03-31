@@ -100,33 +100,33 @@ if ($compte) {
                 <form>
                     <div id="code-postal-ville">
                         <div class="input-group">
-                            <input type="text" id="nom" value="<?php echo htmlspecialchars($nom) ?>" readonly>
+                            <input type="text" id="nom" value="<?php echo htmlspecialchars($nom) ?>" disabled>
                         </div>
 
                         <div class="input-group">
-                            <input type="text" id="prenom" value="<?php echo htmlspecialchars($prenom) ?>" readonly>
+                            <input type="text" id="prenom" value="<?php echo htmlspecialchars($prenom) ?>" disabled>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" readonly>
+                        <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" disabled>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" readonly>
+                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" disabled>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse) ?>" readonly>
+                        <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse) ?>" disabled>
                     </div>
 
                     <div id="code-postal-ville">
                         <div class="input-group">
-                            <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" readonly>
+                            <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" disabled>
                         </div>
 
                         <div class="input-group">
-                            <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
+                            <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" disabled>
                         </div>
                     </div>
                 </form>

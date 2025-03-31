@@ -142,9 +142,9 @@ try {
 
     <main>
     <section>
-    <h1>Création du compte membre</h1>
         <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
-            <div class="form-container">
+			<h1>Création du compte membre</h1>
+			<div class="form-container">
                 <div id="groupeInput" class="form-left">
                     <div class="form-row">
                         <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />

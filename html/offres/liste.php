@@ -211,17 +211,17 @@ try {
 
                 if ($result != 0) {
             ?>
-                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                    <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo round($offre['note'], 2); ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                     <?php
                 } else {
                     ?>
-                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo round($offre['note'], 2); ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                     }
                         ?>
                         <div>
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
-                            <h3><?php echo $offre['note'] . "/5" ?></h3>
+                            <h3><?php echo round($offre['note'], 2) . "/5" ?></h3>
                             <section class="art-header">
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>

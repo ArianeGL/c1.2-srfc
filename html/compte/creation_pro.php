@@ -131,7 +131,7 @@ try {
             $_SESSION['identifiant'] = $email;
             ?> 
             <script>
-                window.location = "./consultation_pro.php";
+                window.location = "../compte/consultation_pro.php";
             </script> 
             <?php
             exit();
@@ -152,7 +152,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./includes/style.css">
+    <link rel="stylesheet" href="../includes/style.css">
     <title>Création compte professionnel - PACT</title>
 </head>
 
@@ -162,8 +162,8 @@ try {
 
     <main>
     <section>
-        <h1>Création du compte professionnel</h1>
         <form action="creation_pro.php" method="post" enctype="multipart/form-data">
+			<h1>Création du compte professionnel</h1>
             <div class="form-container">
                 <div id="groupeInput" class="form-left">
                     <div class="form-row">
@@ -187,7 +187,7 @@ try {
                     </div>
 
                     <div class="form-row">
-                        <input type="text" class="input-creation" id="rib" name="rib" placeholder="RIB" />
+                        <input type="text" class="input-creation" id="rib" name="rib" placeholder="iban" />
                     </div>
                 </div>
                 <div id="form-photo">

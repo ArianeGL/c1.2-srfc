@@ -1,17 +1,17 @@
 /* IF YOU NEED TO CHANGE SOMETHING FROM THE GIVEN CODE PLS ASK ME BEFORE */
 
 :root {
-    --red: #CC0000;
+    --red: #cc0000;
     /* Accent */
-    --light-blue: #E7FDFD;
+    --light-blue: #e7fdfd;
     /* Accent Background */
-    --grey-blue: #9ABBDB;
+    --grey-blue: #9abbdb;
     /* Extra */
     --navy-blue: #254766;
     /* Buttons */
-    --light-grey: #8599AD;
+    --light-grey: #8599ad;
     /* Main background */
-    --dark-grey: #52667A;
+    --dark-grey: #52667a;
     /* Border Color */
 
     --round-corners: 5px;
@@ -37,6 +37,10 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: top;
+    main {
+        margin-bottom: 7%;
+        margin-top: 7%;
+    }
 }
 
 .smallButton {
@@ -447,7 +451,7 @@ form textarea {
 
 #consultation {
     :root {
-        --red-hover: #890C0C;
+        --red-hover: #890c0c;
     }
 
     #red-text {
@@ -458,7 +462,6 @@ form textarea {
         font-size: 64px;
         text-align: center;
     }
-
 
     body {
         font-family: Arial, sans-serif;
@@ -491,7 +494,6 @@ form textarea {
         margin-top: 20px;
     }
 
-
     .profile-row {
         display: flex;
         justify-content: space-between;
@@ -503,7 +505,6 @@ form textarea {
     .input-group {
         margin-bottom: 15px;
     }
-
 
     /* Positionnement du code et de la ville*/
 
@@ -581,7 +582,6 @@ form textarea {
 
     #bouton-modifier {
         background-color: var(--navy-blue);
-
     }
 
     #bouton-modifier:hover {
@@ -595,7 +595,6 @@ form textarea {
     #bouton-supprimer:hover {
         background-color: var(--red-hover);
     }
-
 
     /* Longueur des différents champs */
 
@@ -633,7 +632,6 @@ form textarea {
         width: 950px;
         height: 75px;
     }
-
 }
 
 #creation_compte {
@@ -645,11 +643,11 @@ form textarea {
         border-radius: var(--round-corners);
         margin-top: 20px;
     }
-    
+
     h1 {
         text-align: center;
         font-size: 64px;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
     }
 
     /* Rectangle du formulaire */
@@ -657,14 +655,14 @@ form textarea {
         display: flex;
         align-items: flex-start;
         margin: 2%;
-
     }
 
     .form-left {
         margin-right: 5px;
         padding: 20px;
         border: 1px solid var(--dark-grey);
-        border-radius: 10px;
+        border-radius: var(--round-corners);
+        background-color: #fff;
     }
 
     .form-right {
@@ -672,6 +670,7 @@ form textarea {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
     }
 
     /* Barre de saisie avec ligne du bas uniquement visible */
@@ -683,7 +682,7 @@ form textarea {
         border-bottom: 2px solid var(--light-grey);
         margin-bottom: 10px;
         background-color: transparent;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
         font-size: 40px;
     }
 
@@ -700,7 +699,6 @@ form textarea {
         margin-bottom: 20px;
     }
 
-
     /* Pied de formulaire */
     #form-footer {
         display: flex;
@@ -714,10 +712,6 @@ form textarea {
         font-size: 36px;
     }
 
-
-
-
-
     .bouton-info {
         font-size: 25px;
     }
@@ -726,6 +720,20 @@ form textarea {
         display: flex;
         flex-direction: column;
         margin-left: auto;
+    }
+}
+
+.choix_compte {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5em;
+
+    section {
+        border-radius: var(--round-corners);
+        background-color: white;
+        padding: 2em;
     }
 }
 
@@ -774,14 +782,13 @@ form textarea {
             outline: none;
         }
 
-
         margin-bottom: 50px;
 
         #buttonContainer {
             display: flex;
         }
 
-        div>.smallButton {
+        div > .smallButton {
             margin-right: 1em;
         }
     }
@@ -807,6 +814,7 @@ form textarea {
 
             padding: 20px;
             padding-top: 0px;
+            margin-bottom: 2em;
 
             .art-header {
                 display: flex;
@@ -832,7 +840,11 @@ form textarea {
             background-color: var(--light-blue);
 
             .fade-out-container::after {
-                background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--light-blue));
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0),
+                    var(--light-blue)
+                );
             }
         }
 
@@ -841,7 +853,11 @@ form textarea {
             background-color: #254766;
 
             .fade-out-container::after {
-                background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #254766);
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0),
+                    #254766
+                );
             }
         }
 
@@ -849,7 +865,11 @@ form textarea {
             background-color: var(--grey-blue);
 
             .fade-out-container::after {
-                background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--grey-blue));
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0),
+                    var(--grey-blue)
+                );
             }
         }
     }
@@ -912,7 +932,7 @@ form textarea {
                 flex-wrap: wrap;
                 justify-content: space-evenly;
 
-                input[type=radio] {
+                input[type="radio"] {
                     width: 1em;
                     margin-top: 0.6em;
                 }
@@ -1016,13 +1036,13 @@ form textarea {
         border-color: var(--dark-grey);
     }
 
-    #creation_offre>div>select {
+    #creation_offre > div > select {
         width: 60%;
         height: 3em;
         border-radius: 5px;
     }
 
-    #creation_offre>select {
+    #creation_offre > select {
         width: 57.5%;
         height: 3em;
         border-radius: 5px;
@@ -1050,7 +1070,7 @@ form textarea {
         margin: 10px;
     }
 
-    #depends_select>input {
+    #depends_select > input {
         margin: 10px;
         padding: 10px;
     }
@@ -1135,7 +1155,7 @@ form textarea {
         width: 60%;
     }
 
-    #depends_select>input {
+    #depends_select > input {
         width: 100%;
     }
 
@@ -1151,7 +1171,6 @@ form textarea {
     #tagre {
         width: 30%;
     }
-
 }
 
 #informations_offre {
@@ -1368,9 +1387,7 @@ form textarea {
 /**********/
 /**********/
 
-
 #crea_avis {
-    
     #formAvis {
         display: none;
         background-color: white;
@@ -1447,7 +1464,7 @@ form textarea {
         border-bottom: 2px solid var(--light-grey);
         margin-bottom: 10px;
         background-color: transparent;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
         font-size: 40px;
     }
 
@@ -1471,7 +1488,7 @@ form textarea {
         border-bottom: 2px solid var(--light-grey);
         margin-bottom: 10px;
         background-color: transparent;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
         font-size: 40px;
     }
 
@@ -1485,7 +1502,7 @@ form textarea {
         height: 5em;
         font-size: 1.5em;
         margin-bottom: 10px;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
     }
 }
 
@@ -1498,7 +1515,6 @@ form textarea {
         display: flex;
         justify-content: space-between;
         width: 100%;
-
     }
 
     .facture {
@@ -1508,43 +1524,42 @@ form textarea {
         padding-bottom: 1em;
         border-radius: var(--round-corners);
     }
-<<<<<<< HEAD
 }
 
 .formReponse {
     #edit-form {
-        display : flex;
+        display: flex;
         flex-direction: column;
         /*justify-content: space-around;*/
         align-items: center;
         width: 100%;
     }
-    
+
     /* Barre de saisie avec ligne du bas uniquement visible */
     .input-edit {
-      width: 100%;
-      padding: 8px;
-      margin: 20px;
-      border: none;
-      border-bottom: 2px solid var(--light-grey);
-      margin-bottom: 10px;
-      background-color: transparent;
-      font-family: 'Exo 2', sans-serif;
-      font-size: 40px;
+        width: 100%;
+        padding: 8px;
+        margin: 20px;
+        border: none;
+        border-bottom: 2px solid var(--light-grey);
+        margin-bottom: 10px;
+        background-color: transparent;
+        font-family: "Exo 2", sans-serif;
+        font-size: 40px;
     }
-    
+
     .edit-header {
         display: flex;
     }
-    
+
     #note {
         width: 15%;
     }
-    
+
     #titre {
         width: 100%;
     }
-    
+
     #contexte {
         width: 100%;
         padding: 8px;
@@ -1553,22 +1568,20 @@ form textarea {
         border-bottom: 2px solid var(--light-grey);
         margin-bottom: 10px;
         background-color: transparent;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
         font-size: 40px;
     }
-    
+
     textarea::placeholder {
         font-size: 1.5em;
     }
-    
-    textarea{
+
+    textarea {
         border-color: var(--dark-grey);
         width: 50em;
         height: 5em;
         font-size: 1.5em;
         margin-bottom: 10px;
-        font-family: 'Exo 2', sans-serif;
-}
-=======
->>>>>>> 017e9d2ad7cfe8ef62472a3e7eaa828ecbd231c4
+        font-family: "Exo 2", sans-serif;
+    }
 }
