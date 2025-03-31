@@ -314,6 +314,8 @@ try {
                         $popupContent .= '<p>Note: ' . htmlspecialchars($offre['note']) . '/5</p>';
                         $popupContent .= '<p>Résumé: ' . htmlspecialchars($offre['resume']) . '</p>';
                         $popupContent .= '<a href="informations.php?idoffre=' . $offre['idoffre'] . '">Voir les détails</a>';
+                        $mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' . $offre['latitude'] . ',' . $offre['longitude'];
+                        $popupContent .= '<p><a href="' . htmlspecialchars($mapsUrl) . '" target="_blank">Itinéraire Google Maps</a></p>';
                         $popupContent .= '</div>';
                         
                         $iconType = "greenIcon"; // Par défaut
