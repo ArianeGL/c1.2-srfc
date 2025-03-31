@@ -29,7 +29,6 @@ try {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 
         <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -205,7 +204,7 @@ try {
                 $query1 = $query1 . $ordreTri;
             }
             ?><script>
-            var markers = new L.markerClusterGroup();
+            var markers = L.markerClusterGroup();
             var redIcon = L.icon({ 
                 iconUrl: '../IMAGES/pinMapRouge.png',
 
@@ -342,11 +341,16 @@ try {
             
                         ?>
                     <script>
-                        markers.addLayer(L.marker(
-                            [<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>})
-                            .bindPopup(`<?php echo addslashes($popupContent); 
-                            ?>`));
-                        markers.addTo(map);
+                        marqueur=L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>})
+                                .bindPopup(`<?php echo addslashes($popupContent);
+                                ?>`);
+                        marqueur["data-categorie"]="<?php echo $offre['categorie']?>";
+                        marqueur["data-note"]="<?php echo $offre['note']?>";
+                        marqueur["data-prix"]="<?php echo $offre['prixmin']?>";
+                        marqueur["cat_hidden"]=false;
+                        marqueur["note_hidden"]=false;
+                        marqueur["prix_hidden"]=false;
+                        markers.addLayer(marqueur);
                     </script>
                     <?php
 
@@ -393,6 +397,7 @@ try {
 
         
         map.addLayer(markers);
+        var lstMarkers = markers.getLayers();
 
         var legend = L.control({ position: 'bottomright' });
 
@@ -454,6 +459,7 @@ try {
     var restauration = document.querySelector("#restauration");
 
     var articles = document.getElementsByClassName("art-offre");
+    
 
     activite.addEventListener("click", fil_cat);
     visite.addEventListener("click", fil_cat);
@@ -479,6 +485,65 @@ try {
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
+            for(marqueur of lstMarkers){
+                let art_cat = marqueur['data-categorie'];
+                let present = true;
+                switch (art_cat) {
+                    case 'Activite':
+                        if (!activite.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Visite':
+                        if (!visite.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Spectacle':
+                        if (!spectacle.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Parc attraction':
+                        if (!parc_attraction.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Restauration':
+                        if (!restauration.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    default:
+                        console.log("Erreur de valeur pour le switch.\n");
+                        break;
+                }
+            }
 
             for (article of articles) {
                 let art_cat = article.getAttribute('data-categorie');
@@ -540,7 +605,7 @@ try {
                 }
             }
         }
-
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -570,6 +635,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["cat_hidden"]){
+                marqueur["cat_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -610,6 +682,18 @@ try {
                 filtre_note = 4;
             }
 
+            for (marqueur of lstMarkers) {
+                let art_note = marqueur['data-note'];
+
+                if (filtre_note > art_note) {
+                    marqueur["note_hidden"]=true;
+                } else {
+                    if(marqueur["note_hidden"]){
+                        marqueur["note_hidden"]=false;
+                    }
+                }
+            }
+
             for (article of articles) {
                 let art_note = article.getAttribute('data-note');
 
@@ -623,6 +707,7 @@ try {
             }
         }
 
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -646,6 +731,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["note_hidden"]){
+                marqueur["note_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -731,6 +823,18 @@ try {
                 break;
         }
 
+        for (marqueur of lstMarkers) {
+            let art_prix = marqueur['data-prix'];
+
+            if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
+                marqueur["prix_hidden"]=true;
+            } else {
+                if(marqueur["prix_hidden"]){
+                    marqueur["prix_hidden"]=false;
+                }
+            }
+        }
+
         for (article of articles) {
             let art_prix = article.getAttribute('data-prix');
 
@@ -743,6 +847,7 @@ try {
             }
         }
 
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -761,6 +866,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["prix_hidden"]){
+                marqueur["prix_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -805,6 +917,17 @@ try {
                 retirer.remove();
             }
         }
+    }
+
+    function change_filtre_marqueur(){
+        markers.clearLayers();
+        var marqueurs_filtre=[]
+        for(marqueur of lstMarkers){
+            if(!marqueur["cat_hidden"] && !marqueur["note_hidden"] && !marqueur["prix_hidden"]){
+                marqueurs_filtre.push(marqueur);
+            }
+        }
+        markers.addLayers(marqueurs_filtre);
     }
 </script>
 

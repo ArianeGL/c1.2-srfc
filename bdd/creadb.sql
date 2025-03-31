@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS sae._compte
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
    urlimage          varchar(300)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png'),
-   urlotp            varchar(100),
+   urlotp            varchar(500),
    otp               boolean       default false
 );
 
