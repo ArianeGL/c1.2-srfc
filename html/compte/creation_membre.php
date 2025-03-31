@@ -153,27 +153,27 @@ try {
     <?php require_once HEADER; ?>
 
     <main>
-        <section>
-            <h1>Création du compte membre</h1>
-            <form action="creation_membre.php" method="post" enctype="multipart/form-data">
-                <div class="form-container">
-                    <div id="groupeInput" class="form-left">
-                        <div class="form-row">
-                            <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
-                            <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudonyme *" required />
-                            <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="password" class="input-creation" id="mdp" name="mdp" placeholder="Mot de passe *" required />
-                            <input type="password" class="input-creation" id="confmdp" name="confmdp" placeholder="Confirmation mdp *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" required />
-                        </div>
-                        <div class="form-row">
+    <section>
+        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+			<h1>Création du compte membre</h1>
+			<div class="form-container">
+                <div id="groupeInput" class="form-left">
+                    <div class="form-row">
+                        <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
+                        <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudonyme *" required />
+                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="password" class="input-creation" id="mdp" name="mdp" placeholder="Mot de passe *" required />
+                        <input type="password" class="input-creation" id="confmdp" name="confmdp" placeholder="Confirmation mdp *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" required />
+                    </div>
+                    <div class="form-row">
                             <input type="text" class="input-creation" id="num" name="num" placeholder="Num *" required />
                             <input type="text" class="input-creation" id="rue" name="rue" placeholder="Rue *" required />
                         </div>

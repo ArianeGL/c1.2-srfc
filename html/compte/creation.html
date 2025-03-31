@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./styles/connexion.css">
+        <link rel="stylesheet" href="../includes/style.css">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,12 +17,15 @@
         <script src="../scripts/image_preview.js"></script>
 </head>
 <body>
-    <main style="width: 75%; height: 50%; margin-top: 50px;">
-        <h1 style="text-align: center; margin-top: 0px; margin-bottom: 50px;">Quel type de compte voulez vous créer ?</h1>
-        <div style="display: flex; justify-content: space-around; align-items: center;">
-            <button style="margin-right: 20px;" class="bigButton" onclick="window.location='creation_membre.php'">Compte membre</button>
-            <button class="bigButton" onclick="window.location='creation_pro.php'">Compte professionel</button>
-        </div>
+    <main class="choix_compte">
+	  	<section>
+			<h1 style="text-align: center; margin-top: 0px; margin-bottom: 50px;">Quel type de compte voulez vous créer ?</h1>
+			<div style="display: flex; justify-content: space-around; align-items: center;">
+				<button style="margin-right: 20px;" class="bigButton" onclick="window.location='creation_membre.php'">Compte membre</button>
+				<button class="bigButton" onclick="window.location='creation_pro.php'">Compte professionel</button>
+			</div>
+		</section>
+        
     </main>
 </body>
 </html>
