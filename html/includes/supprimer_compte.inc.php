@@ -46,14 +46,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </head>
 
     <body>
-        <?php require_once HEADER ?>
-        <section id="delete_acc_confirm">
-            <h2>Êtes-vous certain de vouloir supprimer votre compte ? Cette action est irréversible.</h2>
-            <div style="display: flex;">
-                <button class="redButton" onclick="javascript:location.href='../includes/supprimer_compte.inc.php?act=suppr'">Supprimer</button>
-                <button class="smallButton" onclick="javascript:location.href='../compte/consultation_membre.php'">Annuler</button>
-            </div>
-        </section>
+        <main id="supprimer_compte">
+            <?php require_once HEADER ?>
+            <section id="delete_acc_confirm">
+                <h2>Êtes-vous certain de vouloir supprimer votre compte ?</h2>
+                <h2>Cette action est irréversible.</h2>
+                <div id="buttons">
+                    <button class="redButton acc_del_buttons" onclick="javascript:location.href='../includes/supprimer_compte.inc.php?act=suppr'">Supprimer</button>
+                    <button class="smallButton acc_del_buttons" onclick="javascript:location.href='../compte/consultation_membre.php'">Annuler</button>
+                </div>
+            </section>
+        </main>
     </body>
 
     </html>
