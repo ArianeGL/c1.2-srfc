@@ -5,9 +5,10 @@ require_once "../includes/verif_connection.inc.php";
 
 require_once "../includes/consts.inc.php";
 
+print_r("step 1");
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    if($_POST['otp'] = "on"){
+    if($_POST['otp'] == "on"){
         echo "<script>window.location.href='creation_otp.php'</script>";
     }else{
         echo "<script>window.location.href='./consultation_membre.php'</script>";
@@ -55,6 +56,7 @@ function generate_id()
     }
 }
 
+print_r("step 2");
 
 try {
 
@@ -70,7 +72,7 @@ try {
     $ville = substr(trim($_POST['ville']), 0, 30); 
     $code = substr(trim($_POST['code']), 0, 5); 
 
-
+print_r("step 2.1");
     if (strlen($tel) > 10) {
         echo "Le numéro de téléphone doit contenir 10 chiffres.";
         exit;
@@ -96,16 +98,18 @@ try {
         $stmt->execute([':idcompte' => $idcompte,':prenom' => $prenom, ':nom' => $nom,':pseudo' => $pseudo,':tel' => $tel,':mdp' => $mdp,':email' => $email,
         ':num' => $num, ':rue' => $rue,':ville' => $ville,':code' => $code,':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
-
+print_r("step 2.2");
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
             if (!file_exists($user_dir)) {
+                print_r("step 2.2.1");
                 mkdir($user_dir, 0755, true);
             }
             $filename = $idcompte . '.png';
             $destination = $user_dir . '/' . $filename;
-
+                print_r("2.2.2");
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
+                print_r('step 2.2.2.1');
                 $urlimage = 'images_importees/' . $idcompte . '/' . $filename;
                 $_SESSION['photo'] = $urlimage;
 
@@ -117,19 +121,16 @@ try {
                 ]);
             }
         }
+        print_r("step 3");
 
         $_SESSION['identifiant'] = $email;
         ?> 
-        <script>
         <?php
-        if($_POST['otp'] = "on"){
+        if($_POST['otp'] == "on"){
             echo "<script>window.location.href='creation_otp.php'</script>";
         }else{
             echo "<script>window.location.href='./consultation_membre.php'</script>";
         }
-    ?> 
-        </script> 
-        <?php
         exit();
     }
 
@@ -137,8 +138,10 @@ try {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
+
 ?>
         
+    
 <!DOCTYPE html>
 <html lang="fr" id="creation_compte">
 <head>

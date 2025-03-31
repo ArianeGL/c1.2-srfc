@@ -34,15 +34,21 @@
     //  $totp->setLabel("test");
     //print_r($totp->now());
     
-    $code = $_POST["otp"];
+    ?>
+    <!DOCTYPE html>
+    <html lang="fr" id="connection">
 
-
-
-    print_r("now_code : ". $code_reel );
-
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../includes/style.css">
+    <title>PACT - Se Connecter</title>
+    </head>
+    <?php
     
-
+    
     if (isset($_POST['otp'])) {
+        $code = $_POST["otp"];
         if($code == $code_reel){
             echo "Code valide";
             $_SESSION["identifiant"] = $_SESSION['identifiant_otp'];
@@ -51,7 +57,30 @@
         }else{
             echo "Code invalide";
             ?>
-        <form action=<?php echo CONNECTION_OTP; ?> method="post">
+        <body>
+            <?php require_once HEADER; ?>
+        <div id="inputOtp">
+            <div>
+            <form action=<?php echo CONNECTION_OTP; ?> method="post">
+                <label>Identifiant</label>
+                <input class="champs" type="text" id="otp" name="otp" placeholder="Code authentification à 2 facteurs" required  style="width: 200px;">
+                <input type="hidden" name="secret" value="<?php echo htmlspecialchars($secret) ?>">
+                <input type=hidden name="code_reel" value="<?php echo htmlspecialchars($code_reel) ?>">
+                <br>
+                <input class="smallButton" type="submit" value="Se connecter" name="connexion" style="width: 200px;">
+            </form>
+            </div>
+        </div>
+        </body>
+        <?php
+        }
+        
+    } else {
+        ?>
+        <body>
+            <?php require_once HEADER; ?>
+    <div id="inputOtp">
+        <form action=<?php echo CONNECTION_OTP; ?> method="post" enctype="multipart/form-data">
             <label>Identifiant</label>
             <input class="champs" type="text" id="otp" name="otp" placeholder="Code authentification à 2 facteurs" required  style="width: 200px;">
             <input type="hidden" name="secret" value="<?php echo htmlspecialchars($secret) ?>">
@@ -59,20 +88,8 @@
             <br>
             <input class="smallButton" type="submit" value="Se connecter" name="connexion" style="width: 200px;">
         </form>
-        <?php
-        }
-        
-    } else {
-        ?>
-    <form action=<?php echo CONNECTION_OTP; ?> method="post" enctype="multipart/form-data">
-        <label>Identifiant</label>
-        <input class="champs" type="text" id="otp" name="otp" placeholder="Code authentification à 2 facteurs" required  style="width: 200px;">
-        <input type="hidden" name="secret" value="<?php echo $secret ?>">
-        <input type=hidden name="code_reel" value="<?php echo htmlspecialchars($code_reel) ?>">
-
-        <br>
-        <input class="smallButton" type="submit" value="Se connecter" name="connexion" style="width: 200px;">
-    </form>
+    </div>
+    </body>
     <?php
     }    
 
