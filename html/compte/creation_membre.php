@@ -5,8 +5,14 @@ require_once "../includes/verif_connection.inc.php";
 
 require_once "../includes/consts.inc.php";
 
+print_r("step 1");
+
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./consultation_membre.php'</script>";
+    if($_POST['otp'] == "on"){
+        echo "<script>window.location.href='creation_otp.php'</script>";
+    }else{
+        echo "<script>window.location.href='./consultation_membre.php'</script>";
+    }
 }
 
 class FunctionException extends Exception
@@ -50,6 +56,7 @@ function generate_id()
     }
 }
 
+print_r("step 2");
 
 try {
 
@@ -102,16 +109,18 @@ try {
             ':code' => $code,
             ':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
-
+print_r("step 2.2");
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
             if (!file_exists($user_dir)) {
+                print_r("step 2.2.1");
                 mkdir($user_dir, 0755, true);
             }
             $filename = $idcompte . '.png';
             $destination = $user_dir . '/' . $filename;
-
+                print_r("2.2.2");
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
+                print_r('step 2.2.2.1');
                 $urlimage = 'images_importees/' . $idcompte . '/' . $filename;
                 $_SESSION['photo'] = $urlimage;
 
@@ -123,6 +132,7 @@ try {
                 ]);
             }
         }
+        print_r("step 3");
 
         $_SESSION['identifiant'] = $email;
 ?>
@@ -136,6 +146,7 @@ try {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -153,27 +164,27 @@ try {
     <?php require_once HEADER; ?>
 
     <main>
-        <section>
-            <h1>Création du compte membre</h1>
-            <form action="creation_membre.php" method="post" enctype="multipart/form-data">
-                <div class="form-container">
-                    <div id="groupeInput" class="form-left">
-                        <div class="form-row">
-                            <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
-                            <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudonyme *" required />
-                            <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="password" class="input-creation" id="mdp" name="mdp" placeholder="Mot de passe *" required />
-                            <input type="password" class="input-creation" id="confmdp" name="confmdp" placeholder="Confirmation mdp *" required />
-                        </div>
-                        <div class="form-row">
-                            <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" required />
-                        </div>
-                        <div class="form-row">
+    <section>
+        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+			<h1>Création du compte membre</h1>
+			<div class="form-container">
+                <div id="groupeInput" class="form-left">
+                    <div class="form-row">
+                        <input type="text" class="input-creation" id="prenom" name="prenom" placeholder="Prénom *" required />
+                        <input type="text" class="input-creation" id="nom" name="nom" placeholder="Nom *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudonyme *" required />
+                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="password" class="input-creation" id="mdp" name="mdp" placeholder="Mot de passe *" required />
+                        <input type="password" class="input-creation" id="confmdp" name="confmdp" placeholder="Confirmation mdp *" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" required />
+                    </div>
+                    <div class="form-row">
                             <input type="text" class="input-creation" id="num" name="num" placeholder="Num *" required />
                             <input type="text" class="input-creation" id="rue" name="rue" placeholder="Rue *" required />
                         </div>

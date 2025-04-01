@@ -1,4 +1,4 @@
-<?php
+2<?php
 session_start();
 require_once "../db_connection.inc.php";
 require_once "../includes/verif_connection.inc.php";
@@ -250,7 +250,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </section>
                     <section class="form-row">
                     <input type="text" class="input-creation" id="pseudo" name="pseudo" placeholder="Pseudo *" value="<?php echo $pseudo ?>" required />
-                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" value="<?php echo $telephone ?>" required />
+                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" value="<?php echo $telephone ?>" maxlength="10" required />
                     </section>
                     <section class="form-row">
                         <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" value="<?php echo $email ?>" required />
