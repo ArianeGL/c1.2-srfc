@@ -127,7 +127,7 @@ try {
         $_SESSION['identifiant'] = $email;
 ?>
         <script>
-            window.location = "./consultation_membre.php";
+            window.location = "./consultation_membre.php?toast=creacompte";
         </script>
 <?php
         exit();
@@ -154,7 +154,7 @@ try {
 
     <main>
     <section>
-        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
 			<h1>Création du compte membre</h1>
 			<div class="form-container">
                 <div id="groupeInput" class="form-left">
