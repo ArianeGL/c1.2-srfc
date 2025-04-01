@@ -1191,15 +1191,18 @@ form textarea {
             display: flex;
             flex-direction: row;
 
-            img-container {
+            .img-container {
                 display: block;
-                width: 500px;
+                min-width: 50%;
+                max-width: 50%;
             }
 
             img {
                 border-radius: var(--round-corners);
-                width: auto;
-                height: auto;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
             }
 
             section {
@@ -1582,12 +1585,12 @@ form textarea {
         height: 5em;
         font-size: 1.5em;
         margin-bottom: 10px;
-        font-family: 'Exo 2', sans-serif;
-}
+        font-family: "Exo 2", sans-serif;
+    }
 }
 #map {
-    height : 30em;
-    width : 100em;
+    height: 30em;
+    width: 100em;
     z-index: 0;
     margin: 1em;
 }
@@ -1596,40 +1599,38 @@ form textarea {
     padding: 8px 10px;
     background: white;
     border-radius: 5px;
-    line-height: 24px; 
+    line-height: 24px;
 }
 
 .legend-icon {
-    width: 1em; 
-    height: 1em; 
+    width: 1em;
+    height: 1em;
     margin-right: 2em;
-    vertical-align: middle; 
+    vertical-align: middle;
 }
 
-
-
-.info.legend img{
-    max-width: 2.73em; 
-    max-height: 3.45em; 
-    min-width: 2.73em; 
-    min-height: 3.45em; 
+.info.legend img {
+    max-width: 2.73em;
+    max-height: 3.45em;
+    min-width: 2.73em;
+    min-height: 3.45em;
     margin-right: 2em;
-    vertical-align: middle; 
+    vertical-align: middle;
 }
 
-#qrCodeOtp{
+#qrCodeOtp {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#qrCode{
+#qrCode {
     height: 10em;
     width: 10em;
 }
 
-#inputOtp{
+#inputOtp {
     background: white;
     padding: 20px;
     border-radius: 10px;
