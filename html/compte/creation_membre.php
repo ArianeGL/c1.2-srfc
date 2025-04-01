@@ -6,7 +6,7 @@ require_once "../includes/verif_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    if($_POST['otp'] == "on"){
+    if($_POST['otp'] = "on"){
         echo "<script>window.location.href='creation_otp.php'</script>";
     }else{
         echo "<script>window.location.href='./consultation_membre.php'</script>";
@@ -107,6 +107,7 @@ try {
             ':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
 
+
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
             if (!file_exists($user_dir)) {
@@ -127,20 +128,28 @@ try {
             }
         }
 
-        $_SESSION['identifiant'] = $email;
         if($_POST['otp'] == "on"){
+            $_SESSION['identifiant_otp'] = $email;
+            $_SESSION['mdp_otp'] = $mdp;
             echo "<script>window.location.href='creation_otp.php'</script>";
         }else{
-            echo "<script>window.location.href='./consultation_membre.php?toast=creaCompte'</script>";
-        }
 
+            echo "<script>window.location.href='./consultation_membre.php?toast=creaCompte'</script>";
+
+            $_SESSION['identifiant'] = $email;
+            $_SESSION['mdp'] = $mdp;
+            echo "<script>window.location.href='./consultation_membre.php'</script>";
+
+        }
+    ?> 
+        </script> 
+        <?php
         exit();
     }
 } catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -159,6 +168,7 @@ try {
 
     <main>
     <section>
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
         <form action="creation_membre.php" method="post" enctype="multipart/form-data">
 			<h1>Création du compte membre</h1>
 			<div class="form-container">
@@ -189,7 +199,7 @@ try {
                         <div class="form-row">
                             <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
                             <input type="checkbox" class="input-creation" id="otp" name="otp" />
-                    </div>
+                        </div>
                     </div>
 
                     <div id="form-photo">

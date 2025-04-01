@@ -1,12 +1,14 @@
 <?php
+session_start();
+
 require '../vendor/autoload.php';
 require_once("../db_connection.inc.php");
 require_once("../includes/consts.inc.php");
 
 use OTPHP\TOTP;
 
-$email = $_SESSION['identifiant'];
-
+$email = $_SESSION['identifiant_otp'];
+print_r($email);
 // Générer un secret unique pour un utilisateur
 $totp = TOTP::create(); 
 $totp->setLabel($email);
@@ -22,42 +24,32 @@ $query = "update ".NOM_SCHEMA.".".NOM_TABLE_COMPTE."
 
 $stmt = $dbh->prepare($query);
 $stmt->bindParam(':secret', $secret);
-$stmt->bindParam(':email', $_SESSION['identifiant']);
+$stmt->bindParam(':email', $_SESSION['identifiant_otp']);
 
 $stmt->execute();
 
-
-
-?>  
-
+$_SESSION["identifiant"] = $_SESSION["identifiant_otp"];
+$_SESSION["mdp"] = $_SESSION["mdp_otp"];
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" id="creation_otp">
+
 <head>
     <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../includes/style.css  ">
-
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
-
-        <title>PACT</title>
-        <script src="../scripts/image_preview.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../includes/style.css">
+    <title>Création compte membre - PACT</title>
 </head>
 <body>
-    <?php require_once HEADER; ?>
-    <div id="qrCodeOtp">
-        <p>Scannez le QR Code avec une application d'authentification à 2 facteurs</p>
-        <?php 
-            $uri = $totp->getProvisioningUri(); 
-            $qrcode_url = "https://api.qrserver.com/v1/create-qr-code/?data=" . urlencode($uri) . "&size=200x200";
-
-            echo "<img src='$qrcode_url' alt='QR Code' id='qrCode'></br>";
-        ?>
-        <button class="smallButton" onclick="window.location='../offres/liste?toast=creaCompte.php'">Retour</button> 
+    <?php require_once HEADER ?>
+    <div id="divQRCode">
+    <p>Scannez ce QR code avec une application d'authentifiaction à deux facteurs</p>
+    <?php 
+    $uri = $totp->getProvisioningUri(); 
+    $qrcode_url = "https://api.qrserver.com/v1/create-qr-code/?data=" . urlencode($uri) . "&size=200x200";
+    ?>
+    <img id="QRCode" src=" <?php echo $qrcode_url ?>" alt="QR Code"></br>
+    <button class="smallButton" onclick="window.location='../offres/liste.php?toast=creaCompte.php'">Retour</button>
     </div>
 </body>
+</html> 

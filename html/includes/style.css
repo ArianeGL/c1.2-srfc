@@ -1675,8 +1675,14 @@ form textarea {
   }
   .notifications :where(.toast, .column) {
     display: flex;
+    justify-self: center;
+    align-self: center;
     align-items: center;
-  }
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em
+}
+
   .notifications .toast {
     width: 400px;
     position: relative;
@@ -1775,3 +1781,22 @@ form textarea {
   .toast i:last-child:hover {
     color: var(--dark-grey);
   }
+
+
+#divQRCode{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+    align-items: center;
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em
+}
+
+#QRCode{
+    height: 10em;
+    width: 10em;
+}
+
