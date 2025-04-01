@@ -3,6 +3,8 @@ session_start();
 require_once "../db_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
+use OTPHP\TOTP;
+
 function debug_to_console($data)
 {
     $output = $data;
@@ -33,6 +35,7 @@ function est_pro(): bool
     return $pro;
 }
 
+
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +55,7 @@ function est_pro(): bool
 
         $connexion = false;
         $attempt = 0;
+        $isotp = false;
 
         if (isset($_POST["identificateur"])) {
             $identificateur = $_POST["identificateur"];
@@ -65,9 +69,20 @@ function est_pro(): bool
             $sthCompte->bindParam(':mdp', $mdp, PDO::PARAM_STR);
             $sthCompte->execute();
 
+
             if ($sthCompte->fetchColumn() != false) {
                 $connexion = true;
             }
+
+            $querry_otp = "SELECT urlotp,otp FROM ". NOM_SCHEMA .".". NOM_TABLE_COMPTE ." 
+                            WHERE email = :email AND motdepasse = :mdp";
+            $sthotp = $dbh->prepare($querry_otp);
+            $sthotp->bindParam(':email', $identificateur);
+            $sthotp->bindParam(':mdp', $mdp);
+            $sthotp->execute();
+
+            $isotp = $sthotp->fetch(PDO::FETCH_ASSOC)["otp"];
+            //print_r($isotp);
 
             if (!$connexion) {
                 $attempt++; ?>
@@ -90,14 +105,27 @@ function est_pro(): bool
                 </script>
             <?php
             } else {
-                echo "Connexion réussie";
-                $_SESSION["identifiant"] = $identificateur;
-                $_SESSION["mdp"] = $mdp;
+                if(!$isotp){
+                    echo "Connexion réussie";
+                    $_SESSION["identifiant"] = $identificateur;
+                    $_SESSION["mdp"] = $mdp;
+                }else{
+                    $_SESSION["identifiant_otp"] =$identificateur;
+                    $_SESSION["mdp_otp"]=$mdp;
+                    echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
+                }
             }
         }
 
         if (isset($_SESSION["identifiant"])) {
-            echo '<script>window.location.href ="' . LISTE_OFFRES . '" ;</script>';
+            if ($isotp){
+                echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
+            }
+            else{
+                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '" ;
+                    console.log("'. $_SESSION['identifiant'] .'");
+                </script>';
+            }
         } else if ($attempt == 0) { ?>
             <form action=<?php echo CONNECTION_COMPTE; ?> method="post" enctype="multipart/form-data">
                 <label>Identifiant</label>

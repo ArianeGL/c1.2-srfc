@@ -6,7 +6,11 @@ require_once "../includes/verif_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./consultation_membre.php'</script>";
+    if($_POST['otp'] == "on"){
+        echo "<script>window.location.href='creation_otp.php'</script>";
+    }else{
+        echo "<script>window.location.href='./consultation_membre.php'</script>";
+    }
 }
 
 class FunctionException extends Exception
@@ -110,7 +114,6 @@ try {
             }
             $filename = $idcompte . '.png';
             $destination = $user_dir . '/' . $filename;
-
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
                 $urlimage = 'images_importees/' . $idcompte . '/' . $filename;
                 $_SESSION['photo'] = $urlimage;
@@ -125,17 +128,19 @@ try {
         }
 
         $_SESSION['identifiant'] = $email;
-?>
-        <script>
-            window.location = "./consultation_membre.php?toast=creacompte";
-        </script>
-<?php
+        if($_POST['otp'] == "on"){
+            echo "<script>window.location.href='creation_otp.php'</script>";
+        }else{
+            echo "<script>window.location.href='./consultation_membre.php?toast=creacompte'</script>";
+        }
+
         exit();
     }
 } catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -181,6 +186,10 @@ try {
                             <input type="text" class="input-creation" id="ville" name="ville" placeholder="Ville *" required />
                             <input type="text" class="input-creation" id="code" name="code" placeholder="Code postal *" required />
                         </div>
+                        <div class="form-row">
+                            <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
+                            <input type="checkbox" class="input-creation" id="otp" name="otp" />
+                    </div>
                     </div>
 
                     <div id="form-photo">

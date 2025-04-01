@@ -7,6 +7,8 @@ const CONNECTION_COMPTE = "../compte/connection.php";
 const HEADER = "../includes/header.inc.php";
 const FOOTER = "../includes/footer.inc.html";
 const PHOTO_PROFILE_DEFAULT = "../IMAGES/defaultProfil.png";
+const CONNECTION_OTP = "../compte/connection_otp.php";
+const CONSULTATION_MEMBRE = "../compte/consultation_membre.php";
 
 ?>
 
