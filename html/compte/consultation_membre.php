@@ -46,7 +46,11 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
 
 if (!est_membre($email)) { ?>
     <script>
-        window.location = "./consultation_pro.php";
+        let params = new URLSearchParams(document.location.search);
+        let toast = params.get("toast");
+        if(toast!=null){
+            window.location = `./consultation_pro.php?toast=${toast}`;
+        }
     </script>
 <?php }
 $schemaCompte = VUE_MEMBRE;

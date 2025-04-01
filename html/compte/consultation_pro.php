@@ -85,13 +85,22 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../includes/style.css">
+    <script src="../includes/main.js"></script>
 
     <title>Mon Compte - PACT</title>
 </head>
 
 <body>
     <?php require_once HEADER ?>
-
+    <ul class="notifications" id="notif"></ul>
+    <script>
+        const notifications = document.querySelector("#notif");
+        let params = new URLSearchParams(document.location.search);
+        let toast = params.get("toast");
+        if(toast!=null){
+            createToast(toast);
+        }
+    </script>
     <main>
         <section class="profile">
             <div class="profile-header">
@@ -144,6 +153,5 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     <?php require_once FOOTER; ?>
 
 </body>
-<script src="../includes/main.js"></script>
 
 </html>

@@ -239,6 +239,11 @@ const toastDetails = {
 	supCompte: {
 		typeToast: "success",
 		text: "Vous avez supprimer votre compte"
+	},
+
+	deconnexion: {
+		typeToast: "success",
+		text: "Vous êtes désormais déconnectés"
 	}
 }
 

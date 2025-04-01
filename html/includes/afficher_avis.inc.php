@@ -163,7 +163,8 @@ function signalerAvis($idavis)
 
 if (isset($_POST['idavis_signaler'])) {
     signalerAvis($_POST['idavis_signaler']);
-    echo "<script>alert('signalement envoyé')</script>";
+    echo "<script>createToast('blacklisterAvis')</script>";
+
 }
 
 /*
