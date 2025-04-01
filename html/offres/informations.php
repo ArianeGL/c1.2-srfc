@@ -2,6 +2,9 @@
 require_once("../db_connection.inc.php");
 require_once "../includes/consts.inc.php";
 
+
+const CEST = 7200; // diff between utc time and cest time in seconds
+
 session_start();
 
 global $dbh;
@@ -32,7 +35,7 @@ if (isset($_GET['idoffre'])) {
         if (!empty($rows)) {
             foreach ($rows as $row) {
                 $unblocktime = strtotime($row['timeunblacklist']);
-                if ($unblocktime <= time()) {
+                if ($unblocktime <= time() + CEST) {
                     $unblock_query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " SET blacklist = false, timeunblacklist = null WHERE idavis = :id;";
                     try {
                         $stmt = $dbh->prepare($unblock_query);
