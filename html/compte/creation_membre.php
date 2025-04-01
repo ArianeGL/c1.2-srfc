@@ -131,7 +131,7 @@ try {
         if($_POST['otp'] == "on"){
             echo "<script>window.location.href='creation_otp.php'</script>";
         }else{
-            echo "<script>window.location.href='./consultation_membre.php'</script>";
+            echo "<script>window.location.href='./consultation_membre.php?toast=creacompte'</script>";
         }
 
         exit();
