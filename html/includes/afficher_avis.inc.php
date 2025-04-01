@@ -281,22 +281,71 @@ function afficher_avis($avis)
             <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">
                 <?php
             }
-            print_r("offre_appartient: " . offre_appartient($_SESSION['identifiant'], $avis['idoffre']));
-            print_r("est_premium: " . est_premium($avis['idoffre']));
-            print_r("count_blacklist: " . count_blacklist($avis['idoffre']));
             if (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) && est_premium($avis['idoffre']) && count_blacklist($avis['idoffre'])) {
                 ?>
-                <form id="form-blacklister" method="post" enctype="multipart/form-data">
-                    <input type="text" style="display: none" name="idavis_blacklister" value="<?php echo $avis['idavis'] ?>">
-                    <label>
-                        <input style="display: none;" type="submit" class="smallButton" value="Blacklister">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
-                        </svg>
-                    </label>
-                    <input type="date" name="date" required>
-                    <input type="time" name="time" step="30" required>
+                <button onclick="ouvrirPopup()" data-avis-id="<?php echo $idAvis; ?>">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
+                    </svg>
+                </button>
+                <form class="popup" id="popup" method="post" enctype="multipart/form-data">
+                    <div>
+                        <input type="text" style="display: none" name="idavis_blacklister" value="<?php echo $avis['idavis'] ?>">
+                        <p>Date de dé-blacklistage :</p>
+                        <input id="bl_date" type="date" name="date">
+                        <input id="bl_time" type="time" name="time" step="1">
+                    </div>
+                    <div>
+                        <button id="annuler" type="button" class="smallButton" onclick="fermerPopup()">Annuler</button>
+                        <input id="blacklister" type="submit" class="smallButton" value="blacklister" onclick="ajustement_blacklist()">
+                    </div>
                 </form>
+
+                <script>
+                    function ouvrirPopup() {
+                        ajustement_blacklist();
+                        document.getElementById("popup").style.display = "block";
+                    }
+                    function fermerPopup() {
+                        document.getElementById("popup").style.display = "none";
+                    }
+
+                    function ajustement_blacklist(){
+                        let bl_date = document.getElementById("bl_date");
+                        let bl_time = document.getElementById("bl_time");
+                        let maintenant = new Date();
+
+                        if (bl_date.value == "") {
+                            let annee = maintenant.getFullYear() + 1;
+                            let mois = maintenant.getMonth() + 1;
+                            let jour = maintenant.getDate();
+
+                            if (mois < 10) { // ajout d'un 0 devant le mois lorsqu'il est inférieur à 10 pour se conformer au format date
+                                mois = `0${mois}`;
+                            }
+
+                            if (jour < 10) { // ajout d'un 0 devant le jour lorsqu'il est inférieur à 10 pour se conformer au format date
+                                jour = `0${jour}`;
+                            }
+
+                            bl_date.value = `${annee}-${mois}-${jour}`;
+                        }
+                        if (bl_time.value == "") {
+                            let heure = maintenant.getHours();
+                            let minute = maintenant.getMinutes();
+
+                            if (heure < 10) { // ajout d'un 0 devant l'heure lorsqu'elle est inférieur à 10 pour se conformer au format time
+                                heure = `0${heure}`;
+                            }
+
+                            if (minute < 10) { // ajout d'un 0 devant les minutes lorsqu'elles sont inférieurs à 10 pour se conformer au format time
+                                minute = `0${minute}`;
+                            }
+
+                            bl_time.value = `${heure}:${minute}:00`;
+                        }
+                    }
+                </script>
                 <?php
             }
             if (est_membre($_SESSION["identifiant"])) {

@@ -367,6 +367,35 @@ form textarea {
         }
     }
 
+    .popup {
+        display: none;
+        position: fixed;
+        width: 30%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+        border: 5px solid var(--navy-blue);
+        border-radius: var(--round-corners);
+        z-index: 1000;
+
+        div {
+            display:flex;
+            justify-content: space-around;
+            align-items: center;
+            width:auto;
+
+            #bl_date, #bl_time {
+                height: 20px;
+            }
+
+            #annuler {
+                background-color: var(--red);
+            }
+        }
+    }
     margin-bottom: 20px;
 }
 

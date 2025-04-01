@@ -32,7 +32,8 @@ if (isset($_GET['idoffre'])) {
         if (!empty($rows)) {
             foreach ($rows as $row) {
                 $unblocktime = strtotime($row['timeunblacklist']);
-                if ($unblocktime <= time()) {
+                $timezone_diff = 7200; // différence de timezone (UTC-2 = 2*3600)
+                if ($unblocktime - $timezone_diff <= time()) {
                     $unblock_query = "UPDATE " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " SET blacklist = false, timeunblacklist = null WHERE idavis = :id;";
                     try {
                         $stmt = $dbh->prepare($unblock_query);
