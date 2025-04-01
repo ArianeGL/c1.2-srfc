@@ -81,7 +81,25 @@ function can_post($idOffre)
         $sthAvis->execute();
         $countAvis = $sthAvis->fetchColumn();
 
-        if ($countMembre != 0 && $countAvis == 0) {
+        if ($countAvis > 0) {
+            $query = "SELECT supprime FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idcompte = :idcompte AND idoffre = :idoffre";
+            try {
+                $stmt = $dbh->prepare($query);
+                $stmt->bindParam(':idcompte', $idCompte, PDO::PARAM_STR);
+                $stmt->bindParam(':idoffre', $idOffre, PDO::PARAM_STR);
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Couldn't query review status : " . $e->getMessage());
+            }
+
+            $avis_suppr = true;
+            foreach ($rows as $row) {
+                if (!$row['supprime']) $avis_suppr = false;
+            }
+        }
+
+        if ($countMembre != 0 && ($countAvis == 0 || $avis_suppr)) {
             $est_authorise = true;
         }
     }
@@ -127,43 +145,43 @@ function afficher_form_avis($idOffre)
     } else {
 ?>
         <div id="crea_avis">
-        <div>
-        <button class="button" id="deroulerAvis">Ajouter un avis</button>
-        <form method="post" enctype="multipart/form-data" id="formAvis">
+            <div>
+                <button class="button" id="deroulerAvis">Ajouter un avis</button>
+                <form method="post" enctype="multipart/form-data" id="formAvis">
 
-            <label for="titre">
-                <h1>Titre*
-            </label>
-            <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
-            <br>
-            <label for="date">Date</label>
-            <input type="date" name="date" id="date" />
-            <br>
-            <select class="smallButton" name="contexte" id="contexte" required>
-                <option value="" disabled selected hidden>Contexte *</option>
-                <option value="En amoureux">En amoureux</option>
-                <option value="En famille">En famille</option>
-                <option value="Entre amis">Entre amis</option>
-                <option value="Seul">Seul</option>
-            </select>
-            <br>
-            <label for="commentaire">Commentaire *</label>
-            <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
-            <br>
-            <label for="note">Note *</label>
-            <input type="number" max="5" min="1" value="1" name="note" id="note" placeholder="Renseigner une note" required />
-            <br>
-            <script src="image_preview.js"></script>
-            <div class="boutonimages">
-                <p>Importer vos images</p>
-                <label for="images_offre" class="smallButton">Importer</label>
-                <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)">
+                    <label for="titre">
+                        <h1>Titre*
+                    </label>
+                    <input type="text" name="titre" id="titre" placeholder="Renseigner un titre" required />
+                    <br>
+                    <label for="date">Date</label>
+                    <input type="date" name="date" id="date" />
+                    <br>
+                    <select class="smallButton" name="contexte" id="contexte" required>
+                        <option value="" disabled selected hidden>Contexte *</option>
+                        <option value="En amoureux">En amoureux</option>
+                        <option value="En famille">En famille</option>
+                        <option value="Entre amis">Entre amis</option>
+                        <option value="Seul">Seul</option>
+                    </select>
+                    <br>
+                    <label for="commentaire">Commentaire *</label>
+                    <input type="textarea" name="commentaire" id="commentaire" placeholder="Renseigner un commentaire" required />
+                    <br>
+                    <label for="note">Note *</label>
+                    <input type="number" max="5" min="1" value="1" name="note" id="note" placeholder="Renseigner une note" required />
+                    <br>
+                    <script src="image_preview.js"></script>
+                    <div class="boutonimages">
+                        <p>Importer vos images</p>
+                        <label for="images_offre" class="smallButton">Importer</label>
+                        <input type="file" id="images_offre" name="images_offre[]" multiple="multiple" accept="image/*" onchange="preview(image_preview)">
+                    </div>
+                    <img id="image_preview" src="" alt="">
+                    <br>
+                    <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
+                </form>
             </div>
-            <img id="image_preview" src="" alt="">
-            <br>
-            <input class="bigButton" type="submit" name="valider" value="Valider" id="valider"></h1>
-        </form>
-        </div>
         </div>
 
         <script>

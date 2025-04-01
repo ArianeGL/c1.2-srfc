@@ -1837,7 +1837,9 @@ begin
     UPDATE sae._offre SET blacklistdispo = blacklistdispo+1 WHERE idoffre = OLD.idoffre;
   end if;
 
-  UPDATE sae._offre SET supprime = true WHERE idavis = OLD.idavis;
+  UPDATE sae._avis SET supprime = true WHERE idavis = OLD.idavis;
+
+  RETURN OLD;
 end;
 $$ language plpgsql;
 
