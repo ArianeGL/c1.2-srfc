@@ -128,11 +128,11 @@ try {
         }
 
         $_SESSION['identifiant'] = $email;
-?>
-        <script>
-            window.location = "./consultation_membre.php";
-        </script>
-<?php
+        if($_POST['otp'] == "on"){
+            echo "<script>window.location.href='creation_otp.php'</script>";
+        }else{
+            echo "<script>window.location.href='./consultation_membre.php'</script>";
+        }
         exit();
     }
 } catch (PDOException $e) {
