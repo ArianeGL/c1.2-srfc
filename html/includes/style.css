@@ -1617,3 +1617,20 @@ form textarea {
     vertical-align: middle; 
 }
 
+#divQRCode{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+    align-items: center;
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em
+}
+
+#QRCode{
+    height: 10em;
+    width: 10em;
+}
+

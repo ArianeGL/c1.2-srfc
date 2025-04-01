@@ -195,6 +195,10 @@ try {
                     <div class="form-row">
                         <input type="text" class="input-creation" id="rib" name="rib" placeholder="RIB" />
                     </div>
+                    <div class="form-row">
+                            <label class="bouton-info" for="A2F">Activer l'authentification à deux facteurs</label>
+                            <input type="checkbox" class="input-creation" id="otp" name="otp" />
+                        </div>
                 </div>
                 <div id="form-photo">
                     <div id="photo-profil" class="form-right">

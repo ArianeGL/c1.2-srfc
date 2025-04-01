@@ -128,10 +128,13 @@ try {
             }
         }
 
-        $_SESSION['identifiant'] = $email;
         if($_POST['otp'] == "on"){
+            $_SESSION['identifiant_otp'] = $email;
+            $_SESSION['mdp_otp'] = $mdp;
             echo "<script>window.location.href='creation_otp.php'</script>";
         }else{
+            $_SESSION['identifiant'] = $email;
+            $_SESSION['mdp'] = $mdp;
             echo "<script>window.location.href='./consultation_membre.php'</script>";
         }
     ?> 
@@ -191,7 +194,7 @@ try {
                         <div class="form-row">
                             <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
                             <input type="checkbox" class="input-creation" id="otp" name="otp" />
-                    </div>
+                        </div>
                     </div>
 
                     <div id="form-photo">
