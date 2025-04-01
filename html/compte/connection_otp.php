@@ -53,7 +53,7 @@
             echo "Code valide";
             $_SESSION["identifiant"] = $_SESSION['identifiant_otp'];
             $_SESSION["mdp"] = $_SESSION["mdp_otp"];
-            echo '<script> window.location = "'. LISTE_OFFRES .'" </script>'    ;
+            echo '<script> window.location = "'. LISTE_OFFRES . '?toast=connexion' .'" </script>'    ;
         }else{
             echo "Code invalide";
             ?>

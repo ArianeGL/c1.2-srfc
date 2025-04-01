@@ -199,7 +199,7 @@ function clear_node(node) {
 //console.log(notifications);
 // Object containing details for different types of toasts
 const toastDetails = {
-    timer: 50000,
+    timer: 5000,
     success: {
         icon: 'fa-circle-check',
         text: 'Success: This is a success toast.',
@@ -216,9 +216,29 @@ const toastDetails = {
         icon: 'fa-circle-info',
         text: 'Info: This is an information toast.',
     },
-	creacompte: {
+	creaCompte: {
 		typeToast: "success",
 		text: "Vous avez créer votre compte"
+	},
+
+	connexion: {
+		typeToast: "success",
+		text: "Vous êtes désormais connectés"
+	},
+
+	creaAvis: {
+		typeToast: "success",
+		text: "Votre avis a bien été créé"
+	},
+
+	blacklisterAvis: {
+		typeToast: "success",
+		text: "Vous avez blacklisté un avis"
+	},
+
+	supCompte: {
+		typeToast: "success",
+		text: "Vous avez supprimer votre compte"
 	}
 }
 

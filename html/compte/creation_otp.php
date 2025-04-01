@@ -58,6 +58,6 @@ $stmt->execute();
 
             echo "<img src='$qrcode_url' alt='QR Code' id='qrCode'></br>";
         ?>
-        <button class="smallButton" onclick="window.location='../offres/liste.php'">Retour</button> 
+        <button class="smallButton" onclick="window.location='../offres/liste?toast=creaCompte.php'">Retour</button> 
     </div>
 </body>
