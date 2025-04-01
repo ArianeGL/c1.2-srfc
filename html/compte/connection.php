@@ -131,7 +131,7 @@ $query = "SELECT otp FROM ". NOM_SCHEMA .".". NOM_TABLE_COMPTE ."
                 echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
             }
             else{
-                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '" ;
+                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '?toast=connexion' . '" ;
                     console.log("'. $_SESSION['identifiant'] .'");
                 </script>';
             }

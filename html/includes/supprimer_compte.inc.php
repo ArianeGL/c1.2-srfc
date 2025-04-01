@@ -75,5 +75,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     session_destroy();
-    echo "<script>location.href='../offres/liste.php'</script>";
+    echo "<script>location.href='../offres/liste.php?toast=supCompte'</script>";
 }

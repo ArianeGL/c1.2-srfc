@@ -49,7 +49,7 @@ $_SESSION["mdp"] = $_SESSION["mdp_otp"];
     $qrcode_url = "https://api.qrserver.com/v1/create-qr-code/?data=" . urlencode($uri) . "&size=200x200";
     ?>
     <img id="QRCode" src=" <?php echo $qrcode_url ?>" alt="QR Code"></br>
-    <button class="smallButton" onclick="window.location='../offres/liste.php'">Retour</button>
+    <button class="smallButton" onclick="window.location='../offres/liste.php?toast=creaCompte.php'">Retour</button>
     </div>
 </body>
 </html> 

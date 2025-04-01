@@ -9,7 +9,7 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
     if($_POST["otp"]){
         echo "<script>window.location.href='creation_otp.php'</script>";
     }else{
-        echo "<script>window.location.href='./consultation_pro.php'</script>";
+        echo "<script>window.location.href='./consultation_pro.php?toast=creaCompte'</script>";
     }
 }
 

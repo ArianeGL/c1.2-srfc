@@ -134,7 +134,7 @@ try {
             echo "<script>window.location.href='creation_otp.php'</script>";
         }else{
 
-            echo "<script>window.location.href='./consultation_membre.php?toast=creacompte'</script>";
+            echo "<script>window.location.href='./consultation_membre.php?toast=creaCompte'</script>";
 
             $_SESSION['identifiant'] = $email;
             $_SESSION['mdp'] = $mdp;
