@@ -134,10 +134,14 @@ try {
 
             $_SESSION['identifiant'] = $email;
             
-            if($_POST["otp"] == "on"){
+            if($_POST['otp'] == "on"){
+                $_SESSION['identifiant_otp'] = $email;
+                $_SESSION['mdp_otp'] = $mdp;
                 echo "<script>window.location.href='creation_otp.php'</script>";
             }else{
-            echo "<script>window.location.href='./consultation_pro.php'</script>";
+                $_SESSION['identifiant'] = $email;
+                $_SESSION['mdp'] = $mdp;
+                echo "<script>window.location.href='./consultation_membre.php'</script>";
             }
             exit();
         } catch (PDOException $e) {

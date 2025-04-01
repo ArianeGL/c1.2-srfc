@@ -165,6 +165,7 @@ try {
     <main>
     <section>
         <form action="creation_membre.php" method="post" enctype="multipart/form-data">
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
 			<h1>Création du compte membre</h1>
 			<div class="form-container">
                 <div id="groupeInput" class="form-left">
