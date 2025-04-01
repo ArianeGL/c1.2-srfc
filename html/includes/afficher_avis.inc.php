@@ -61,7 +61,7 @@ function afficher_liste_avis($id_offre)
         ?>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
             <?php
-            } else if ($avis['blacklist'] && offre_appartient($_SESSION['identifiant'], $avis['idoffre'])) {
+            } else if ($avis['blacklist'] && (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) || avis_appartient($avis['idavis']))) {
                 afficher_avis($avis);
             ?>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
@@ -241,7 +241,7 @@ function afficher_avis($avis)
 
         $isLiked = $vote && $vote['aime'];
         $isDisliked = $vote && !$vote['aime'];
-        
+
         $query = "SELECT blacklist FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idavis = :idavis";
         $stmt = $dbh->prepare($query);
         $stmt->execute([':idavis' => $idAvis]);
@@ -346,12 +346,51 @@ function afficher_avis($avis)
                         }
                     }
                 </script>
+            <?php
+        }
+        if (est_membre($_SESSION["identifiant"])) {
+            ?>
+                <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
+                    <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isLiked === true) echo "disabled"; ?> style="
+        display: flex;
+        align-items: center;
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+                " id="pouceHaut">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo $isLiked ? DISABLED_LIKE : ENABLED_LIKE; ?>
+                        </svg>
+                        <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
+                    </button>
+                    <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isDisliked === true) echo "disabled"; ?> style="
+        display: flex;
+        align-items: center;
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+                " id="pouceBas">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo $isDisliked ? DISABLED_DISLIKE : ENABLED_DISLIKE; ?>
+                        </svg>
+                        <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
+                    </button>
+                </section>
+            <?php
+        } else {
+            ?>
                 <?php
-            }
-            if (est_membre($_SESSION["identifiant"])) {
                 ?>
                 <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
-                <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isLiked === true) echo "disabled"; ?> style="
+                    <button disabled style="
         display: flex;
         align-items: center;
                 background: none;
@@ -362,12 +401,12 @@ function afficher_avis($avis)
                 cursor: pointer;
                 outline: inherit;
                 " id="pouceHaut">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo $isLiked ? DISABLED_LIKE : ENABLED_LIKE; ?>
-                    </svg>
-                    <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
-                </button>
-                <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isDisliked === true) echo "disabled"; ?> style="
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo ENABLED_LIKE; ?>
+                        </svg>
+                        <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
+                    </button>
+                    <button disabled style="
         display: flex;
         align-items: center;
                 background: none;
@@ -378,66 +417,29 @@ function afficher_avis($avis)
                 cursor: pointer;
                 outline: inherit;
                 " id="pouceBas">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo $isDisliked ? DISABLED_DISLIKE : ENABLED_DISLIKE; ?>
-                    </svg>
-                    <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
-                </button>
-            </section>
-        <?php
-            } else {
-        ?>
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo ENABLED_DISLIKE; ?>
+                        </svg>
+                        <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
+                    </button>
+                </section>
             <?php
+        }
             ?>
-            <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
-                <button disabled style="
-        display: flex;
-        align-items: center;
-                background: none;
-                color: inherit;
-                border: none;
-                padding: 0;
-                font: inherit;
-                cursor: pointer;
-                outline: inherit;
-                " id="pouceHaut">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo ENABLED_LIKE; ?>
-                    </svg>
-                    <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
-                </button>
-                <button disabled style="
-        display: flex;
-        align-items: center;
-                background: none;
-                color: inherit;
-                border: none;
-                padding: 0;
-                font: inherit;
-                cursor: pointer;
-                outline: inherit;
-                " id="pouceBas">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo ENABLED_DISLIKE; ?>
-                    </svg>
-                    <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
-                </button>
             </section>
-        <?php
+            <?php if ($avis['reponse']): ?>
+                <div class="reponse">
+                    <h3>Réponse :</h3>
+                    <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
+                    <script>
+                        console.log("La reponse: <?php echo $avis['reponse']; ?>");
+                    </script>
+                </div>
+            <?php endif;
+            if (can_repondre($idAvis)) {
+                afficher_form_reponse($avis['idavis'], $avis['idoffre']);
             }
-        ?>
-        </section>
-        <?php if ($avis['reponse']): ?>
-            <div class="reponse">
-                <h3>Réponse :</h3>
-                <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
-                <script>console.log("La reponse: <?php echo $avis['reponse']; ?>");</script>
-            </div>
-        <?php endif;
-        if (can_repondre($idAvis)){
-            afficher_form_reponse($avis['idavis'], $avis['idoffre']);
-        } 
-        ?>
+            ?>
     </div>
 <?php
 }
