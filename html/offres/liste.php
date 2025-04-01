@@ -29,7 +29,6 @@ try {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 
         <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -47,14 +46,24 @@ try {
             window.location.href = `informations.php?idoffre=${idoffre}`;
         }
     </script>
-
+	<script src="../scripts/recent.js"></script>
+    
     <title>PACT</title>
 </head>
 
 <body>
     <?php require_once HEADER; ?>
+    <ul class="notifications" id="notif"></ul>
+    <script>
+        const notifications = document.querySelector("#notif");
+        let params = new URLSearchParams(document.location.search);
+        let toast = params.get("toast");
+        if(toast!=null){
+            createToast(toast);
+        }
+    </script>
     <!-- Main content -->
-    <main style="margin-bottom: 700px;">
+    <main style="margin-bottom: 700px;">`
         <?php if(isset($_SESSION['identifiant']) && est_pro($_SESSION['identifiant'])){ ?>
             <button style="margin-bottom:30px" class="button" onclick="window.location='creation.php'">Créer une offre</button>
         <?php } ?>
@@ -191,8 +200,99 @@ try {
                 </script>
             </div>
         </nav>
-        
         <div id="map"></div>
+
+		<section style="width: 50%; padding: 10px; margin: 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; ">
+			<h1>Offres Consultées Récement</h1>
+		</section>
+
+		<section id="offer-list">
+			<?php
+			$query1 = '
+			SELECT * FROM ' . NOM_SCHEMA . '._offre 
+			NATURAL JOIN ' . NOM_SCHEMA . '._compteProfessionnel' . $ordreTri;
+
+			if (est_pro(get_account_id())) {
+				$filtre_cat = " WHERE idcompte = '" . get_account_id() . "'";
+				$query1 = $query1 . $filtre_cat;
+				$query1 = $query1 . $ordreTri;
+			}
+
+			// Fetch all offers from the database into a PHP array
+			$offers = [];
+			foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
+				// Fetch image
+				$query_image = 'SELECT urlimage FROM ' . NOM_SCHEMA . '.' . NOM_TABLE_OFFRE . ' 
+								NATURAL JOIN ' . NOM_SCHEMA . '.' . NOM_TABLE_IMGOF . ' 
+								WHERE idoffre=\'' . $offre['idoffre'] . '\'';
+				$images = $dbh->query($query_image)->fetch();
+
+				// Store offer details in an array
+				$offers[] = [
+					'idoffre' => (string) $offre['idoffre'],
+					'nomoffre' => $offre['nomoffre'],
+					'note' => $offre['note'],
+					'categorie' => $offre['categorie'],
+					'prixmin' => $offre['prixmin'],
+					'villeoffre' => $offre['villeoffre'],
+					'resume' => $offre['resume'],
+					'denomination' => $offre['denomination'],
+					'image' => $images[0] ?? '',
+				];
+			}
+			?>
+
+			<script>
+				// Get recent offers order
+				let recentOffers = Array.from(getStoredOfferIds());
+
+				// Get all offers from PHP
+				let offers = <?php echo json_encode($offers); ?>;
+
+				// Filter offers to only include those in recentOffers
+				let sortedOffers = recentOffers
+					.map(id => offers.find(offer => offer.idoffre === id)) // Map offers in correct order
+					.filter(offer => offer); // Remove undefined values
+
+				// Generate HTML
+				let offerSection = document.getElementById("offer-list");
+				let offerHTML = sortedOffers.map(offer => `
+					<article class="art-offre" onclick="loadInfoOffre('${offer.idoffre}')" 
+						data-categorie="${offer.categorie}" 
+						data-note="${offer.note}" 
+						data-prix="${offer.prixmin}">
+						<div>
+							<h3 class="clopTitre">${offer.nomoffre}</h3>
+							<h3>${offer.note}/5</h3>
+							<section class="art-header">
+								<h3>${offer.categorie}</h3>
+								<p>${offer.prixmin} &#8364;</p>
+							</section>
+						</div>
+						<div>
+							<img src="${offer.image}" alt="Nom_image" class="clopArtImg">
+							<h4 id="clopVille">${offer.villeoffre}</h4>
+							<div class="fade-out-container">
+								<p>${offer.resume}</p>
+							</div>
+							<p class="clopDeno">${offer.denomination}</p>
+						</div>
+					</article>
+				`).join("");
+
+				offerSection.innerHTML = offerHTML;
+				// if there are no recent offers, display a message
+				if (sortedOffers.length === 0) {
+					offerSection.innerHTML = '<h1 style="color: white;text-shadow:-1px -1px 0 black,1px -1px 0 black,-1px  1px 0 black,1px  1px 0 black;-webkit-text-stroke: 1px black;">Aucune offre consultée récemment</h1>';
+				}
+			</script>
+		</section>
+
+
+		<section style="width: 50%; padding: 10px; margin: 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; margin-top: 100px;">
+			<h1>Liste des Offres</h1>
+		</section>
+
         <section>
             <?php
             $query1 = '
@@ -204,8 +304,9 @@ try {
                 $query1 = $query1 . $filtre_cat;
                 $query1 = $query1 . $ordreTri;
             }
-            ?><script>
-            var markers = new L.markerClusterGroup();
+            ?>
+			<script>
+            var markers = L.markerClusterGroup();
             var redIcon = L.icon({ 
                 iconUrl: '../IMAGES/pinMapRouge.png',
 
@@ -255,38 +356,29 @@ try {
                 shadowAnchor: [4, 62],  // the same for the shadow
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
-        </script><?php
+        </script>
+		<?php
             foreach ($dbh->query($query1, PDO::FETCH_ASSOC) as $offre) {
                 $requeteCompteAvis['nbavis'] = "";
-                /*
-                try {
-                    $query3 = "SELECT COUNT(*) AS nbavis FROM ".NOM_SCHEMA."._offre o INNER JOIN ".NOM_SCHEMA."._avis a ON o.idoffre = a.idoffre WHERE idoffre=".$offre['idoffre'];
-                    $sth3 = $dbh->prepare($query3);
-                    $sth3->execute();
-                    $requeteCompteAvis = $sth3->fetchAll();
-                    } catch (PDOException $e) {
-                        die("SQL Query failed : " . $e->getMessage());
-                        }
-                        */
-                        $query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
-                        $sth = $dbh->prepare($query);
-                        $sth->bindParam(':idoffre', $offre['idoffre']);
-                        $sth->execute();
-                        $result = $sth->fetchColumn();
-                        
-                        if ($result != 0) {
-                            ?>
+				$query = "SELECT * FROM " . NOM_SCHEMA . ".option WHERE idoffre = :idoffre";
+				$sth = $dbh->prepare($query);
+				$sth->bindParam(':idoffre', $offre['idoffre']);
+				$sth->execute();
+				$result = $sth->fetchColumn();
+				
+				if ($result != 0) {
+					?>
                     <article class="relief art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                 } else {
                     ?>
-                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo $offre['note']; ?>" data-prix="<?php echo $offre['prixmin']; ?>">
+                        <article class="art-offre" onclick="loadInfoOffre('<?php echo $offre['idoffre']; ?>')" data-categorie="<?php echo $offre['categorie']; ?>" data-note="<?php echo round($offre['note'], 2); ?>" data-prix="<?php echo $offre['prixmin']; ?>">
                         <?php
                     }
                     ?>
                         <div>
                             <h3 class="clopTitre"><?php echo $offre['nomoffre']; ?></h3>
-                            <h3><?php echo $offre['note'] . "/5" ?></h3>
+                            <h3><?php echo round($offre['note'], 2) . "/5" ?></h3>
                             <section class="art-header">
                                 <h3><?php echo $offre['categorie']; ?></h3>
                                 <p><?php echo $offre['prixmin']; ?> &#8364;</p>
@@ -307,8 +399,18 @@ try {
                             <p class="clopDeno"><?php echo $offre['denomination']; ?></p>
                         </div>
                     </article>
+                    
                     <?php
-                        // Dans votre boucle foreach pour les offres
+                        $popupContent = '<div>';
+                        $popupContent .= '<h3>' . htmlspecialchars($offre['nomoffre']) . '</h3>';
+                        $popupContent .= '<p>Prix: ' . htmlspecialchars($offre['prixmin']) . ' €</p>';
+                        $popupContent .= '<p>Note: ' . htmlspecialchars($offre['note']) . '/5</p>';
+                        $popupContent .= '<p>Résumé: ' . htmlspecialchars($offre['resume']) . '</p>';
+                        $popupContent .= '<a href="informations.php?idoffre=' . $offre['idoffre'] . '">Voir les détails</a>';
+                        $mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' . $offre['latitude'] . ',' . $offre['longitude'];
+                        $popupContent .= '<p><a href="' . htmlspecialchars($mapsUrl) . '" target="_blank">Itinéraire Google Maps</a></p>';
+                        $popupContent .= '</div>';
+                        
                         $iconType = "greenIcon"; // Par défaut
 
                         // Déterminez l'icône en fonction de la catégorie
@@ -332,7 +434,16 @@ try {
             
                         ?>
                     <script>
-                        markers.addLayer(L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>}));
+                        marqueur=L.marker([<?php echo $offre['latitude']?>, <?php echo $offre['longitude']?>], {icon: <?php echo $iconType; ?>})
+                                .bindPopup(`<?php echo addslashes($popupContent);
+                                ?>`);
+                        marqueur["data-categorie"]="<?php echo $offre['categorie']?>";
+                        marqueur["data-note"]="<?php echo $offre['note']?>";
+                        marqueur["data-prix"]="<?php echo $offre['prixmin']?>";
+                        marqueur["cat_hidden"]=false;
+                        marqueur["note_hidden"]=false;
+                        marqueur["prix_hidden"]=false;
+                        markers.addLayer(marqueur);
                     </script>
                     <?php
 
@@ -340,7 +451,7 @@ try {
                 
                 ?>
         </section>
-        
+
     </main>
     
     <?php require_once FOOTER; ?>
@@ -379,6 +490,7 @@ try {
 
         
         map.addLayer(markers);
+        var lstMarkers = markers.getLayers();
 
         var legend = L.control({ position: 'bottomright' });
 
@@ -440,6 +552,7 @@ try {
     var restauration = document.querySelector("#restauration");
 
     var articles = document.getElementsByClassName("art-offre");
+    
 
     activite.addEventListener("click", fil_cat);
     visite.addEventListener("click", fil_cat);
@@ -465,6 +578,65 @@ try {
             //classList.toggle("hidden")
             //classList.contains("hidden")
             //let articles = document.getElementsByClassName("art-offre");
+            for(marqueur of lstMarkers){
+                let art_cat = marqueur['data-categorie'];
+                let present = true;
+                switch (art_cat) {
+                    case 'Activite':
+                        if (!activite.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Visite':
+                        if (!visite.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Spectacle':
+                        if (!spectacle.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Parc attraction':
+                        if (!parc_attraction.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    case 'Restauration':
+                        if (!restauration.checked) {
+                            marqueur["cat_hidden"]=true;
+                        }else{
+                            if(marqueur["cat_hidden"]){
+                                marqueur["cat_hidden"]=false;
+                            }
+                        }
+                        break;
+
+                    default:
+                        console.log("Erreur de valeur pour le switch.\n");
+                        break;
+                }
+            }
 
             for (article of articles) {
                 let art_cat = article.getAttribute('data-categorie');
@@ -526,7 +698,7 @@ try {
                 }
             }
         }
-
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -556,6 +728,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["cat_hidden"]){
+                marqueur["cat_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -596,6 +775,18 @@ try {
                 filtre_note = 4;
             }
 
+            for (marqueur of lstMarkers) {
+                let art_note = marqueur['data-note'];
+
+                if (filtre_note > art_note) {
+                    marqueur["note_hidden"]=true;
+                } else {
+                    if(marqueur["note_hidden"]){
+                        marqueur["note_hidden"]=false;
+                    }
+                }
+            }
+
             for (article of articles) {
                 let art_note = article.getAttribute('data-note');
 
@@ -609,6 +800,7 @@ try {
             }
         }
 
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -632,6 +824,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["note_hidden"]){
+                marqueur["note_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -717,6 +916,18 @@ try {
                 break;
         }
 
+        for (marqueur of lstMarkers) {
+            let art_prix = marqueur['data-prix'];
+
+            if ((Number(art_prix) < Number(num_min.value)) || (Number(art_prix) > Number(num_max.value))) {
+                marqueur["prix_hidden"]=true;
+            } else {
+                if(marqueur["prix_hidden"]){
+                    marqueur["prix_hidden"]=false;
+                }
+            }
+        }
+
         for (article of articles) {
             let art_prix = article.getAttribute('data-prix');
 
@@ -729,6 +940,7 @@ try {
             }
         }
 
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -747,6 +959,13 @@ try {
             }
         }
 
+        for(marqueur of lstMarkers){
+            if(marqueur["prix_hidden"]){
+                marqueur["prix_hidden"]=false;
+            }
+        }
+        
+        change_filtre_marqueur();
         cachees_verif();
     }
 
@@ -791,6 +1010,17 @@ try {
                 retirer.remove();
             }
         }
+    }
+
+    function change_filtre_marqueur(){
+        markers.clearLayers();
+        var marqueurs_filtre=[]
+        for(marqueur of lstMarkers){
+            if(!marqueur["cat_hidden"] && !marqueur["note_hidden"] && !marqueur["prix_hidden"]){
+                marqueurs_filtre.push(marqueur);
+            }
+        }
+        markers.addLayers(marqueurs_filtre);
     }
 </script>
 

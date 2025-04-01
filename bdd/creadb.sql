@@ -29,7 +29,9 @@ CREATE TABLE IF NOT EXISTS sae._compte
    villecompte       varchar(30)   NOT NULL,
    codepostalcompte  varchar(5)    NOT NULL,
    telephone         varchar(15)   NOT NULL,
-   urlimage          varchar(300)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png')
+   urlimage          varchar(300)  default('/docker/sae/data/html/IMAGES/photoProfileDefault.png'),
+   urlotp            varchar(500),
+   otp               boolean       default false
 );
 
 ALTER TABLE sae._compte
@@ -382,8 +384,7 @@ CREATE TABLE IF NOT EXISTS sae._avis
   timeunblacklist timestamp,
   signale boolean not null,
   reponse varchar(9999),
-  datereponse DATE,
-  CONSTRAINT _avis_unique UNIQUE(idoffre,idcompte)
+  datereponse DATE
 );
 
 CREATE TABLE IF NOT EXISTS sae._imageavis

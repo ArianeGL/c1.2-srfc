@@ -6,7 +6,11 @@ require_once "../includes/verif_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    echo "<script>window.location.href='./consultation_pro.php'</script>";
+    if($_POST["otp"]){
+        echo "<script>window.location.href='creation_otp.php'</script>";
+    }else{
+        echo "<script>window.location.href='./consultation_pro.php?toast=creaCompte'</script>";
+    }
 }
 
 class FunctionException extends Exception
@@ -129,11 +133,16 @@ try {
             }
 
             $_SESSION['identifiant'] = $email;
-            ?> 
-            <script>
-                window.location = "./consultation_pro.php";
-            </script> 
-            <?php
+            
+            if($_POST['otp'] == "on"){
+                $_SESSION['identifiant_otp'] = $email;
+                $_SESSION['mdp_otp'] = $mdp;
+                echo "<script>window.location.href='creation_otp.php'</script>";
+            }else{
+                $_SESSION['identifiant'] = $email;
+                $_SESSION['mdp'] = $mdp;
+                echo "<script>window.location.href='./consultation_membre.php'</script>";
+            }
             exit();
         } catch (PDOException $e) {
             die("SQL Query error : " . $e->getMessage());
@@ -152,7 +161,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./includes/style.css">
+    <link rel="stylesheet" href="../includes/style.css">
+    <link rel="stylesheet" href="../includes/style.css">
     <title>Création compte professionnel - PACT</title>
 </head>
 
@@ -162,8 +172,8 @@ try {
 
     <main>
     <section>
-        <h1>Création du compte professionnel</h1>
         <form action="creation_pro.php" method="post" enctype="multipart/form-data">
+			<h1>Création du compte professionnel</h1>
             <div class="form-container">
                 <div id="groupeInput" class="form-left">
                     <div class="form-row">
@@ -189,6 +199,10 @@ try {
                     <div class="form-row">
                         <input type="text" class="input-creation" id="rib" name="rib" placeholder="RIB" />
                     </div>
+                    <div class="form-row">
+                            <label class="bouton-info" for="A2F">Activer l'authentification à deux facteurs</label>
+                            <input type="checkbox" class="input-creation" id="otp" name="otp" />
+                        </div>
                 </div>
                 <div id="form-photo">
                     <div id="photo-profil" class="form-right">

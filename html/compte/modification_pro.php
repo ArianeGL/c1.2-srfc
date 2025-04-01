@@ -244,8 +244,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="hidden" class="input-creation" id="idcompte" name="idcompte" placeholder="idcompte" value="<?php echo $idCompte ?>" required />
                     </section>
                     <section class="form-row">
-                        <input type="text" class="input-creation" id="raison" name="raison" placeholder="Raison sociale *" value="<?php echo $denomination ?>" readonly />
-                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" value="<?php echo $telephone ?>" required />
+                        <input type="text" class="input-creation" id="raison" name="raison" placeholder="Raison sociale *" value="<?php echo $denomination ?>" disabled />
+                        <input type="text" class="input-creation" id="tel" name="tel" placeholder="Téléphone *" value="<?php echo $telephone ?>" maxlength="10" required />
                     </section>
                     <section class="form-row">
                         <input type="email" class="input-creation" id="email" name="email" placeholder="Adresse mail *" value="<?php echo $email ?>" required />

@@ -73,6 +73,21 @@ function afficher_liste_avis($id_offre)
     }
 }
 
+function get_acc_name($id)
+{
+    $ret = "";
+    global $dbh;
+
+    $query = "SELECT pseudo FROM " . NOM_SCHEMA . "." . VUE_MEMBRE . " WHERE idcompte = '" . $id . "';";
+    try {
+        $ret = $dbh->query($query)->fetch();
+    } catch (PDOException $e) {
+        die("Couldn't fetch account username : " . $e->getMessage());
+    }
+
+    return $ret[0];
+}
+
 function est_membre($email)
 {
     $ret = false;
@@ -214,6 +229,9 @@ function afficher_avis($avis)
         <?php if ($avis['blacklist']) { ?>
             <h2>BLACKLIST</h2>
         <?php } ?>
+        <section>
+            <p><?php echo get_acc_name($avis['idcompte']) ?></p>
+        </section>
         <div class="avis-header">
             <section class="avis-titre">
                 <h2 class="note_avis"> <?php echo $avis['noteavis'] . "/5"; ?> </h2>

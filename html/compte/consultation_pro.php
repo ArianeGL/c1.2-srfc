@@ -100,33 +100,33 @@ if (isset($_SESSION['identifiant']) && valid_account()) {
             <div class="profile-row">
                 <form>
                     <div class="input-group">
-                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" readonly>
+                        <input type="text" id="nom-societe" value="<?php echo htmlspecialchars($denomination) ?>" disabled>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" readonly>
+                        <input type="text" id="courriel" value="<?php echo htmlspecialchars($email) ?>" disabled>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" readonly>
+                        <input type="text" id="telephone" value="<?php echo htmlspecialchars($telephone) ?>" disabled>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse) ?>" readonly>
+                        <input type="text" id="adresse" value="<?php echo htmlspecialchars($adresse) ?>" disabled>
                     </div>
 
                     <div id="code-postal-ville">
                         <div class="input-group">
-                            <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" readonly>
+                            <input type="text" id="code-postal" value="<?php echo htmlspecialchars($codePostal) ?>" disabled>
                         </div>
 
                         <div class="input-group">
-                            <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" readonly>
+                            <input type="text" id="ville" value="<?php echo htmlspecialchars($ville) ?>" disabled>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" readonly>
+                        <input type="text" id="IBAN" value="<?php echo htmlspecialchars($IBAN) ?>" disabled>
                     </div>
                 </form>
 
