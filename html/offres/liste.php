@@ -449,6 +449,7 @@ try {
     
 </body>
 <?php
+        $adresse = "9 la tégrie, Saint hilaire de loulay";
         $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
         
         // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim

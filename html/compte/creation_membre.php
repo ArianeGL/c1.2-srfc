@@ -6,7 +6,7 @@ require_once "../includes/verif_connection.inc.php";
 require_once "../includes/consts.inc.php";
 
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    if($_POST['otp'] == "on"){
+    if($_POST['otp'] = "on"){
         echo "<script>window.location.href='creation_otp.php'</script>";
     }else{
         echo "<script>window.location.href='./consultation_membre.php'</script>";
@@ -107,6 +107,7 @@ try {
             ':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
 
+
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
             if (!file_exists($user_dir)) {
@@ -133,13 +134,15 @@ try {
         }else{
             echo "<script>window.location.href='./consultation_membre.php'</script>";
         }
+    ?> 
+        </script> 
+        <?php
         exit();
     }
 } catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
