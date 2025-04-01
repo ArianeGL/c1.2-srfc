@@ -46,10 +46,11 @@ function afficher_liste_avis($id_offre)
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
         $liste_avis = $dbh->query($query)->fetchAll();
         foreach ($liste_avis as $avis) {
-            if (!$avis['supprime']) afficher_avis($avis);
+            if (!$avis['supprime']) {
+                afficher_avis($avis);
         ?>
-            <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-    <?php
+                <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+    <?php }
         }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
