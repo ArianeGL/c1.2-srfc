@@ -40,6 +40,13 @@ function create_update_form(avis, idavis, idoffre) {
 	idAvisPost.style.display = "none";
 	form.appendChild(idAvisPost);
 
+	let requestType = document.createElement("input");
+	requestType.setAttribute("type", "text");
+	requestType.setAttribute("name", "request");
+	requestType.setAttribute("value", "edit");
+	requestType.style.display = "none";
+	form.appendChild(requestType);
+
 	let idOffrePost = document.createElement("input");
 	idOffrePost.setAttribute("type", "text");
 	idOffrePost.setAttribute("name", "idoffre");

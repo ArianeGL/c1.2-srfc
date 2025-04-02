@@ -164,7 +164,6 @@ function signalerAvis($idavis)
 if (isset($_POST['idavis_signaler'])) {
     signalerAvis($_POST['idavis_signaler']);
     echo "<script>createToast('blacklisterAvis')</script>";
-
 }
 
 /*
@@ -212,7 +211,8 @@ function count_blacklist($idoffre)
 
 if (isset($_POST['idavis_blacklister'])) {
     $selected_date = $_POST['date'] . " " . $_POST['time'];
-    blacklist_avis($_POST['idavis_blacklister'], $selected_date);
+    if (count_blacklist($_POST['idoffre']) > 0) blacklist_avis($_POST['idavis_blacklister'], $selected_date);
+    else echo "<script>alert('Vous n'avez plus de jeton de blacklist')</script>";
     echo "<script>alert('avis blacklisté')</script>";
 }
 
@@ -298,10 +298,10 @@ function afficher_avis($avis)
                 </button>
             </div>
             <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">
-                <?php
-            }
-            if (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) && est_premium($avis['idoffre']) && count_blacklist($avis['idoffre'])) {
-                ?>
+            <?php
+        }
+        if (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) && est_premium($avis['idoffre']) && count_blacklist($avis['idoffre'])) {
+            ?>
                 <button onclick="ouvrirPopup()" data-avis-id="<?php echo $idAvis; ?>">
                     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
@@ -310,6 +310,7 @@ function afficher_avis($avis)
                 <form class="popup" id="popup" method="post" enctype="multipart/form-data">
                     <div>
                         <input type="text" style="display: none" name="idavis_blacklister" value="<?php echo $avis['idavis'] ?>">
+                        <input type="text" style="display: none" name="idoffre" value="<?php echo $avis['idoffre'] ?>">
                         <p>Date de dé-blacklistage :</p>
                         <input id="bl_date" type="date" name="date">
                         <input id="bl_time" type="time" name="time" step="1">
@@ -325,11 +326,12 @@ function afficher_avis($avis)
                         ajustement_blacklist();
                         document.getElementById("popup").style.display = "block";
                     }
+
                     function fermerPopup() {
                         document.getElementById("popup").style.display = "none";
                     }
 
-                    function ajustement_blacklist(){
+                    function ajustement_blacklist() {
                         let bl_date = document.getElementById("bl_date");
                         let bl_time = document.getElementById("bl_time");
                         let maintenant = new Date();

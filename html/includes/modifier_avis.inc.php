@@ -83,7 +83,7 @@ function modifier_contexte_avis($id_avis, $contexte)
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['note'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['note']) && $_POST['request'] = "edit") {
     $id_avis = $_POST['idavis'];
     $id_offre = $_POST['idoffre'];
     $note = $_POST['note'];
