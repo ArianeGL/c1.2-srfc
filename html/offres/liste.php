@@ -47,12 +47,21 @@ try {
         }
     </script>
 	<script src="../scripts/recent.js"></script>
-
+    
     <title>PACT</title>
 </head>
 
 <body>
     <?php require_once HEADER; ?>
+    <ul class="notifications" id="notif"></ul>
+    <script>
+        const notifications = document.querySelector("#notif");
+        let params = new URLSearchParams(document.location.search);
+        let toast = params.get("toast");
+        if(toast!=null){
+            createToast(toast);
+        }
+    </script>
     <!-- Main content -->
     <main style="margin-bottom: 700px;">`
         <?php if(isset($_SESSION['identifiant']) && est_pro($_SESSION['identifiant'])){ ?>
@@ -449,6 +458,7 @@ try {
     
 </body>
 <?php
+        $adresse = "9 la tégrie, Saint hilaire de loulay";
         $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($adresse) . "&format=json&limit=1";
         
         // Préparer l'en-tête HTTP pour respecter la politique d'utilisation de Nominatim

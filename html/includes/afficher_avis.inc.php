@@ -11,13 +11,26 @@ const DISABLED_DISLIKE = '<path d="M14 26L22 44C23.5913 44 25.1174 43.3679 26.24
 const EDIT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4 4L33 11L36 26L26 36L11 33L4 4ZM4 4L19.172 19.172M24 38L38 24L44 30L30 44L24 38ZM26 22C26 24.2091 24.2091 26 22 26C19.7909 26 18 24.2091 18 22C18 19.7909 19.7909 18 22 18C24.2091 18 26 19.7909 26 22Z" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
-
 const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
 
 const DELETE = '<svg fill="#254766" height="48px" width="48px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve" stroke="#254766"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_6_"> <g id="XMLID_11_"> <path d="M240,121.076H30V275c0,8.284,6.716,15,15,15h60h37.596c19.246,24.348,49.031,40,82.404,40c57.897,0,105-47.103,105-105 C330,172.195,290.816,128.377,240,121.076z M225,300c-41.355,0-75-33.645-75-75s33.645-75,75-75s75,33.645,75,75 S266.355,300,225,300z"></path> </g> <g id="XMLID_18_"> <path d="M240,90h15c8.284,0,15-6.716,15-15s-6.716-15-15-15h-30h-15V15c0-8.284-6.716-15-15-15H75c-8.284,0-15,6.716-15,15v45H45 H15C6.716,60,0,66.716,0,75s6.716,15,15,15h15H240z M90,30h90v30h-15h-60H90V30z"></path> </g> <g id="XMLID_23_"> <path d="M256.819,193.181c-5.857-5.858-15.355-5.858-21.213,0L225,203.787l-10.606-10.606c-5.857-5.858-15.355-5.858-21.213,0 c-5.858,5.858-5.858,15.355,0,21.213L203.787,225l-10.606,10.606c-5.858,5.858-5.858,15.355,0,21.213 c2.929,2.929,6.768,4.394,10.606,4.394c3.839,0,7.678-1.465,10.607-4.394L225,246.213l10.606,10.606 c2.929,2.929,6.768,4.394,10.607,4.394c3.839,0,7.678-1.465,10.606-4.394c5.858-5.858,5.858-15.355,0-21.213L246.213,225 l10.606-10.606C262.678,208.535,262.678,199.039,256.819,193.181z"></path> </g> </g> </g></svg>';
+
+const DISABLED_BLACKLIST = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 30.5L12 37.5L22.5 42L10.5 40.5L4 31.5L3 22L5.5 13.5L11.5 7L19 3.5L28 3L37.5 7.5L43.5 15.5L45 24L43.5 32L39 39L35 42L31 44L24 45L17.5 44L11.5 40.68L27.5 41.5L35.5 37.5L41 30L41.5 22.5L39 14.5L33 9L24.5 6L15.5 8.5L10 13L6.5 22L7.5 30.5Z" fill="#254766"/>
+<rect x="12" y="21" width="24" height="6" fill="#254766"/>
+<path d="M35.9999 26.8999H36.4999V26.3999V21.5999V21.0999H35.9999H11.9999H11.4999V21.5999V26.3999V26.8999H11.9999H35.9999ZM12.2774 6.45589C15.7473 4.1374 19.8267 2.8999 23.9999 2.8999C29.596 2.8999 34.9628 5.12293 38.9199 9.07995C42.8769 13.037 45.0999 18.4038 45.0999 23.9999C45.0999 28.1731 43.8624 32.2526 41.5439 35.7224C39.2254 39.1923 35.9301 41.8968 32.0745 43.4938C28.219 45.0908 23.9765 45.5086 19.8835 44.6945C15.7905 43.8803 12.0308 41.8707 9.07996 38.9198C6.12907 35.969 4.11949 32.2093 3.30534 28.1163C2.49119 24.0233 2.90904 19.7808 4.50605 15.9253C6.10306 12.0698 8.8075 8.77439 12.2774 6.45589Z" stroke="#254766"/>
+<path d="M36 27H36.5V26.5V21.5V21H36H12H11.5V21.5V26.5V27H12H36ZM14.2775 9.44928C17.1554 7.52636 20.5388 6.5 24 6.5C28.6413 6.5 33.0925 8.34374 36.3744 11.6256C39.6562 14.9075 41.5 19.3587 41.5 24C41.5 27.4612 40.4736 30.8446 38.5507 33.7225C36.6278 36.6003 33.8947 38.8433 30.697 40.1679C27.4993 41.4924 23.9806 41.839 20.5859 41.1637C17.1913 40.4885 14.0731 38.8218 11.6256 36.3744C9.17822 33.9269 7.51151 30.8087 6.83627 27.4141C6.16102 24.0194 6.50758 20.5007 7.83212 17.303C9.15665 14.1053 11.3997 11.3722 14.2775 9.44928Z" stroke="#254766"/>
+</svg>';
+
+const ENABLED_BLACKLIST = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 30.5L12 37.5L22.5 42L10.5 40.5L4 31.5L3 22L5.5 13.5L11.5 7L19 3.5L28 3L37.5 7.5L43.5 15.5L45 24L43.5 32L39 39L35 42L31 44L24 45L17.5 44L11.5 40.68L27.5 41.5L35.5 37.5L41 30L41.5 22.5L39 14.5L33 9L24.5 6L15.5 8.5L10 13L6.5 22L7.5 30.5Z" fill="#254766"/>
+<rect x="12" y="21" width="24" height="6" fill="#254766"/>
+<path d="M35.9999 26.8999H36.4999V26.3999V21.5999V21.0999H35.9999H11.9999H11.4999V21.5999V26.3999V26.8999H11.9999H35.9999ZM12.2774 6.45589C15.7473 4.1374 19.8267 2.8999 23.9999 2.8999C29.596 2.8999 34.9628 5.12293 38.9199 9.07995C42.8769 13.037 45.0999 18.4038 45.0999 23.9999C45.0999 28.1731 43.8624 32.2526 41.5439 35.7224C39.2254 39.1923 35.9301 41.8968 32.0745 43.4938C28.219 45.0908 23.9765 45.5086 19.8835 44.6945C15.7905 43.8803 12.0308 41.8707 9.07996 38.9198C6.12907 35.969 4.11949 32.2093 3.30534 28.1163C2.49119 24.0233 2.90904 19.7808 4.50605 15.9253C6.10306 12.0698 8.8075 8.77439 12.2774 6.45589Z" stroke="#254766"/>
+<path d="M36 27H36.5V26.5V21.5V21H36H12H11.5V21.5V26.5V27H12H36ZM14.2775 9.44928C17.1554 7.52636 20.5388 6.5 24 6.5C28.6413 6.5 33.0925 8.34374 36.3744 11.6256C39.6562 14.9075 41.5 19.3587 41.5 24C41.5 27.4612 40.4736 30.8446 38.5507 33.7225C36.6278 36.6003 33.8947 38.8433 30.697 40.1679C27.4993 41.4924 23.9806 41.839 20.5859 41.1637C17.1913 40.4885 14.0731 38.8218 11.6256 36.3744C9.17822 33.9269 7.51151 30.8087 6.83627 27.4141C6.16102 24.0194 6.50758 20.5007 7.83212 17.303C9.15665 14.1053 11.3997 11.3722 14.2775 9.44928Z" stroke="#254766"/>
+</svg>';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -44,13 +57,19 @@ function afficher_liste_avis($id_offre)
         <script src="../scripts/supprimer_avis.js"></script>
         <?php
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
-        $liste_avis = $dbh->query($query)->fetchAll();
+        $liste_avis = $dbh->query($query)->fetchAll(PDO::FETCH_ASSOC);
         foreach ($liste_avis as $avis) {
-            if (!$avis['supprime']) {
+            if (!$avis['blacklist'] && !$avis['supprime']) {
                 afficher_avis($avis);
         ?>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
-    <?php }
+            <?php
+            } else if ($avis['blacklist'] && (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) || avis_appartient($avis['idavis'])) && !$avis['supprime']) {
+                afficher_avis($avis);
+            ?>
+                <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
+    <?php
+            }
         }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
@@ -99,6 +118,24 @@ function est_membre($email)
     return $ret;
 }
 
+function est_premium($idoffre)
+{
+    $ret = false;
+    global $dbh;
+
+    // Requête pour vérifier si l'offre est premium
+    $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = '" . $idoffre . "' AND abonnement = 'Premium';";
+    $stmt = $dbh->prepare($query);
+    $stmt->execute();
+
+    // Récupérer la réponse
+    $reponse = $stmt->fetchColumn();
+
+    if ($reponse != 0) $ret = true;
+
+    return $ret;
+}
+
 function mail_signalement($idavis)
 {
     $mail = new PHPMailer(true);
@@ -141,9 +178,59 @@ function signalerAvis($idavis)
     }
 }
 
-if (isset($_POST['idavis'])) {
-    signalerAvis($_POST['idavis']);
-    echo "<script>alert('signalement envoyé')</script>";
+if (isset($_POST['idavis_signaler'])) {
+    signalerAvis($_POST['idavis_signaler']);
+    echo "<script>createToast('blacklisterAvis')</script>";
+}
+
+/*
+ * prend en parametre l'id de l'avis a blacklist et la date a laquelle l'avis sera de-blacklist (format : "AAAA-MM-JJ hh:mm:ss")
+ * set l'attribut blacklist de l'avis a true
+ * set la date de deblacklist a $timeunblacklist
+ */
+function blacklist_avis($idavis, $timeunblacklist)
+{
+    global $dbh;
+    $query = "UPDATE " . NOM_SCHEMA . "." . VUE_AVIS . " SET blacklist = true, timeunblacklist = :timeunblacklist WHERE idavis = :idavis;";
+    $timeunblacklist = gmdate("Y-m-d H:i:s", strtotime($timeunblacklist));
+
+    try {
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":timeunblacklist", $timeunblacklist);
+        $stmt->bindParam(":idavis", $idavis);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "<script>alert('L'avis n'a pas pu etre blacklist)</script>";
+        echo "<script>Console.log('" . $e->getMessage() . "')</script>";
+    }
+}
+
+
+/*
+ * prend en parametre l'id de l'offre sur lequel on souhaite connaitre le nombre de jeton de blacklist
+ * retourne le nombre de jeton de blacklist disponible
+ * retourne false si il n'y en a pas
+ */
+function count_blacklist($idoffre)
+{
+    global $dbh;
+
+    $query = "SELECT blacklistdispo FROM " . NOM_SCHEMA . "." . NOM_TABLE_OFFRE . " WHERE idoffre = :idoffre";
+    try {
+        $stmt = $dbh->prepare($query);
+        $ret = $stmt->execute([':idoffre' => $idoffre]);
+    } catch (PDOException $e) {
+        die("Couldn't fetch blacklist tokens : " . $e->getMessage());
+    }
+
+    return $ret;
+}
+
+if (isset($_POST['idavis_blacklister'])) {
+    $selected_date = $_POST['date'] . " " . $_POST['time'];
+    if (count_blacklist($_POST['idoffre']) > 0) blacklist_avis($_POST['idavis_blacklister'], $selected_date);
+    else echo "<script>alert('Vous n'avez plus de jeton de blacklist')</script>";
+    echo "<script>alert('avis blacklisté')</script>";
 }
 
 
@@ -155,9 +242,11 @@ function afficher_avis($avis)
 {
     global $dbh;
     $date_visite = getdate(strtotime($avis['datevisite']));
-    $appartient = offre_appartient($_SESSION['identifiant'], $avis['idoffre']);
     ?>
     <div class="avis">
+        <?php if ($avis['blacklist']) { ?>
+            <h2>BLACKLIST</h2>
+        <?php } ?>
         <section>
             <p><?php echo get_acc_name($avis['idcompte']) ?></p>
         </section>
@@ -188,12 +277,19 @@ function afficher_avis($avis)
 
         $isLiked = $vote && $vote['aime'];
         $isDisliked = $vote && !$vote['aime'];
+
+        $query = "SELECT blacklist FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idavis = :idavis";
+        $stmt = $dbh->prepare($query);
+        $stmt->execute([':idavis' => $idAvis]);
+        $blacklist = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $isBlacklisted = $blacklist;
         ?>
         <?php
         if (isset($_SESSION['identifiant']) && !$avis['signale'] && !avis_appartient($avis['idavis'])) {
         ?>
             <form id="form-signaler" method="post" enctype="multipart/form-data">
-                <input type="text" style="display: none" name="idavis" value="<?php echo $avis['idavis'] ?>">
+                <input type="text" style="display: none" name="idavis_signaler" value="<?php echo $avis['idavis'] ?>">
                 <label>
                     <input style="display: none;" type="submit" class="smallButton" value="Signaler">
                     <?php echo REPORT; ?>
@@ -214,7 +310,7 @@ function afficher_avis($avis)
                 font: inherit;
                 cursor: pointer;
                 outline: inherit;
-            " type="button" onclick="modifier_avis(this, <?php echo "'" . $avis['idavis'] . "', '" . $avis["idoffre"]; ?>')" class="modifier">
+            " type="button" onclick="modifier_avis(this, <?php echo '\'' . $avis['idavis'] . '\', \'' . $avis['idoffre'] . '\''; ?>)" class="modifier">
                     <?php echo EDIT;  ?>
                 </button>
                 <button style="
@@ -231,13 +327,121 @@ function afficher_avis($avis)
                     <?php echo DELETE;  ?>
                 </button>
             </div>
-            <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;"
+            <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">
+            <?php
+        }
+        if (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) && est_premium($avis['idoffre']) && count_blacklist($avis['idoffre'])) {
+            ?>
+                <button onclick="ouvrirPopup()" data-avis-id="<?php echo $idAvis; ?>">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <?php echo $isBlacklisted ? DISABLED_BLACKLIST : ENABLED_BLACKLIST; ?>
+                    </svg>
+                </button>
+                <form class="popup" id="popup" method="post" enctype="multipart/form-data">
+                    <div>
+                        <input type="text" style="display: none" name="idavis_blacklister" value="<?php echo $avis['idavis'] ?>">
+                        <input type="text" style="display: none" name="idoffre" value="<?php echo $avis['idoffre'] ?>">
+                        <p>Date de dé-blacklistage :</p>
+                        <input id="bl_date" type="date" name="date">
+                        <input id="bl_time" type="time" name="time" step="1">
+                    </div>
+                    <div>
+                        <button id="annuler" type="button" class="smallButton" onclick="fermerPopup()">Annuler</button>
+                        <input id="blacklister" type="submit" class="smallButton" value="blacklister" onclick="ajustement_blacklist()">
+                    </div>
+                </form>
+
+                <script>
+                    function ouvrirPopup() {
+                        ajustement_blacklist();
+                        document.getElementById("popup").style.display = "block";
+                    }
+
+                    function fermerPopup() {
+                        document.getElementById("popup").style.display = "none";
+                    }
+
+                    function ajustement_blacklist() {
+                        let bl_date = document.getElementById("bl_date");
+                        let bl_time = document.getElementById("bl_time");
+                        let maintenant = new Date();
+
+                        if (bl_date.value == "") {
+                            let annee = maintenant.getFullYear() + 1;
+                            let mois = maintenant.getMonth() + 1;
+                            let jour = maintenant.getDate();
+
+                            if (mois < 10) { // ajout d'un 0 devant le mois lorsqu'il est inférieur à 10 pour se conformer au format date
+                                mois = `0${mois}`;
+                            }
+
+                            if (jour < 10) { // ajout d'un 0 devant le jour lorsqu'il est inférieur à 10 pour se conformer au format date
+                                jour = `0${jour}`;
+                            }
+
+                            bl_date.value = `${annee}-${mois}-${jour}`;
+                        }
+                        if (bl_time.value == "") {
+                            let heure = maintenant.getHours();
+                            let minute = maintenant.getMinutes();
+
+                            if (heure < 10) { // ajout d'un 0 devant l'heure lorsqu'elle est inférieur à 10 pour se conformer au format time
+                                heure = `0${heure}`;
+                            }
+
+                            if (minute < 10) { // ajout d'un 0 devant les minutes lorsqu'elles sont inférieurs à 10 pour se conformer au format time
+                                minute = `0${minute}`;
+                            }
+
+                            bl_time.value = `${heure}:${minute}:00`;
+                        }
+                    }
+                </script>
+            <?php
+        }
+        if (est_membre($_SESSION["identifiant"])) {
+            ?>
+                <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
+                    <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isLiked === true) echo "disabled"; ?> style="
+        display: flex;
+        align-items: center;
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+                " id="pouceHaut">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo $isLiked ? DISABLED_LIKE : ENABLED_LIKE; ?>
+                        </svg>
+                        <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
+                    </button>
+                    <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isDisliked === true) echo "disabled"; ?> style="
+        display: flex;
+        align-items: center;
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+                " id="pouceBas">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo $isDisliked ? DISABLED_DISLIKE : ENABLED_DISLIKE; ?>
+                        </svg>
+                        <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
+                    </button>
+                </section>
+            <?php
+        } else {
+            ?>
                 <?php
-            }
-            if (est_membre($_SESSION["identifiant"])) {
                 ?>
                 <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
-                <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isLiked === true) echo "disabled"; ?> style="
+                    <button disabled style="
         display: flex;
         align-items: center;
                 background: none;
@@ -248,12 +452,12 @@ function afficher_avis($avis)
                 cursor: pointer;
                 outline: inherit;
                 " id="pouceHaut">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo $isLiked ? DISABLED_LIKE : ENABLED_LIKE; ?>
-                    </svg>
-                    <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
-                </button>
-                <button data-avis-id="<?php echo $idAvis; ?>" <?php if (!est_membre($_SESSION['identifiant']) || $isDisliked === true) echo "disabled"; ?> style="
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo ENABLED_LIKE; ?>
+                        </svg>
+                        <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
+                    </button>
+                    <button disabled style="
         display: flex;
         align-items: center;
                 background: none;
@@ -264,63 +468,29 @@ function afficher_avis($avis)
                 cursor: pointer;
                 outline: inherit;
                 " id="pouceBas">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo $isDisliked ? DISABLED_DISLIKE : ENABLED_DISLIKE; ?>
-                    </svg>
-                    <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
-                </button>
-            </section>
-        <?php
-            } else {
-        ?>
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <?php echo ENABLED_DISLIKE; ?>
+                        </svg>
+                        <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
+                    </button>
+                </section>
             <?php
+        }
             ?>
-            <section id="like" style="display: flex; align-items: center; margin: 10px; justify-content: space-between; max-width: 200px;">
-                <button disabled style="
-        display: flex;
-        align-items: center;
-                background: none;
-                color: inherit;
-                border: none;
-                padding: 0;
-                font: inherit;
-                cursor: pointer;
-                outline: inherit;
-                " id="pouceHaut">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo ENABLED_LIKE; ?>
-                    </svg>
-                    <h2 id="nb_like" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nblike'] ?> </h2>
-                </button>
-                <button disabled style="
-        display: flex;
-        align-items: center;
-                background: none;
-                color: inherit;
-                border: none;
-                padding: 0;
-                font: inherit;
-                cursor: pointer;
-                outline: inherit;
-                " id="pouceBas">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <?php echo ENABLED_DISLIKE; ?>
-                    </svg>
-                    <h2 id="nb_dislike" style="margin-left: 10px; color: var(--navy-blue);"><?php echo $avis['nbdislike'] ?> </h2>
-                </button>
             </section>
-        <?php
+            <?php if ($avis['reponse']): ?>
+                <div class="reponse">
+                    <h3>Réponse :</h3>
+                    <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
+                    <script>
+                        console.log("La reponse: <?php echo $avis['reponse']; ?>");
+                    </script>
+                </div>
+            <?php endif;
+            if (can_repondre($idAvis)) {
+                afficher_form_reponse($avis['idavis'], $avis['idoffre']);
             }
-        ?>
-        </section>
-        <?php if ($avis['reponse']): ?>
-            <div class="reponse">
-                <h3>Réponse :</h3>
-                <p><?php echo htmlspecialchars($avis['reponse']); ?></p>
-            </div>
-        <?php endif;
-        $reponseExiste = reponse_existe($idAvis);
-        afficher_form_reponse($avis['idavis'], $avis['idoffre']); ?>
+            ?>
     </div>
 <?php
 }
@@ -463,7 +633,7 @@ function avis_appartient($id_avis): bool
     $ret = false;
 
     try {
-        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
+        $query = "SELECT idavis FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idavis = :id_avis AND idcompte = :id_compte";
         $stmt = $dbh->prepare($query);
         $stmt->bindParam(":id_avis", $id_avis);
         $id_compte = get_account_id();

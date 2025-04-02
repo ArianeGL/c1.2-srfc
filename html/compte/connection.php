@@ -35,6 +35,16 @@ function est_pro(): bool
     return $pro;
 }
 
+$query = "SELECT otp FROM ". NOM_SCHEMA .".". NOM_TABLE_COMPTE ."
+    WHERE email = :idcompte and motdepasse = :mdp;";
+
+    $stmt = $dbh->prepare($query);
+    $stmt->bindParam(":idcompte", $identificateur);
+    $stmt->bindParam(":mdp", $mdp);
+
+    $stmt->execute();
+
+    $isotp = $stmt->fetch(PDO::FETCH_ASSOC)["otp"];
 
 ?>
 
@@ -55,7 +65,7 @@ function est_pro(): bool
 
         $connexion = false;
         $attempt = 0;
-        $isotp = false;
+
 
         if (isset($_POST["identificateur"])) {
             $identificateur = $_POST["identificateur"];
@@ -82,7 +92,6 @@ function est_pro(): bool
             $sthotp->execute();
 
             $isotp = $sthotp->fetch(PDO::FETCH_ASSOC)["otp"];
-            //print_r($isotp);
 
             if (!$connexion) {
                 $attempt++; ?>
@@ -122,7 +131,7 @@ function est_pro(): bool
                 echo '<script>window.location.href ="' . CONNECTION_OTP . '"</script>';
             }
             else{
-                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '" ;
+                echo '<script>window.location.href ="' . CONSULTATION_MEMBRE . '?toast=connexion' . '" ;
                     console.log("'. $_SESSION['identifiant'] .'");
                 </script>';
             }

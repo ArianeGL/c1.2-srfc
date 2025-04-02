@@ -16,6 +16,15 @@
 
     --round-corners: 5px;
     /* USE THIS FOR ROUNDED CORNERS, PING ME IF YOU WANT TO HAVE AN OTHER ROUNDED CORNER */
+
+    /* Couleurs toasts */
+    --success: #0ABF30;
+    --error: #E24D4C;
+    --warning: #E9BD0C;
+    --info: #3498DB;
+
+    /* Couleurs hover pour les boutons rouge */
+    --red-hover: #890c0c;
 }
 
 .hidden {
@@ -371,6 +380,35 @@ form textarea {
         }
     }
 
+    .popup {
+        display: none;
+        position: fixed;
+        width: 30%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+        border: 5px solid var(--navy-blue);
+        border-radius: var(--round-corners);
+        z-index: 1000;
+
+        div {
+            display:flex;
+            justify-content: space-around;
+            align-items: center;
+            width:auto;
+
+            #bl_date, #bl_time {
+                height: 20px;
+            }
+
+            #annuler {
+                background-color: var(--red);
+            }
+        }
+    }
     margin-bottom: 20px;
 }
 
@@ -465,7 +503,7 @@ form textarea {
 
     body {
         font-family: Arial, sans-serif;
-        background-color: var(--white);
+        background-color: white;
         margin: 0;
     }
 
@@ -526,8 +564,8 @@ form textarea {
         padding: 8px;
         border: 1px solid var(--light-grey);
         border-radius: var(--round-corners);
-        background-color: var(--white);
-        color: var(--black);
+        background-color: white;
+        color: black;
         font-size: 40px;
     }
 
@@ -704,6 +742,11 @@ form textarea {
         display: flex;
         justify-content: space-between;
         margin: 5px;
+
+        input[type="checkbox"]{
+            height: 2em;
+            width: 2em;
+        }
     }
 
     #obligation {
@@ -1191,15 +1234,18 @@ form textarea {
             display: flex;
             flex-direction: row;
 
-            img-container {
+            .img-container {
                 display: block;
-                width: 500px;
+                min-width: 50%;
+                max-width: 50%;
             }
 
             img {
                 border-radius: var(--round-corners);
-                width: auto;
-                height: auto;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
             }
 
             section {
@@ -1582,9 +1628,37 @@ form textarea {
         height: 5em;
         font-size: 1.5em;
         margin-bottom: 10px;
-        font-family: 'Exo 2', sans-serif;
+        font-family: "Exo 2", sans-serif;
+    }
 }
+
+#qrCodeOtp {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+#qrCode {
+    height: 10em;
+    width: 10em;
+}
+
+#inputOtp {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/**********/
+/**********/
+/** map ***/
+/**********/
+/**********/
+/**********/
+
 #map {
     height : 30em;
     width : 100em;
@@ -1606,8 +1680,6 @@ form textarea {
     vertical-align: middle; 
 }
 
-
-
 .info.legend img{
     max-width: 2.73em; 
     max-height: 3.45em; 
@@ -1617,22 +1689,143 @@ form textarea {
     vertical-align: middle; 
 }
 
-#qrCodeOtp{
+/**********/
+/**********/
+/* toast **/
+/**********/
+/**********/
+/**********/
+
+.notifications {
+    position: fixed;
+    top: calc(2.5em + 20px);
+    right: 20px;
+    z-index: 101;
+  }
+  .notifications :where(.toast, .column) {
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    align-items: center;
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em
+}
+
+  .notifications .toast {
+    width: 400px;
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    border-radius: var(--round-corners);
+    padding: 16px 17px;
+    margin-bottom: 10px;
+    border: 1px solid var(--dark-grey);
+    background: white;
+    color: var(--navy-blue);
+    justify-content: space-between;
+    animation: show_toast 0.3s ease forwards;
+  }
+  @keyframes show_toast {
+    0% {
+      transform: translateX(100%);
+    }
+    40% {
+      transform: translateX(-5%);
+    }
+    80% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-10px);
+    }
+  }
+  .notifications .toast.hide {
+    animation: hide_toast 0.3s ease forwards;
+  }
+  @keyframes hide_toast {
+    0% {
+      transform: translateX(-10px);
+    }
+    40% {
+      transform: translateX(0%);
+    }
+    80% {
+      transform: translateX(-5%);
+    }
+    100% {
+      transform: translateX(calc(100% + 20px));
+    }
+  }
+  .toast::before {
+    position: absolute;
+    content: "";
+    height: 3px;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    animation: progress 5s linear forwards;
+  }
+  @keyframes progress {
+    100% {
+      width: 0%;
+    }
+  }
+  .toast.success::before, .btn#success {
+    background: var(--success);
+  }
+  .toast.error::before, .btn#error {
+    background: var(--error);
+  }
+  .toast.warning::before, .btn#warning {
+    background: var(--warning);
+  }
+  .toast.info::before, .btn#info {
+    background: var(--info);
+  }
+  .toast .column i {
+    font-size: 1.75rem;
+  }
+  .toast.success .column i {
+    color: var(--success);
+  }
+  .toast.error .column i {
+    color: var(--error);
+  }
+  .toast.warning .column i {
+    color: var(--warning);
+  }
+  .toast.info .column i {
+    color: var(--info);
+  }
+  .toast .column span {
+    font-size: 1.07rem;
+    margin-left: 12px;
+  }
+  .toast i:last-child {
+    color: var(--navy-blue);
+    transition: color 0.2s ease;
+    cursor: pointer;
+  }
+  .toast i:last-child:hover {
+    color: var(--dark-grey);
+  }
+
+
+#divQRCode{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    justify-self: center;
+    align-self: center;
     align-items: center;
+    background-color: white;
+    border-radius: var(--round-corners);
+    padding: 1em
 }
 
-#qrCode{
+#QRCode{
     height: 10em;
     width: 10em;
 }
 
-#inputOtp{
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}

@@ -5,10 +5,8 @@ require_once "../includes/verif_connection.inc.php";
 
 require_once "../includes/consts.inc.php";
 
-print_r("step 1");
-
 if (isset($_SESSION['identifiant']) && valid_account()) {
-    if($_POST['otp'] == "on"){
+    if($_POST['otp'] = "on"){
         echo "<script>window.location.href='creation_otp.php'</script>";
     }else{
         echo "<script>window.location.href='./consultation_membre.php'</script>";
@@ -56,7 +54,6 @@ function generate_id()
     }
 }
 
-print_r("step 2");
 
 try {
 
@@ -109,18 +106,16 @@ try {
             ':code' => $code,
             ':urlimage' => PHOTO_PROFILE_DEFAULT
         ]);
-print_r("step 2.2");
+
+
         if (isset($_FILES['photo'])) {
             $user_dir = './images_importees/' . $idcompte;
             if (!file_exists($user_dir)) {
-                print_r("step 2.2.1");
                 mkdir($user_dir, 0755, true);
             }
             $filename = $idcompte . '.png';
             $destination = $user_dir . '/' . $filename;
-                print_r("2.2.2");
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
-                print_r('step 2.2.2.1');
                 $urlimage = 'images_importees/' . $idcompte . '/' . $filename;
                 $_SESSION['photo'] = $urlimage;
 
@@ -132,21 +127,29 @@ print_r("step 2.2");
                 ]);
             }
         }
-        print_r("step 3");
 
-        $_SESSION['identifiant'] = $email;
-?>
-        <script>
-            window.location = "./consultation_membre.php";
-        </script>
-<?php
+        if($_POST['otp'] == "on"){
+            $_SESSION['identifiant_otp'] = $email;
+            $_SESSION['mdp_otp'] = $mdp;
+            echo "<script>window.location.href='creation_otp.php'</script>";
+        }else{
+
+            echo "<script>window.location.href='./consultation_membre.php?toast=creaCompte'</script>";
+
+            $_SESSION['identifiant'] = $email;
+            $_SESSION['mdp'] = $mdp;
+            echo "<script>window.location.href='./consultation_membre.php'</script>";
+
+        }
+    ?> 
+        </script> 
+        <?php
         exit();
     }
 } catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -165,7 +168,8 @@ print_r("step 2.2");
 
     <main>
     <section>
-        <form action="creation_compte_membre.php" method="post" enctype="multipart/form-data">
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
+        <form action="creation_membre.php" method="post" enctype="multipart/form-data">
 			<h1>Création du compte membre</h1>
 			<div class="form-container">
                 <div id="groupeInput" class="form-left">
@@ -191,6 +195,10 @@ print_r("step 2.2");
                         <div class="form-row">
                             <input type="text" class="input-creation" id="ville" name="ville" placeholder="Ville *" required />
                             <input type="text" class="input-creation" id="code" name="code" placeholder="Code postal *" required />
+                        </div>
+                        <div class="form-row">
+                            <label class="bouton-info" for="communication">Activer l'authentification à deux facteurs</label>
+                            <input type="checkbox" class="input-creation" id="otp" name="otp" />
                         </div>
                     </div>
 
