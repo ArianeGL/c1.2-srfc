@@ -1829,3 +1829,29 @@ form textarea {
     width: 10em;
 }
 
+#supprimer_compte {
+    display: flex;
+    justify-content: center;
+}
+
+#delete_acc_confirm {
+    background-color: white;
+    width: fit-content;
+    padding: 10px;
+    border-radius: var(--round-corners);
+    border: 1px solid var(--dark-grey);
+
+    #buttons {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    button {
+        height: 60px;
+        width: 200px;
+        font-size: 1em;
+        font-family: "Concert One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+}
