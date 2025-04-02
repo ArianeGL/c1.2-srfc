@@ -16,6 +16,8 @@ const REPORT = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmln
 <path d="M8 30C8 30 10 28 16 28C22 28 26 32 32 32C38 32 40 30 40 30V6C40 6 38 8 32 8C26 8 22 4 16 4C10 4 8 6 8 6V30ZM8 30V44" stroke="#254766" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>';
 
+const DELETE = '<svg fill="#254766" height="48px" width="48px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve" stroke="#254766"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_6_"> <g id="XMLID_11_"> <path d="M240,121.076H30V275c0,8.284,6.716,15,15,15h60h37.596c19.246,24.348,49.031,40,82.404,40c57.897,0,105-47.103,105-105 C330,172.195,290.816,128.377,240,121.076z M225,300c-41.355,0-75-33.645-75-75s33.645-75,75-75s75,33.645,75,75 S266.355,300,225,300z"></path> </g> <g id="XMLID_18_"> <path d="M240,90h15c8.284,0,15-6.716,15-15s-6.716-15-15-15h-30h-15V15c0-8.284-6.716-15-15-15H75c-8.284,0-15,6.716-15,15v45H45 H15C6.716,60,0,66.716,0,75s6.716,15,15,15h15H240z M90,30h90v30h-15h-60H90V30z"></path> </g> <g id="XMLID_23_"> <path d="M256.819,193.181c-5.857-5.858-15.355-5.858-21.213,0L225,203.787l-10.606-10.606c-5.857-5.858-15.355-5.858-21.213,0 c-5.858,5.858-5.858,15.355,0,21.213L203.787,225l-10.606,10.606c-5.858,5.858-5.858,15.355,0,21.213 c2.929,2.929,6.768,4.394,10.606,4.394c3.839,0,7.678-1.465,10.607-4.394L225,246.213l10.606,10.606 c2.929,2.929,6.768,4.394,10.607,4.394c3.839,0,7.678-1.465,10.606-4.394c5.858-5.858,5.858-15.355,0-21.213L246.213,225 l10.606-10.606C262.678,208.535,262.678,199.039,256.819,193.181z"></path> </g> </g> </g></svg>';
+
 const DISABLED_BLACKLIST = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.5 30.5L12 37.5L22.5 42L10.5 40.5L4 31.5L3 22L5.5 13.5L11.5 7L19 3.5L28 3L37.5 7.5L43.5 15.5L45 24L43.5 32L39 39L35 42L31 44L24 45L17.5 44L11.5 40.68L27.5 41.5L35.5 37.5L41 30L41.5 22.5L39 14.5L33 9L24.5 6L15.5 8.5L10 13L6.5 22L7.5 30.5Z" fill="#254766"/>
 <rect x="12" y="21" width="24" height="6" fill="#254766"/>
@@ -52,16 +54,17 @@ function afficher_liste_avis($id_offre)
     try {
 ?>
         <script src="../scripts/modifier_avis.js"></script>
+        <script src="../scripts/supprimer_avis.js"></script>
         <?php
         $query = "SELECT * FROM " . NOM_SCHEMA . "." . NOM_TABLE_AVIS . " WHERE idoffre = '" . $id_offre . "';";
         $liste_avis = $dbh->query($query)->fetchAll(PDO::FETCH_ASSOC);
         foreach ($liste_avis as $avis) {
-            if (!$avis['blacklist']) {
+            if (!$avis['blacklist'] && !$avis['supprime']) {
                 afficher_avis($avis);
         ?>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
             <?php
-            } else if ($avis['blacklist'] && (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) || avis_appartient($avis['idavis']))) {
+            } else if ($avis['blacklist'] && (offre_appartient($_SESSION['identifiant'], $avis['idoffre']) || avis_appartient($avis['idavis'])) && !$avis['supprime']) {
                 afficher_avis($avis);
             ?>
                 <hr style="border: none; border-top: 2px solid var(--navy-blue); margin: 20px; margin-left: 0px;">
@@ -70,6 +73,20 @@ function afficher_liste_avis($id_offre)
         }
     } catch (PDOException $e) {
         die("Couldn't fetch comments : " . $e->getMessage());
+    }
+}
+
+function suppr_avis($id)
+{
+    global $dbh;
+    $query = "DELETE FROM " . NOM_SCHEMA . "." . VUE_AVIS . " WHERE idavis = :id";
+
+    try {
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(":id", $id, PDO::PARAM_STR);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        die("Couldn't delete review : " . $e->getMessage());
     }
 }
 
@@ -295,6 +312,19 @@ function afficher_avis($avis)
                 outline: inherit;
             " type="button" onclick="modifier_avis(this, <?php echo '\'' . $avis['idavis'] . '\', \'' . $avis['idoffre'] . '\''; ?>)" class="modifier">
                     <?php echo EDIT;  ?>
+                </button>
+                <button style="
+        display: flex;
+        align-items: center;
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+        " type="button" onclick="supprimer_avis(<?php echo "'" . $avis['idavis'] . "'" ?>)" class="supprimer">
+                    <?php echo DELETE;  ?>
                 </button>
             </div>
             <section style="display: flex; align-items: center; justify-content: space-between; max-width: 200px;">

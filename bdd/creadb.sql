@@ -384,7 +384,8 @@ CREATE TABLE IF NOT EXISTS sae._avis
   timeunblacklist timestamp,
   signale boolean not null,
   reponse varchar(9999),
-  datereponse DATE
+  datereponse DATE,
+  supprime boolean default false
 );
 
 CREATE TABLE IF NOT EXISTS sae._imageavis
@@ -1825,3 +1826,33 @@ CREATE OR REPLACE TRIGGER tg_aimeavis
 --INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0001","Fa-0001");
 --INSERT INTO sae.facture(idoffre,idfacture) VALUES("Of-0009","Fa-0002");
 
+
+--------- SPRINT 4 --------------------------
+create or replace function sae.suppravis() returns trigger as $$
+declare
+  abo varchar(15);
+  nb_avis integer;
+begin
+  SELECT INTO abo abonnement FROM sae._offre WHERE idoffre = OLD.idoffre;
+  if abo = 'Premium' then
+    UPDATE sae._offre SET blacklistdispo = blacklistdispo+1 WHERE idoffre = OLD.idoffre;
+  end if;
+
+  UPDATE sae._avis SET supprime = true WHERE idavis = OLD.idavis;
+
+  UPDATE sae._offre SET nbavis = nbavis - 1 WHERE idoffre = OLD.idoffre;
+  SELECT INTO nb_avis nbavis from sae._offre WHERE idoffre = OLD.idoffre;
+  if nb_avis > 0 then
+    UPDATE sae._offre SET note = (select SUM(noteavis) from sae._avis where idoffre = OLD.idoffre and supprime = false) / nbavis WHERE idoffre = OLD.idoffre;
+  else
+    UPDATE sae._offre SET note = 0 WHERE idoffre = OLD.idoffre;
+  end if;
+
+  RETURN OLD;
+end;
+$$ language plpgsql;
+
+create or replace trigger tg_on_delete_avis
+instead of delete on sae.avis
+for each row
+execute function sae.suppravis();
