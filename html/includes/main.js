@@ -218,12 +218,12 @@ const toastDetails = {
     },
 	creaCompte: {
 		typeToast: "success",
-		text: "Vous avez créer votre compte"
+		text: "Vous avez créé votre compte"
 	},
 
 	connexion: {
 		typeToast: "success",
-		text: "Vous êtes désormais connectés"
+		text: "Vous êtes désormais connecté"
 	},
 
 	creaAvis: {
@@ -238,12 +238,12 @@ const toastDetails = {
 
 	supCompte: {
 		typeToast: "success",
-		text: "Vous avez supprimer votre compte"
+		text: "Vous avez supprimé votre compte"
 	},
 
 	deconnexion: {
 		typeToast: "success",
-		text: "Vous êtes désormais déconnectés"
+		text: "Vous êtes désormais déconnecté"
 	}
 }
 

@@ -8,7 +8,7 @@ require_once("../includes/consts.inc.php");
 use OTPHP\TOTP;
 
 $email = $_SESSION['identifiant_otp'];
-print_r($email);
+
 // Générer un secret unique pour un utilisateur
 $totp = TOTP::create(); 
 $totp->setLabel($email);
